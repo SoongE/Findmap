@@ -1,10 +1,9 @@
-let userModel = require('../models/user');
-const secret_config = require('../config/secretKey');
-const {logger} = require('../modules/winston');
+let userModel = require('../models/users');
+const secret = require('../config/secretKey');
 const crypto = require('crypto');
 
 
-const user = {
+const users = {
     signUp: async (req, res) => {
         let { id, password, name, nickName, profileUrl, birthday, gender, email, phoneNum } = req.body;
 
@@ -48,10 +47,10 @@ const user = {
             // 회원 가입 성공
             return res.json({result: {userIdx: userInfoRows[0].idx}, isSuccess: true, code: 200, message: "회원가입 성공"});
         } catch (err) {
-            logger.error(`App - SignUp Controller error\n: ${err.message}`);
+            console.log(error);
             return res.status(500).send(`Error: ${err.message}`);
         }
     }
 }
 
-module.exports = user;
+module.exports = users;
