@@ -1,0 +1,46 @@
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 16:38:19"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 16:43:10"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 16:45:08"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 16:46:34"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 16:47:30"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 16:50:08"}
+{"message":"App - SignUp Query error\n: crypto is not defined","level":"error","timestamp":"2021-06-17 16:50:28"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 16:52:12"}
+{"message":"App - SignUp Query error\n: User is not defined","level":"error","timestamp":"2021-06-17 16:52:16"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 16:52:34"}
+{"message":"App - SignUp Query error\n: hashedPw is not defined","level":"error","timestamp":"2021-06-17 16:52:36"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 16:53:31"}
+{"message":"App - SignUp Query error\n: table is not defined","level":"error","timestamp":"2021-06-17 16:53:34"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 16:54:08"}
+{"message":"App - SignUp Query error\n: pool.getConnection is not a function","level":"error","timestamp":"2021-06-17 16:54:11"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 16:55:31"}
+{"message":"App - SignUp DB Connection error\n: pool.getConnection is not a function","level":"error","timestamp":"2021-06-17 16:55:34"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 16:55:52"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 16:58:11"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 17:03:58"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 17:04:13"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 17:07:06"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 17:09:05"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 17:46:07"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 17:46:32"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 20:38:54"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 20:41:40"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 20:45:25"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 20:46:40"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 20:53:02"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 21:12:53"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 21:16:27"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 21:29:29"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 21:30:49"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 21:31:18"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 21:32:32"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 21:33:26"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 21:43:12"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 21:43:57"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 21:45:17"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 21:45:56"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 21:48:52"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 21:53:15"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 21:56:00"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 21:56:36"}
+{"message":"undefined - API Server Start At Port 3000","level":"info","timestamp":"2021-06-17 21:58:38"}
