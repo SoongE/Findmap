@@ -1,8 +1,5 @@
 let user = require('../models/user');
-
 const secret_config = require('../config/secretKey');
-const {pool} = require('../config/database');
-
 const {logger} = require('../modules/winston');
 const crypto = require('crypto');
 
@@ -42,43 +39,26 @@ exports.signUp = async function (req, res) {
     const regexPhoneNum = /^01(?:0|1|[6-9])(?:\d{3}|\d{4})\d{4}$/;
     if (phoneNum && !regexPhoneNum.test(phoneNum)) return res.json({isSuccess: false,code: 310,message: "phoneNum 형식이 맞지 않습니다 (ex: 01012341234)"});
     
-    // try {
-        // try {
-            //id 중복 확인
-            // const idRows = await user.userIdCheck(id);
-            // if (idRows.length > 0) { return res.json({isSuccess: false,code: 401,message: "중복된 id입니다"});}
+    try {
+        //id 중복 확인
+        const idRow = await user.userIdCheck(id);
+        if (idRow.length > 0) { return res.json({isSuccess: false,code: 401,message: "중복된 id입니다"});}
+        const emailRow = await user.userEmailCheck(email);
+        if (emailRow.length > 0) { return res.json({isSuccess: false,code: 402,message: "중복된 이메일입니다"});}
+        const phoneNumRow = await user.userPhoneNumCheck(phoneNum);
+        if (phoneNumRow.length > 0) { return res.json({isSuccess: false,code: 403,message: "중복된 전화번호입니다"});}
 
-            // 회원 가입
-            // const salt = crypto.randomBytes(32).toString();
-            // const hashedPw = crypto.pbkdf2Sync(password, salt, 1, 32, 'sha512').toString('hex');
-            const hashedPassword = await crypto.createHash('sha512').update(password).digest('hex');
+        // 비밀번호 암호화        
+        const hashedPassword = await crypto.createHash('sha512').update(password).digest('hex');
 
-            const insertIdx = await user.signup(id, hashedPassword, name, nickName, profileUrl, birthday, gender, email, phoneNum)
-            console.log(insertIdx);
+        // 회원 가입
+        const insertUserRows = await user.signUp(id, hashedPassword, name, nickName, profileUrl, birthday, gender, email, phoneNum);
+        const [userInfoRows] = await user.selectUserInfoById(id);
 
-            if (insertIdx == 0) {
-                return res.status({isSuccess: false, code: 800, message: "DB Error"})
-            }
-
-            // const insertUserInfoParams = [id, hashedPassword, name, email, phoneNum];
-            // const insertUserRows = await userDao.insertUserInfo(insertUserInfoParams);   
-            
-            // const [userInfoRows] = await userDao.selectUserInfobyId(id)
-         
-            // 회원 가입 성공
-            return res.json({
-                result: {userIdx: userInfoRows[0].userIdx,jwt: token},
-                isSuccess: true,
-                code: 200,
-                message: "회원가입 성공"
-            });
-
-        // } catch (err) {
-        //     logger.error(`App - SignUp Query error\n: ${err.message}`);
-        //     return res.status(500).send(`Error: ${err.message}`);
-        // }
-    // } catch (err) {
-    //     logger.error(`App - SignUp DB Connection error\n: ${err.message}`);
-    //     return res.status(500).send(`Error: ${err.message}`);
-    // }
+        // 회원 가입 성공
+        return res.json({result: {userIdx: userInfoRows[0].idx}, isSuccess: true, code: 200, message: "회원가입 성공"});
+    } catch (err) {
+        logger.error(`App - SignUp error\n: ${err.message}`);
+        return res.status(500).send(`Error: ${err.message}`);
+    }
 };
