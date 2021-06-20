@@ -58,7 +58,7 @@ exports.signUp = async function (req, res) {
         // 회원 가입 성공
         return res.json({result: {userIdx: userInfoRows[0].idx}, isSuccess: true, code: 200, message: "회원가입 성공"});
     } catch (err) {
-        logger.error(`App - SignUp error\n: ${err.message}`);
+        logger.error(`App - SignUp Controller error\n: ${err.message}`);
         return res.status(500).send(`Error: ${err.message}`);
     }
 };
