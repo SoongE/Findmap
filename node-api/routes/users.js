@@ -12,20 +12,17 @@ router.post('/signup', user.signUp);
 router.post('/signin',user.signIn);
 
 /*
-// 자동 로그인
-router.post('/auto-login', user.autoLogin);
+// 로그아웃 
+router.get('/logout', auth, user.logout);
+
+// 탈퇴
+router.patch('/withdraw', auth, user.withdraw);
 
 // 유저 정보 조회 API
 router.get('/:userIdx/privacy', user.getUserPrivacy);
 
 // 유저 정보 수정 API
 router.patch('/:userIdx/privacy', user.patchUserPrivacy);
-
-// 로그아웃 API
-router.post('/auto-login', user.autoLogin);
-
-// 탈퇴 API
-router.post('/auto-login', user.autoLogin);
 
 // 카카오 회원가입+로그인 API
 router.post('/users/kakao', user.kakaoSignUp);
