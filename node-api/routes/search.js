@@ -16,13 +16,13 @@ router.get('/hot-search',search.getHotSearch);
 router.post('/follow', search.follow);
 
 // 검색하기 
-router.post('/app/seach',search.postUserSearch);
+router.post('/seach',search.postUserSearch);
 
 // 검색 기록 조회 
-router.get('/app/users/:userIdx/search/log',search.getUserSearch);
+router.get('/users/:userIdx/search/log',search.getUserSearch);
 
 // 검색 기록 삭제
-router.patch('/app/users/:userIdx/search/log',search.patchUserSearch);
+router.patch('/users/:userIdx/search/log',search.patchUserSearch);
 */
 
 module.exports = router;
