@@ -1,14 +1,38 @@
-before_script:
-  - apt-get update -qq && apt-get install -y -qq sqlite3 libsqlite3-dev nodejs
-  - ruby -v
-  - which ruby
-  - gem install bundler --no-document
-  - bundle install --jobs $(nproc)  "${FLAGS[@]}"
+image: node:latest
 
-rspec:
-  script:
-    - bundle exec rspec
+stages:
+  - test
+  - build
+  - deploy
 
-rubocop:
+cache:
+  paths:
+    - node-api/node_modules/
+
+# include:
+#   - template: Deploy-ECS.gitlab-ci.yml
+# include:
+#   template: Serverless.gitlab-ci.yml
+
+test:
   script:
-    - bundle exec rubocop
+    - cd node-api
+    - npm install
+    - cd /bin/www
+    - node www
+
+build:
+  extends: .deploy-ecs:build:image  
+
+deploy_staging:
+  stage: deploy
+  extends: .deploy-ecs:deploy:image
+
+deploy_prod:
+  stage: deploy
+  extends: .deploy-ecs:deploy:image
+  environment:
+    name: production
+  when: manual
+  only:
+  - master
