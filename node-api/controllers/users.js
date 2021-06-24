@@ -76,9 +76,9 @@ const users = {
             if (emailRows[0].status === "D") { return res.json({success: false,code: 405,message: "탈퇴된 계정입니다. 재가입을 진행하시겠습니까?"});}
 
             // 로그인 여부 check
-            // userIdx = emailRows[0].idx;
-            // const checkJWT = await userModel.checkJWT(userIdx);
-            // if (checkJWT.length > 0) { return res.json({success: false,code: 406,message: "이미 로그인된 계정입니다."});}
+            userIdx = emailRows[0].idx;
+            const checkJWT = await userModel.checkJWT(userIdx);
+            if (checkJWT.length > 0) { return res.json({success: false,code: 406,message: "이미 로그인된 계정입니다."});}
 
             // 로그인 (refreshToken이 아닌 accessToken만 사용)
             const {token, _} = await jwt.sign(userIdx);
