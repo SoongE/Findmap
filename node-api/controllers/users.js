@@ -61,7 +61,7 @@ const users = {
         try {
             // 이메일 존재 확인
             const emailRows = await userModel.userEmailCheck(email);
-            if (emailRows.length == 0) { return res.json({success: false,code: 402,message: "존재하지 않는 이메일입니다"});}
+            if (emailRows.length == 0) { return res.json({success: false,code: 403,message: "존재하지 않는 이메일입니다"});}
 
             // 비밀번호 일치 확인
             const hashedPassword = await crypto
@@ -69,16 +69,16 @@ const users = {
                 .update(password)
                 .digest("hex");
             
-            if (emailRows[0].password !== hashedPassword) { return res.json({success: false,code: 402,message: "비밀번호가 일치하지 않습니다."});}
+            if (emailRows[0].password !== hashedPassword) { return res.json({success: false,code: 311,message: "비밀번호가 일치하지 않습니다."});}
 
             // 계정 상태 확인
-            if (emailRows[0].status === "I") { return res.json({success: false,code: 402,message: "비활성화 계정입니다. 활성화를 진행하시겠습니까?"});}
-            if (emailRows[0].status === "D") { return res.json({success: false,code: 402,message: "탈퇴된 계정입니다. 재가입을 진행하시겠습니까?"});}
+            if (emailRows[0].status === "I") { return res.json({success: false,code: 404,message: "비활성화 계정입니다. 활성화를 진행하시겠습니까?"});}
+            if (emailRows[0].status === "D") { return res.json({success: false,code: 405,message: "탈퇴된 계정입니다. 재가입을 진행하시겠습니까?"});}
 
             // 로그인 여부 check
-            userIdx = emailRows[0].idx;
-            const checkJWT = await userModel.checkJWT(userIdx);
-            if (checkJWT.length > 0) { return res.json({success: false,code: 402,message: "이미 로그인된 계정입니다."});}
+            // userIdx = emailRows[0].idx;
+            // const checkJWT = await userModel.checkJWT(userIdx);
+            // if (checkJWT.length > 0) { return res.json({success: false,code: 406,message: "이미 로그인된 계정입니다."});}
 
             // 로그인 (refreshToken이 아닌 accessToken만 사용)
             const {token, _} = await jwt.sign(userIdx);
