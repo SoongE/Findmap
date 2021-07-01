@@ -1,6 +1,12 @@
-FROM nginx:stable
+FROM nginx
+LABEL maintainer="Rhcsky <dev.rhcsky@gmail.com>"
 
-COPY nginx.conf /etc/ngix/nginx.conf
+EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;" ]
+COPY ./scripts/ /scripts
+RUN chmod +x /scripts/*.sh
 
+COPY ./user.conf.d/ /etc/nginx/user.conf.d/ 
+
+CMD ["/bin/bash"]
+# CMD ["/bin/bash", "/scripts/entrypoint.sh"]
