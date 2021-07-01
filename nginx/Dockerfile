@@ -1,8 +1,6 @@
-FROM tutum/nginx
-RUN rm /etc/nginx/sites-enabled/default
-ADD sites-enabled/ /etc/nginx/sites-enabled/
+FROM nginx:stable
 
-ADD www /usr/share/nginx/html
+COPY nginx.conf /etc/ngix/nginx.conf
 
-# add uwsgi params to nginx root. used in sites-enabled reverse-proxy api definition
-# ADD uwsgi_params /etc/nginx
+CMD ["nginx", "-g", "daemon off;" ]
+
