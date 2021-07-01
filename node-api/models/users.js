@@ -2,18 +2,6 @@ const pool = require('../modules/pool');
 const db = require('../config/database');
 
 const users = {
-    userIdCheck: async(id) => {
-        const query = `SELECT id FROM UserTB WHERE id = ?`;
-        const params = [id];
-        try {
-            const result = await pool.queryParam(query,params);
-            return result;
-        } catch (err) {
-            console.log('idCheck ERROR: ', err);
-            //return res.status(500).send(`Error: ${err.message}`);
-            throw err;
-        }
-    },
     userEmailCheck: async(email) => {
         const query = `SELECT idx,email,password,status FROM UserTB WHERE email = ?`;
         const params = [email];
@@ -36,12 +24,12 @@ const users = {
             throw err;
         }
     },
-    selectUserInfoById: async(id) => {
+    selectUserInfoByEmail: async(email) => {
         const query = `
-            SELECT idx, id, name, email, phoneNum 
+            SELECT idx, name, email, phoneNum 
             FROM UserTB
-            WHERE id = ? and status = 'Y';`;
-        const params = [id];
+            WHERE email = ? and status = 'Y';`;
+        const params = [email];
         try {
             const result = await pool.queryParam(query,params);
             return [result];
@@ -50,9 +38,9 @@ const users = {
             throw err;
         }
     },
-    signUp: async (id, password, name, nickName, profileUrl, birthday, gender, email, phoneNum) => {
-        const fields = 'id, password, name, nickName, profileUrl, birthday, gender, email, phoneNum';
-        const values = [id, password, name, nickName, profileUrl, birthday, gender, email, phoneNum];
+    signUp: async (email, password, name, nickName, profileUrl, birthday, gender, phoneNum) => {
+        const fields = 'email, password, name, nickName, profileUrl, birthday, gender,  phoneNum';
+        const values = [email, password, name, nickName, profileUrl, birthday, gender, email, phoneNum];
         const query = `INSERT INTO UserTB(${fields}) VALUES(?,?,?,?,?,?,?,?,?)`;
         try {
             const result = await pool.queryParamArr(query, values);
