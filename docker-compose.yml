@@ -48,7 +48,6 @@ services:
         #  each docker container has a seperate ip address below the docker-machine host, so you have to link containers to correctly pass to upstream flask port
         - flask-api:flask-api
         - node-api:node-api
-    # command: sh /scripts/entrypoint.sh
     container_name: nginx
     tty: true
     stdin_open: true

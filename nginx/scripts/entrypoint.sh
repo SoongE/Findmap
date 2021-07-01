@@ -14,5 +14,5 @@ template_user_configs
 auto_enable_configs
 
 # Start up nginx, save PID so we can reload config inside of run_certbot.sh
-nginx -g "daemon off;" &
+nginx -g "daemon off;"
 NGINX_PID=$!
