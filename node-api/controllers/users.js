@@ -257,7 +257,7 @@ const users = {
         try {
             const deleteUserResult = await userModel.secession(userIdx);
             const deleteJWTResult = await userModel.deleteJWT(userIdx);
-            return res.json({success: false, code: 1000, message: "회원 탈퇴 성공", result: {"userIdx": userIdx});
+            return res.json({success: false, code: 1000, message: "회원 탈퇴 성공", result: {"userIdx": userIdx}});
         } catch (err) {
             console.log(error);
             return res.status(4000).send(`Error: ${err.message}`);
@@ -272,12 +272,12 @@ const users = {
 
         try {
             const editUserResult = await userModel.updateUserJob(job);
-            return res.json({success: false, code: 1000, message: "신분 선택 성공"})";
+            return res.json({success: false, code: 1000, message: "신분 선택 성공"});
         } catch (err) {
             console.log(error);
             return res.status(4000).send(`Error: ${err.message}`);
         }
-    };
+    },
 }
 
 module.exports = users;
