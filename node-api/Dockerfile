@@ -17,5 +17,4 @@ RUN npm install
 
 EXPOSE 8080
 ENTRYPOINT [ "npm", "run", "start" ]
-#CMD [ "yarn", "yarn start:prod" ]
 
