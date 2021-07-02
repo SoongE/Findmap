@@ -42,7 +42,7 @@ services:
       context: ./nginx
       dockerfile: ./Dockerfile
     ports:
-        - "80:80"
+        - "5678:5678"
     links:
         # nginx has to link to flask-api (not vice-versa) so that nginx/sites-enabled/default has access to flask-api by service name (acts as host dns).
         #  each docker container has a seperate ip address below the docker-machine host, so you have to link containers to correctly pass to upstream flask port
