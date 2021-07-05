@@ -6,9 +6,9 @@ const TOKEN_EXPIRED = -3;
 const TOKEN_INVALID = -2;
 
 module.exports = {
-    sign: async (user) => {
+    sign: async (userIdx) => {
         const payload = {
-            idx: user.userIdx,
+            userIdx: userIdx
         };
         const result = {
             //sign메소드를 통해 access token 발급
@@ -35,5 +35,31 @@ module.exports = {
             }
         }
         return decoded;
+    },
+    refresh: async (refreshToken) => {
+        try {
+            const result = jwt.verify(refreshToken, secretKey);
+            if (result.userIdx === undefined) {
+                return TOKEN_INVALID;
+            }
+            const user = await UserModel.getUserByIdx(result.userIdx);
+            if (refreshToken !== user[0].refreshToken) {
+                console.log('invalid refresh token');
+                return TOKEN_INVALID;
+            }
+            const payload = {
+                userIdx: user[0].userIdx,
+                name: user[0].name
+            };
+            const dto = {
+                token: jwt.sign(payload, secretKey, options),
+                refreshToken: jwt.sign(payload, secretKey, refreshOptions)
+            };
+            await UserModel.updateRefreshToken(payload.userIdx, dto.refreshToken);
+            return dto;
+        } catch (err) {
+            console.log('jwt.js ERROR : ', err);
+            throw err;
+        }
     }
 }
