@@ -8,7 +8,6 @@ def index():
 
 @app.route('/whoyouare')
 def whoyouare():
-    print('hello')
     name = request.args.get("name")
 
     return {"message" : f'FLASK SEND: Hello, {name}!'}
