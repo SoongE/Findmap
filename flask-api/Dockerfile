@@ -9,4 +9,4 @@ RUN python3 -m pip install flask wget xmltodict flask-cors flask_restx
 COPY . .
 
 EXPOSE 5000
-ENTRYPOINT [ "python3", "app.py" ]
+ENTRYPOINT [ "python3", "app.py"]

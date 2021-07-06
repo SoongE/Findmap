@@ -1,16 +1,7 @@
-from flask import Flask, escape, request
+from main.runner import create_app
 
-app = Flask(__name__)
-
-@app.route('/')
-def index():
-    return 'Flask Server'
-
-@app.route('/whoyouare')
-def whoyouare():
-    name = request.args.get("name")
-
-    return {"message" : f'FLASK SEND: Hello, {name}!'}
+app = create_app("dev")
+app.app_context().push()
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000)
