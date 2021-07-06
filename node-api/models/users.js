@@ -40,24 +40,13 @@ const users = {
     },
     signUp: async (email, password, name, nickName, profileUrl, birthday, gender, phoneNum) => {
         const fields = 'email, password, name, nickName, profileUrl, birthday, gender,  phoneNum';
-        const values = [email, password, name, nickName, profileUrl, birthday, gender, email, phoneNum];
-        const query = `INSERT INTO UserTB(${fields}) VALUES(?,?,?,?,?,?,?,?,?)`;
+        const values = [email, password, name, nickName, profileUrl, birthday, gender, phoneNum];
+        const query = `INSERT INTO UserTB(${fields}) VALUES(?,?,?,?,?,?,?,?)`;
         try {
             const result = await pool.queryParamArr(query, values);
             return result;
         } catch (err) {
             console.log('signUp ERROR: ', err);
-            throw err;
-        }
-    },
-    checkJWT: async(userIdx) => {
-        const query = `SELECT userIdx FROM TokenTB WHERE userIdx = ?;`;
-        const params = [userIdx];
-        try {
-            const result = await pool.queryParam(query,params);
-            return [result];
-        } catch (err) {
-            console.log('checkJWT ERROR: ', err);
             throw err;
         }
     },
@@ -70,6 +59,39 @@ const users = {
             return result;
         } catch (err) {
             console.log('insertToken ERROR: ', err);
+            throw err;
+        }
+    },
+    checkJWT: async(userIdx) => {
+        const query = `SELECT userIdx,token FROM TokenTB WHERE userIdx = ?;`;
+        const params = [userIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('checkJWT ERROR: ', err);
+            throw err;
+        }
+    },
+    deleteJWT: async(userIdx) => {
+        const query = `DELETE FROM TokenTB WHERE userIdx = ?;`;
+        const params = [userIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('checkJWT ERROR: ', err);
+            throw err;
+        }
+    },
+    withdraw: async(userIdx) => {
+        const query = `UPDATE UserTB SET status = 'D' WHERE idx = ?;`;
+        const params = [userIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('checkJWT ERROR: ', err);
             throw err;
         }
     }

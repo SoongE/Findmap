@@ -3,6 +3,10 @@ const secret = require('../config/secretKey');
 const crypto = require('crypto');
 const jwt = require('../modules/jwt');
 
+const { smtpTransport } = require("../config/email.js");
+const nodeCache = require('node-cache');
+const ncache = new nodeCache();
+
 
 const users = {
     signUp: async (req, res) => {
@@ -58,9 +62,10 @@ const users = {
 
             // 비밀번호 암호화        
             const hashedPassword = await crypto.createHash('sha512').update(password).digest('hex');
+            password = hashedPassword;
 
             // 회원 가입
-            const insertUserRows = await userModel.signUp(email, hashedPassword, name, nickName, profileUrl, birthday, gender, phoneNum);
+            const insertUserRows = await userModel.signUp(email, password, name, nickName, profileUrl, birthday, gender, phoneNum);
             const [userInfoRows] = await userModel.selectUserInfoByEmail(email);
 
             // 회원 가입 성공
@@ -103,8 +108,10 @@ const users = {
 
             // 로그인 여부 check
             userIdx = emailRows[0].idx;
+
             const checkJWT = await userModel.checkJWT(userIdx);
-            if (checkJWT.length > 0) {
+
+            if (checkJWT[0].length > 0) {
                 return res.json({success: false, code: 3008, message: "이미 로그인된 계정입니다."});
             }
 
@@ -153,8 +160,8 @@ const users = {
 
         const mailOptions = {
             from: "wdh1121@naver.com",
-            to: sendEmail,
-            subject: "[파인드맵] 인증 관련 이메일 입니다.",
+            to: email,
+            subject: "[파인드맵] 인증 이메일 입니다.",
             text: `[인증번호] ${authNum}`
         };
 
@@ -166,9 +173,9 @@ const users = {
             } else {
                 smtpTransport.close();
                 // 캐시 데이터 저장
-                ncache.set(sendEmail, authNum, 600);
+                ncache.set(email, authNum, 600);
 
-                return res.send(response(baseResponse.USER_EMAIL_SEND_SUCCESS, {"authNumber": authNum}));
+                return res.json({success: true, code: 1000, message: "인증메일 전송 성공", result: {"authNumber": authNum}});
             }
         });
     },
@@ -196,45 +203,18 @@ const users = {
         if (!CacheData) return res.json({success: false, code: 2017, message: "인증번호가 일치하지 않습니다."});
         if (CacheData != verifyCode) return res.json({success: false, code: 2018, message: "인증번호가 일치하지 않습니다."});
 
-        //const emailVerifyResponse = await userService.postEmailVerify(email);
-
-        // 이메일 유저 정보 확인
         /*
-        const emailRows = await userModel.userEmailCheck(email);
-
-        if (emailRows.length != 0){ // 이메일로 가입한 유저 정보가 있다면
-            userIdx = emailRows[0].idx;
-
-            // 뱃지가 없다면 생성, 있다면 에러 response
-            const verifyemailRows = await userProvider.emailVerifyCheck(userIdx);
-            if (verifyemailRows[0] != null) { //배지가 없다면 배지 생성
-                return errResponse(baseResponse.ALREADY_AUTH_EMAIL); //이미 인증된 이메일입니다.
-            } else {
-                const userBadgeResult = await userDao.insertUserEmailBadge(connection, userIdx);
-            }
-        } else { // 이메일로 가입한 유저 정보가 없다면
-            const userIdResult = await userDao.insertOnlyEmailUser(connection, email); //회원가입
-            const emailRows = await userProvider.emailCheck(email);
-            userIdx = emailRows[0].idx;
-
-            // 뱃지가 없다면 생성, 있다면 에러 response
-            const verifyemailRows = await userProvider.emailVerifyCheck(userIdx);
-            if (verifyemailRows[0] != null) { //배지가 없다면 배지 생성, 회원가입
-                return errResponse(baseResponse.ALREADY_AUTH_EMAIL); //이미 인증된 이메일입니다.
-            } else {
-                const userBadgeResult = await userDao.insertUserEmailBadge(connection, userIdx);
-            }
-        }
+        // 이메일 유저 정보가 없다면 생성
+        // 이메일 유저 정보가 있다면 loginType 1로 수정
         */
         return res.json({success: false, code: 1000, message: "이메일 인증에 성공했습니다."});
 
     },
     logout: async (req, res) => {
-        const userIdx = req.verifiedToken.userIdx;
+        const userIdx = req.decoded.userIdx;
 
         const checkJWT = await userModel.checkJWT(userIdx);
-        if (checkJWT.length < 1) return res.json({success: false, code: 3009, message: "로그인되어 있지 않습니다."});
-        if (token != checkJWT[0].jwt) return res.json({success: false, code: 3010, message: "토큰 검증 실패"});
+        if (checkJWT[0].length < 1) return res.json({success: false, code: 3009, message: "로그인되어 있지 않습니다."});
 
         try {
             const deleteJWTResult = await userModel.deleteJWT(userIdx);
@@ -245,17 +225,18 @@ const users = {
         }
     },
     withdraw: async (req, res) => {
-        const userIdx = req.params.userIdx;
-        const token = req.headers['token'];
-
-        if (!userIdx) return res.json({success: false, code: 2020, message: "userIdx를 입력해주세요."});
-        if (!token) return res.json({success: false, code: 2020, message: "token을 입력해주세요."});
+        const userIdx = req.decoded.userIdx;
 
         const checkJWT = await userModel.checkJWT(userIdx);
-        if (checkJWT.length < 1 || token != checkJWT[0].jwt) res.json({success: false, code: 2021, message: "userIdx가 일치하지 않습니다."});
+        if (checkJWT[0].length < 1) return res.json({success: false, code: 3009, message: "로그인되어 있지 않습니다."});
+
+        // const userIdx = req.params.userIdx;
+        // if (!userIdx) return res.json({success: false, code: 2020, message: "userIdx를 입력해주세요."});
+        // const token = req.headers['token'];
+        // if (token != checkJWT[0].token) res.json({success: false, code: 2021, message: "userIdx가 일치하지 않습니다."});
 
         try {
-            const deleteUserResult = await userModel.secession(userIdx);
+            const deleteUserResult = await userModel.withdraw(userIdx);
             const deleteJWTResult = await userModel.deleteJWT(userIdx);
             return res.json({success: false, code: 1000, message: "회원 탈퇴 성공", result: {"userIdx": userIdx}});
         } catch (err) {
@@ -277,7 +258,11 @@ const users = {
             console.log(error);
             return res.status(4000).send(`Error: ${err.message}`);
         }
+<<<<<<< HEAD
     },
+=======
+    }
+>>>>>>> fed6df75c75adc0aae3e828d199c7802731bb1cf
 }
 
 module.exports = users;

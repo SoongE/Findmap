@@ -18,10 +18,10 @@ router.post('/email-send', user.authSendEmail);
 router.get("/email-check", user.emailVerify);
 
 // 로그아웃
-router.get('/logout', auth, user.logout);
+router.get('/logout', auth.checkToken, user.logout);
 
 // 탈퇴
-router.patch('/withdraw', auth, user.withdraw);
+router.patch('/withdraw', auth.checkToken, user.withdraw);
 
 /*
 // 신분 선택
