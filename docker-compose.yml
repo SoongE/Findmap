@@ -23,7 +23,7 @@ services:
       dockerfile: ./Dockerfile
     restart: on-failure:10
     expose:
-        - "8080"
+        - "3000"
     #command: pm2 start /node-api/node-api.json --no-daemon
     #command: node --debug /node-api/bin/node-api.js
     #command: node-debug /node-api/bin/node-api.js
