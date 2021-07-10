@@ -2,6 +2,8 @@ from urllib.request import urlopen
 from urllib.error import HTTPError, URLError
 import urllib.robotparser
 from bs4 import BeautifulSoup as bs
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 
 
 class Crawler:
@@ -10,6 +12,12 @@ class Crawler:
         self.url = url
         self.html = ""
         self.soup = ""
+
+        chrome_options = Options()
+        chrome_options.add_argument('--headless')
+        chrome_options.add_argument('--no-sandbox')
+        chrome_options.add_argument('--disable-dev-shm-usage')
+        self.driver = webdriver.Chrome('/workspace/chromedriver', chrome_options=chrome_options)
 
     def robots_check(self):
         rp = urllib.robotparser.RobotFileParser()
@@ -79,10 +87,33 @@ class Crawler:
 
     def get_contents(self):
         # get contents of the page
+        iframe_check = self.soup.find('iframe')
         contents = list()
-        p_list = self.soup.find_all('p')
-        for x in p_list:
-            text = x.get_text().strip()
-            contents.append(text)
+
+        if iframe_check:
+            self.driver.get(self.url)
+            iframes = self.driver.find_elements_by_tag_name('iframe')
+
+            for i, iframe in enumerate(iframes):
+                try:
+                    self.driver.switch_to.frame(iframes[i])
+                    p_list = self.driver.find_elements_by_tag_name("p")
+
+                    for x in p_list:
+                        p_text = x.text.strip()
+                        if p_text == '':
+                            continue
+                        contents.append(p_text)
+
+                    self.driver.switch_to_default_content()
+
+                except:
+                    self.driver.switch_to_default_content()
+
+        else:
+            p_list = self.soup.find_all('p')
+            for x in p_list:
+                text = x.get_text().strip()
+                contents.append(text)
 
         return " ".join(contents)
