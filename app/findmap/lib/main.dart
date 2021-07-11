@@ -11,9 +11,9 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:badges/badges.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(Main());
 
-class MyApp extends StatelessWidget {
+class Main extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -98,11 +98,11 @@ class _TapPageState extends State<TabPage> {
         },
         itemCount: 5,
       ),
-      bottomNavigationBar: _GNavContainer(),
+      bottomNavigationBar: gNavContainer(),
     );
   }
 
-  SafeArea _GNavContainer() {
+  SafeArea gNavContainer() {
     return SafeArea(
       child: Container(
         // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
@@ -120,7 +120,7 @@ class _TapPageState extends State<TabPage> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 3.0, vertical: 3),
           child: GNav(
-            tabs: GButtonTaps(_widgetTitle, _widgetColors, _widgetIcons),
+            tabs: gButtonTaps(_widgetTitle, _widgetColors, _widgetIcons),
             selectedIndex: _selectedIndex,
             onTabChange: (index) {
               setState(() {
@@ -134,7 +134,7 @@ class _TapPageState extends State<TabPage> {
     );
   }
 
-  List<GButton> GButtonTaps(List<String> widgetTitle, List<Color> widgetColors,
+  List<GButton> gButtonTaps(List<String> widgetTitle, List<Color> widgetColors,
       List<IconData> widgetIcons) {
     return [
       GButton(
