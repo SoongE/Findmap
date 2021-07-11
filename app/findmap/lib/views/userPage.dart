@@ -1,9 +1,13 @@
 import 'dart:convert';
 import 'dart:async';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:findmap/models/user.dart';
+import 'package:findmap/utils/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+
+import 'login.dart';
 
 Future<User> fetchUser() async {
   var queryParameters = {
@@ -20,7 +24,9 @@ Future<User> fetchUser() async {
 }
 
 class UserPage extends StatefulWidget {
-  UserPage({Key? key}) : super(key: key);
+  final String nickName;
+
+  UserPage({Key? key, required this.nickName}) : super(key: key);
 
   @override
   _UserPageState createState() => _UserPageState();
@@ -40,7 +46,7 @@ class _UserPageState extends State<UserPage> {
     final double statusBarHeight = MediaQuery.of(context).padding.top;
 
     return Container(
-      color: Colors.green,
+      color: Colors.lightGreen,
       child: Padding(
         padding: EdgeInsets.only(top: statusBarHeight),
         child: FutureBuilder<User>(
@@ -49,7 +55,7 @@ class _UserPageState extends State<UserPage> {
             if (snapshot.hasError) print(snapshot.error);
 
             return snapshot.hasData
-                ? UserPageBody(user: snapshot.data!)
+                ? UserPageBody(user: snapshot.data!, nickName: widget.nickName)
                 : Center(child: CircularProgressIndicator());
           },
         ),
@@ -60,8 +66,10 @@ class _UserPageState extends State<UserPage> {
 
 class UserPageBody extends StatelessWidget {
   final User user;
+  final String nickName;
 
-  UserPageBody({Key? key, required this.user}) : super(key: key);
+  UserPageBody({Key? key, required this.user, required this.nickName})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -70,12 +78,14 @@ class UserPageBody extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           CircleAvatar(
-            radius: 50.0,
-            backgroundColor: Colors.orange,
-            // backgroundImage: ImageAsset,
+            radius: 70.0,
+            backgroundImage: NetworkImage(
+              'https://avatars.githubusercontent.com/u/53206234?v=4',
+            ),
           ),
+          Padding(padding: EdgeInsets.symmetric(vertical: 15)),
           Text(
-            user.name,
+            nickName,
             style: TextStyle(
               fontSize: 40.0,
               color: Colors.yellowAccent,
@@ -84,12 +94,10 @@ class UserPageBody extends StatelessWidget {
             ),
           ),
           Text(
-            'THE CUTTEST',
+            'Hi, Rhc',
             style: TextStyle(
-              fontFamily: 'Source Sans Pro',
               color: Colors.yellow.shade300,
               fontSize: 20.0,
-              letterSpacing: 2.5,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -146,8 +154,37 @@ class UserPageBody extends StatelessWidget {
                       fontFamily: 'Source Sans Pro'),
                 ),
               )),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                primary: Colors.white,
+                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                textStyle: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black)),
+            child: Text(
+              'Logout',
+              style: TextStyle(color: Colors.black),
+            ),
+            onPressed: () {
+              _logout(context);
+            },
+          ),
         ],
       ),
     );
+  }
+
+  void _logout(BuildContext context) async {
+    final storage = new FlutterSecureStorage();
+    Map<String, String> allStorage = await storage.readAll();
+    allStorage.forEach((k, v) async {
+      if (v == STATUS_LOGIN) {
+        await storage.write(key: k, value: STATUS_LOGOUT);
+      }
+    });
+    showSnackbar(context, "로그아웃 완료");
+    Navigator.pushReplacement(context,
+        MaterialPageRoute(builder: (BuildContext context) => LoginPage()));
   }
 }
