@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 const user = require('../controllers/users');
-const {auth} = require('../middlewares/auth');
+const auth = require('../middlewares/auth');
 //const upload = require('../modules/multer');
 
 // 이메일 회원가입
