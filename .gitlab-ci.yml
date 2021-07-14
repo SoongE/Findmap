@@ -10,6 +10,10 @@ test_flutter:
   stage: test
   script:
     - echo INNER_NAME=$INNER_NAME
+  only:
+    - main
+    - dev
+    - merge_requests
 
 test_nodejs:
   tags:
@@ -17,6 +21,10 @@ test_nodejs:
   stage: test
   script:
     - echo INNER_NAME=$INNER_NAME
+  only:
+    - main
+    - dev
+    - merge_requests
 
 test_flask:
   tags:
@@ -28,3 +36,7 @@ test_flask:
     - python -m pip install -r requirements.txt
   script:
     - echo INNER_NAME=$INNER_NAME
+  only:
+    - main
+    - dev
+    - merge_requests
