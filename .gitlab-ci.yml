@@ -1,0 +1,26 @@
+stages:
+  - triggers
+
+trigger_flutter:
+  stage: triggers
+  trigger:
+    include: gitlab-ci/.gitlab-ci-flutter.yml
+  rules:
+    - changes:
+        - app/*
+
+trigger_nodejs:
+  stage: triggers
+  trigger:
+    include: gitlab-ci/.gitlab-ci-nodejs.yml
+  rules:
+    - changes:
+        - node-api/*
+
+trigger_flask:
+  stage: triggers
+  trigger:
+    include: gitlab-ci/.gitlab-ci-flask.yml
+  rules:
+    - changes:
+        - flask-api/*
