@@ -1,5 +1,7 @@
 ## 빅데이터, AI기반 컨버전스 콘텐츠 마인드맵 앱개발
 
+[![CI status](https://lab.hanium.or.kr/21_HF144/21_hf144/badges/main/pipeline.svg)](https://lab.hanium.or.kr/21_HF144/21_hf144/commits/main)
+
 ### Dockerizing flutter, flask, nodejs with Docker-Compose and Docker-Machine
 
 **Stack:**

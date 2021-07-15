@@ -1,0 +1,12 @@
+stages:
+  - test
+
+variables:
+  INNER_NAME: "RHCSKY"
+
+test_flutter:
+  tags:
+    - runner
+  stage: test
+  script:
+    - echo INNER_NAME=$INNER_NAME
