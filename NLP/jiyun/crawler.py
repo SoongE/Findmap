@@ -63,35 +63,43 @@ class Crawler:
 
     def get_image(self):
         # get image of the page
-        class_ignore = ["profile", "thumb", "thumbnail", "ads", "sidebar", "loading", "comment"]
+        class_ignore = ["profile", "thumb", "thumbnail", "ads", "sidebar", "loading", "comment", "scroll"]
         images = self.soup.find_all('img', class_=lambda x: x not in class_ignore)
-        # print(img)
-        print(images)
+
+        imgUrl = None
         if images:
             # when the image file exists in page
             for image in images:
                 try:
                     imgUrl = image['src']
                 except:
-                    imgUrl = image['data-src']
+                    try:
+                        imgUrl = image['data-src']
+                    except:
+                        try:
+                            imgUrl = image['srcset']
+                        except:
+                            imgUrl = None
+                            continue
+
+                if re.search('gif$', imgUrl) is not None:
+                    imgUrl = None
+                    continue
 
                 cp = False
-                not_includes = ["scroll", "toast", "thumb", "profile", "load", "ads", "comment"]
+                not_includes = ["toast", "thumb", "profile", "load", "ads", "comment"]
                 for x in not_includes:
                     if x in imgUrl:
                         cp = True
+                        imgUrl = None
                         break
                 if cp:
                     continue
 
-                if (re.search('jpg$', imgUrl) is not None or re.search('jpeg$', imgUrl) is not None
-                    or re.search('png$', imgUrl) is not None):
-                    break
-
             if imgUrl:
                 return imgUrl
             else:
-                None
+                return None
 
         else:
             # when the image file doesn't exist in page
@@ -103,14 +111,16 @@ class Crawler:
         sentences = list()
         title = ""
         img_url = ""
+        self.driver.get(self.url)
 
         if iframe_check:
-            self.driver.get(self.url)
             iframes = self.driver.find_elements_by_tag_name('iframe')
 
             for i, iframe in enumerate(iframes):
                 try:
                     self.driver.switch_to.frame(iframes[i])
+                    self.html = self.driver.page_source
+                    self.html_parse()
 
                     # get sentences
                     p_list = self.driver.find_elements_by_tag_name("p")
@@ -123,6 +133,7 @@ class Crawler:
                     # get title
                     if title == "":
                         title = self.get_title()
+                        print(title)
                         if title is None:
                             print("Error: get the title of the page")
 
@@ -137,27 +148,26 @@ class Crawler:
                 except:
                     self.driver.switch_to_default_content()
 
-        else:
-            # get sentences
-            self.driver.get(self.url)
-            p_list = self.driver.find_elements_by_tag_name("p")
-            for x in p_list:
-                p_text = x.text.strip()
-                if p_text == '':
-                    continue
-                sentences.append(p_text)
+        # get sentences
+        p_list = self.driver.find_elements_by_tag_name("p")
 
-            # get title
-            if title == "":
-                title = self.get_title()
-                if title is None:
-                    print("Error: get the title of the page")
+        for x in p_list:
+            p_text = x.text.strip()
+            if p_text == '':
+                continue
+            sentences.append(p_text)
 
-            # get image url
-            if img_url == "":
-                img_url = self.get_image()
-                if img_url is None:
-                    img_url = None
+        # get title
+        if title == "":
+            title = self.get_title()
+            if title is None:
+                print("Error: get the title of the page")
+
+        # get image url
+        if img_url == "":
+            img_url = self.get_image()
+            if img_url is None:
+                img_url = None
 
         return title, " ".join(sentences), img_url
 

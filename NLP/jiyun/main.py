@@ -11,6 +11,7 @@ def main():
     if crw.robots_check():
         # this page admit crawling
         scrap_page = crw.crawl()
+
         title = scrap_page[1]
         sentences = scrap_page[2]
 
