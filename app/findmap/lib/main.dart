@@ -1,6 +1,7 @@
+import 'package:findmap/views/first.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:findmap/views/login.dart';
+import 'package:findmap/views/email_login.dart';
 import 'package:findmap/views/mainPage.dart';
 import 'package:findmap/utils/utils.dart';
 import 'package:flutter/services.dart';
@@ -12,14 +13,14 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent, // 투명색
-    ));
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: Colors.transparent));
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Find anything fitted with you',
       theme: ThemeData(
+        fontFamily: 'NanumBarunGothic',
         primarySwatch: Colors.blue,
       ),
       home: SplashPage(),
@@ -63,7 +64,7 @@ class _SplashPageState extends State<SplashPage> {
       });
     } else {
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => LoginPage()));
+          context, MaterialPageRoute(builder: (context) => FirstPage()));
     }
     if (statusUser != null && statusUser != '') {
       Navigator.pushReplacement(
@@ -72,7 +73,7 @@ class _SplashPageState extends State<SplashPage> {
               builder: (context) => MainPage(nickName: statusUser)));
     } else {
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => LoginPage()));
+          context, MaterialPageRoute(builder: (context) => FirstPage()));
     }
   }
 }

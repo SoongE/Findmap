@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:findmap/views/login.dart';
+import 'package:findmap/views/email_login.dart';
 import 'package:findmap/utils/utils.dart';
 
 import 'package:findmap/views/mainPage.dart';
@@ -131,7 +131,7 @@ class _RegisterPageState extends State<RegisterPage> {
             : Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (BuildContext context) => LoginPage(),
+                  builder: (BuildContext context) => EmailLoginPage(),
                 ),
               ),
         child: Text(

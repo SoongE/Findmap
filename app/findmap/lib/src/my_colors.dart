@@ -7,5 +7,10 @@ class MyColors {
   static const Color alarm = Colors.teal;
   static const Color user = Colors.green;
 
-// static const Color white = const Color(0xFFFFFFFF);
+  // First Page Color
+  static const Color myYellow = const Color(0xFFFFEB67);
+  static const Color myBlue = const Color(0xFF3CABF0);
+  static const Color myPurple = const Color(0xFF7D3CF0);
+  static const Color myPink = const Color(0xFFEE8686);
+
 }

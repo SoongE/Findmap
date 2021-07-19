@@ -4,12 +4,12 @@ import 'package:findmap/views/register.dart';
 import 'package:findmap/utils/utils.dart';
 import 'package:findmap/views/mainPage.dart';
 
-class LoginPage extends StatefulWidget {
+class EmailLoginPage extends StatefulWidget {
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _EmailLoginPageState createState() => _EmailLoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _EmailLoginPageState extends State<EmailLoginPage> {
   bool isLoading = false;
   late TextEditingController _userEmailCtrl;
   late TextEditingController _userPasswordCtrl;

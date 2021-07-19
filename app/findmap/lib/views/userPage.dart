@@ -7,7 +7,7 @@ import 'package:findmap/models/user.dart';
 import 'package:findmap/utils/utils.dart';
 import 'package:flutter/material.dart';
 
-import 'login.dart';
+import 'email_login.dart';
 
 Future<User> fetchUser() async {
   var queryParameters = {
@@ -185,6 +185,6 @@ class UserPageBody extends StatelessWidget {
     });
     showSnackbar(context, "로그아웃 완료");
     Navigator.pushReplacement(context,
-        MaterialPageRoute(builder: (BuildContext context) => LoginPage()));
+        MaterialPageRoute(builder: (BuildContext context) => EmailLoginPage()));
   }
 }

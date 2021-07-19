@@ -26,7 +26,7 @@ class _MainPageState extends State<MainPage> {
   final _padding = EdgeInsets.symmetric(horizontal: 18, vertical: 12);
 
   PageController _controller = PageController();
-
+  
   static const List<IconData> _widgetIcons = <IconData>[
     LineIcons.archive,
     LineIcons.search,
