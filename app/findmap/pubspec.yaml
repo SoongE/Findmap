@@ -40,15 +40,10 @@ dev_dependencies:
     sdk: flutter
   build_runner: ^2.0.6
   json_serializable: ^4.1.3
-# For information on the generic Dart part of this file, see the
-# following page: https://dart.dev/tools/pub/pubspec
+  flutter_launcher_icons: ^0.9.0
+#  flutter_native_splash: ^1.2.0
 
-# The following section is specific to Flutter.
 flutter:
-
-  # The following line ensures that the Material Icons font is
-  # included with your application, so that you can use the icons in
-  # the material Icons class.
   uses-material-design: true
   assets:
     - assets/logo.png
@@ -59,3 +54,24 @@ flutter:
     - family: NanumBarunGothic
       fonts:
         - asset: assets/fonts/NanumBarunGothic.ttf
+
+flutter_native_splash:
+  color: "#ffffff"
+  image: assets/logo.png
+
+  color_dark: "#737373"
+  image_dark: assets/logo.png
+
+  android: true
+  ios: true
+  #web: false
+
+  fullscreen: true
+#  android12: true
+
+flutter_icons:
+  andoird: true
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/logo.png"
+

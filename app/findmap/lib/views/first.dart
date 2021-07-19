@@ -26,7 +26,7 @@ class FirstPage extends StatelessWidget{
                 BuildBox(context, MyColors.myPink, "AppleID로 로그인하기"),
               ],
             ),
-            Spacer(flex: 1),
+            Spacer(flex: 2),
           ],
         ),
       ),

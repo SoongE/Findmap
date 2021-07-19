@@ -37,19 +37,12 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(milliseconds: 500), () => _checkUser(context));
+    _checkUser(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-          child: Icon(
-        Icons.stream,
-        size: 80,
-        color: Colors.blue,
-      )),
-    );
+    return Scaffold();
   }
 
   void _checkUser(context) async {
