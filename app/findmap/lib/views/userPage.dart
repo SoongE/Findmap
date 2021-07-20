@@ -1,13 +1,13 @@
-import 'dart:convert';
 import 'dart:async';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 import 'package:findmap/models/user.dart';
 import 'package:findmap/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
 
-import 'email_login.dart';
+import 'first.dart';
 
 Future<User> fetchUser() async {
   var queryParameters = {
@@ -177,14 +177,10 @@ class UserPageBody extends StatelessWidget {
 
   void _logout(BuildContext context) async {
     final storage = new FlutterSecureStorage();
-    Map<String, String> allStorage = await storage.readAll();
-    allStorage.forEach((k, v) async {
-      if (v == STATUS_LOGIN) {
-        await storage.write(key: k, value: STATUS_LOGOUT);
-      }
-    });
+    await storage.deleteAll();
+
     showSnackbar(context, "로그아웃 완료");
-    Navigator.pushReplacement(context,
-        MaterialPageRoute(builder: (BuildContext context) => EmailLoginPage()));
+    Navigator.pushAndRemoveUntil(
+        context, createRoute(FirstPage()), (route) => false);
   }
 }
