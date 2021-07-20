@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:findmap/utils/utils.dart';
+import 'package:findmap/utils/validate.dart';
 import 'package:findmap/views/register.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -70,12 +71,12 @@ class _EmailConfirmPageState extends State<EmailConfirmPage> {
                 },
                 child: _isSendConfirmMail
                     ? Container(
-                  key: UniqueKey(),
-                  child: Column(children: [
-                    Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                    _confirmWidget(),
-                  ]),
-                )
+                        key: UniqueKey(),
+                        child: Column(children: [
+                          Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                          _confirmWidget(),
+                        ]),
+                      )
                     : Container(key: UniqueKey()),
               ),
               Padding(padding: EdgeInsets.symmetric(vertical: 10)),
@@ -92,8 +93,7 @@ class _EmailConfirmPageState extends State<EmailConfirmPage> {
       keyboardType: TextInputType.phone,
       focusNode: _confirmFocus,
       validator: (val) =>
-          CheckValidate()
-              .validateEmailConfirm(_confirmFocus, val!, _emailConfirmNumber),
+          CheckValidate().emailConfirm(val!, _emailConfirmNumber),
       autovalidateMode: AutovalidateMode.onUserInteraction,
       controller: _userConfirmNumber,
       decoration: InputDecoration(
@@ -108,7 +108,7 @@ class _EmailConfirmPageState extends State<EmailConfirmPage> {
     return TextFormField(
       keyboardType: TextInputType.emailAddress,
       focusNode: _emailFocus,
-      validator: (val) => CheckValidate().validateEmail(_emailFocus, val!),
+      validator: (val) => CheckValidate().email(val!),
       autovalidateMode: AutovalidateMode.onUserInteraction,
       controller: _userEmailCtrl,
       decoration: InputDecoration(
@@ -125,8 +125,7 @@ class _EmailConfirmPageState extends State<EmailConfirmPage> {
     return TextFormField(
       keyboardType: TextInputType.text,
       focusNode: _passwordFocus,
-      validator: (val) =>
-          CheckValidate().validatePassword(_passwordFocus, val!),
+      validator: (val) => CheckValidate().password(val!),
       autovalidateMode: AutovalidateMode.onUserInteraction,
       controller: _userPasswordCtrl,
       obscureText: _passwordVisible,
@@ -138,8 +137,7 @@ class _EmailConfirmPageState extends State<EmailConfirmPage> {
             icon: Icon(
                 _passwordVisible ? Icons.visibility : Icons.visibility_off,
                 color: Colors.grey),
-            onPressed: () =>
-                setState(() {
+            onPressed: () => setState(() {
                   _passwordVisible = !_passwordVisible;
                 })),
       ),
@@ -151,8 +149,7 @@ class _EmailConfirmPageState extends State<EmailConfirmPage> {
       keyboardType: TextInputType.text,
       focusNode: _passwordAgainFocus,
       validator: (val) =>
-          CheckValidate().validatePasswordAgain(
-              _passwordAgainFocus, val!, _userPasswordCtrl.text),
+          CheckValidate().passwordAgain(val!, _userPasswordCtrl.text),
       autovalidateMode: AutovalidateMode.onUserInteraction,
       obscureText: _passwordVisible,
       decoration: InputDecoration(
@@ -163,8 +160,7 @@ class _EmailConfirmPageState extends State<EmailConfirmPage> {
             icon: Icon(
                 _passwordVisible ? Icons.visibility : Icons.visibility_off,
                 color: Colors.grey),
-            onPressed: () =>
-                setState(() {
+            onPressed: () => setState(() {
                   _passwordVisible = !_passwordVisible;
                 })),
       ),
@@ -175,10 +171,7 @@ class _EmailConfirmPageState extends State<EmailConfirmPage> {
     return SizedBox(
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          fixedSize: Size(MediaQuery
-              .of(context)
-              .size
-              .width - 40, 45),
+          fixedSize: Size(MediaQuery.of(context).size.width - 40, 45),
         ),
         onPressed: () => _checkInputs(context),
         child: Text(
@@ -242,63 +235,6 @@ class _EmailConfirmPageState extends State<EmailConfirmPage> {
       return response.body;
     } else {
       throw Exception('Failed to load post');
-    }
-  }
-}
-
-class CheckValidate {
-  String? validateEmail(FocusNode focusNode, String value) {
-    if (value.isEmpty) {
-      // focusNode.requestFocus();
-      return '이메일을 입력하세요.';
-    } else {
-      String pattern =
-          r'^(([^<>()[\]\\,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-      RegExp regExp = new RegExp(pattern);
-      if (!regExp.hasMatch(value)) {
-        // focusNode.requestFocus();
-        return '잘못된 이메일 형식입니다.';
-      } else {
-        return null;
-      }
-    }
-  }
-
-  String? validatePassword(FocusNode focusNode, String value) {
-    if (value.isEmpty) {
-      // focusNode.requestFocus();
-      return '비밀번호를 입력하세요.';
-    } else {
-      String pattern =
-      // r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?~^<>,.&+=])[A-Za-z\d$@$!%*#?~^<>,.&+=]{8,15}$';
-          r'^(?=.*[A-Za-z])[A-Za-z\d]{8,15}$';
-      RegExp regExp = new RegExp(pattern);
-      if (!regExp.hasMatch(value)) {
-        // focusNode.requestFocus();
-        return '대소문자, 숫자 포함 8자 이상 15자 이내로 입력하세요.';
-      } else {
-        return null;
-      }
-    }
-  }
-
-  String? validatePasswordAgain(FocusNode focusNode, String value,
-      String password) {
-    if (value == password) {
-      return null;
-    } else {
-      // focusNode.requestFocus();
-      return '비밀번호가 일치하지 않습니다.';
-    }
-  }
-
-  String? validateEmailConfirm(FocusNode focusNode, String value,
-      String confirm) {
-    if (value == confirm) {
-      return null;
-    } else {
-      // focusNode.requestFocus();
-      return '인증번호가 일치하지 않습니다.';
     }
   }
 }

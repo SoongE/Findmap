@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:findmap/models/user.dart';
 import 'package:findmap/utils/utils.dart';
+import 'package:findmap/utils/validate.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
@@ -294,57 +295,5 @@ class _RegisterPageState extends State<RegisterPage> {
     storage.write(key: 'gender', value: body['gender']);
     storage.write(key: 'phoneNum', value: body['phoneNum']);
     storage.write(key: 'taste', value: body['taste']);
-  }
-}
-
-class CheckValidate {
-  String? name(String value) {
-    if (value.isEmpty) {
-      return '이름을 입력해주세요';
-    } else {
-      String pattern = r'^[가-힣|a-z|A-Z|]+$';
-      RegExp regExp = new RegExp(pattern);
-      if (!regExp.hasMatch(value) || value.length < 2) {
-        return '이름을 정확히 입력해주세요';
-      } else {
-        return null;
-      }
-    }
-  }
-
-  String? nickName(String value) {
-    if (value.isEmpty) {
-      return '닉네임을 입력해주세요';
-    } else {
-      String pattern = r'^[가-힣|a-z|A-Z|0-9]+$';
-      RegExp regExp = new RegExp(pattern);
-      if (!regExp.hasMatch(value)) {
-        return '특수문자는 사용 불가합니다';
-      } else {
-        return null;
-      }
-    }
-  }
-
-  String? gender(String value) {
-    if (value.isEmpty) {
-      return '성별을 선택해주세요';
-    } else {
-      return null;
-    }
-  }
-
-  String? phoneNumber(String value) {
-    if (value.isEmpty) {
-      return '전화번호를 입력해주세요';
-    } else {
-      String pattern = r'^[0-9|-]+$';
-      RegExp regExp = new RegExp(pattern);
-      if (!regExp.hasMatch(value)) {
-        return '숫자만 입력 가능합니다';
-      } else {
-        return null;
-      }
-    }
   }
 }

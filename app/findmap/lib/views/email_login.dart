@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:findmap/models/user.dart';
 import 'package:findmap/utils/utils.dart';
+import 'package:findmap/utils/validate.dart';
 import 'package:findmap/views/email_confirm.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -75,7 +76,7 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
   Widget _emailWidget() {
     return TextFormField(
       controller: _userEmail,
-      validator: (val) => CheckValidate().validateEmail(_userEmail.text),
+      validator: (val) => CheckValidate().email(_userEmail.text),
       autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: InputDecoration(
         prefixIcon: Icon(Icons.email),
@@ -88,7 +89,7 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
   Widget _passwordWidget() {
     return TextFormField(
       controller: _userPassword,
-      validator: (val) => CheckValidate().validatePassword(_userPassword.text),
+      validator: (val) => CheckValidate().loginPassword(_userPassword.text),
       autovalidateMode: AutovalidateMode.onUserInteraction,
       obscureText: _passwordVisible,
       decoration: InputDecoration(
@@ -201,30 +202,5 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
     storage.write(key: 'gender', value: body['gender']);
     storage.write(key: 'phoneNum', value: body['phoneNum']);
     storage.write(key: 'taste', value: body['taste']);
-  }
-}
-
-class CheckValidate {
-  String? validateEmail(String value) {
-    if (value.isEmpty) {
-      return '이메일을 입력하세요.';
-    } else {
-      String pattern =
-          r'^(([^<>()[\]\\,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-      RegExp regExp = new RegExp(pattern);
-      if (!regExp.hasMatch(value)) {
-        return '잘못된 이메일 형식입니다.';
-      } else {
-        return null;
-      }
-    }
-  }
-
-  String? validatePassword(String value) {
-    if (value.isEmpty) {
-      return '비밀번호를 입력하세요.';
-    } else {
-      return null;
-    }
   }
 }
