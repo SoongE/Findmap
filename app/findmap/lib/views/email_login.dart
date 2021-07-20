@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:findmap/views/register.dart';
+import 'package:findmap/views/email_confirm.dart';
 import 'package:findmap/utils/utils.dart';
 import 'package:findmap/views/mainPage.dart';
 
@@ -30,7 +30,7 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
         centerTitle: true,
         elevation: 0.0,
         title: Text(
-          '로그인',
+          'E-mail 로그인',
           style: TextStyle(color: Colors.black),
         ),
       ),
@@ -40,13 +40,15 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Spacer(flex: 10,),
             _emailWidget(),
-            Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+            Padding(padding: EdgeInsets.symmetric(vertical: 2)),
             _passwordWidget(),
-            Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+            Padding(padding: EdgeInsets.symmetric(vertical: 2)),
             _loginButton(context),
-            Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+            Padding(padding: EdgeInsets.symmetric(vertical: 5)),
             _registerButton(),
+            Spacer(flex: 10,),
           ],
         ),
       ),
@@ -58,7 +60,7 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
       controller: _userEmailCtrl,
       decoration: InputDecoration(
         prefixIcon: Icon(Icons.email),
-        labelText: "Email",
+        labelText: "E-mail",
         border: OutlineInputBorder(),
       ),
     );
@@ -78,21 +80,16 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
   Widget _loginButton(context) {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
-      child: FlatButton(
-        color: Colors.purple,
-        textColor: Colors.white,
-        disabledColor: Colors.purple,
-        disabledTextColor: Colors.black,
-        padding: EdgeInsets.all(8.0),
-        splashColor: Colors.blueAccent,
-        onPressed: () => isLoading ? null : _loginCheck(),
+      child:
+      ElevatedButton(
+        onPressed: () => _loginCheck(),
         child: Text(
-          isLoading ? 'loggin in.....' : 'login',
-          style: TextStyle(
-            fontSize: 20.0,
-            color: Colors.white,
-          ),
+        isLoading ? '로그인 중...' : '로그인',
+        style: TextStyle(
+          fontSize: 20.0,
+          color: Colors.white,
         ),
+      ),
       ),
     );
   }
@@ -101,18 +98,16 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Text('Don\'t have an account ?'),
+        Text('아직 계정이 없으신가요?'),
         SizedBox(
           width: 20,
         ),
         InkWell(
-          onTap: () => Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (BuildContext context) => RegisterPage())),
+          onTap: () => Navigator.push(
+              context, createRoute(RegisterPage())),
           child: Text(
-            'register',
-            style: TextStyle(color: Colors.blueAccent),
+            '회원가입 하러가기',
+            style: TextStyle(color: Colors.blue),
           ),
         ),
       ],

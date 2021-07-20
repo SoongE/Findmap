@@ -1,4 +1,5 @@
 import 'package:findmap/src/my_colors.dart';
+import 'package:findmap/utils/utils.dart';
 import 'package:findmap/views/email_login.dart';
 import 'package:flutter/material.dart';
 
@@ -42,8 +43,8 @@ class FirstPage extends StatelessWidget{
         fixedSize: Size(MediaQuery.of(context).size.width - 80,45),
         primary: color,
       ),
-      onPressed: () => page != null ? Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => page)) : null,
+      onPressed: () => page != null ? Navigator.push(
+          context, createRoute(page)) : null,
       child: Stack(
         alignment: Alignment.center,
         children: [
