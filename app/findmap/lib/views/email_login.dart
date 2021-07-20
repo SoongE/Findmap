@@ -181,12 +181,13 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
         // Todo: to here
         _saveToSecurityStorage(responseBody['result']);
         return User.fromJson(responseBody['result']);
+      } else if (responseBody['code'] == 3004) {
+        showSnackbar(context, "등록된 계정이 없습니다. 회원가입을 진행하세요!");
+        throw Exception('Need to sign up: ${responseBody['message']}');
       } else
-        throw Exception(
-            'Response status is failure: ${responseBody['message']}');
-    } else {
+        throw Exception('Response status is failure: ${responseBody}');
+    } else
       throw Exception('Failed to load post');
-    }
   }
 
   void _saveToSecurityStorage(dynamic body) {
