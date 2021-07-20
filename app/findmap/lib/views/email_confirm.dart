@@ -201,9 +201,8 @@ class _RegisterPageState extends State<RegisterPage> {
         context,
         MaterialPageRoute(
             builder: (BuildContext context) => MainPage(
-              nickName: userNickName,
-            )));
-
+                  nickName: userNickName,
+                )));
   }
 
   void _sendConfirmEmail() {}
