@@ -1,24 +1,26 @@
 import 'package:findmap/utils/utils.dart';
-import 'package:findmap/views/mainPage.dart';
+import 'package:findmap/views/register.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class RegisterPage extends StatefulWidget {
+class EmailConfirmPage extends StatefulWidget {
   @override
-  _RegisterPageState createState() => _RegisterPageState();
+  _EmailConfirmPageState createState() => _EmailConfirmPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _EmailConfirmPageState extends State<EmailConfirmPage> {
   late TextEditingController _userConfirmNumber;
   late TextEditingController _userEmailCtrl;
   late TextEditingController _userPasswordCtrl;
+  String _emailConfirmNumber = 'dlrj aksemfrl sjan glaemfek bb....';
 
-  bool isSendConfirmMail = false;
+  bool _passwordVisible = true;
+  bool _isSendConfirmMail = false;
   FocusNode _emailFocus = new FocusNode();
   FocusNode _passwordFocus = new FocusNode();
   FocusNode _passwordAgainFocus = new FocusNode();
-  bool _passwordVisible = true;
+  FocusNode _confirmFocus = new FocusNode();
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -46,7 +48,6 @@ class _RegisterPageState extends State<RegisterPage> {
       body: new Form(
         key: formKey,
         child: Container(
-          color: Colors.white,
           padding: const EdgeInsets.all(20.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -58,7 +59,7 @@ class _RegisterPageState extends State<RegisterPage> {
               _passwordAgainWidget(),
               AnimatedSwitcher(
                 duration: Duration(milliseconds: 500),
-                child: isSendConfirmMail
+                child: _isSendConfirmMail
                     ? Container(
                         key: UniqueKey(),
                         child: Column(children: [
@@ -84,6 +85,11 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Widget _confirmWidget() {
     return TextFormField(
+      keyboardType: TextInputType.text,
+      focusNode: _confirmFocus,
+      validator: (val) => CheckValidate()
+          .validateEmailConfirm(_confirmFocus, val!, _emailConfirmNumber),
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       controller: _userConfirmNumber,
       decoration: InputDecoration(
         prefixIcon: Icon(Icons.account_circle_rounded),
@@ -165,7 +171,7 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
         onPressed: () => _checkInputs(context),
         child: Text(
-          isSendConfirmMail ? '확인' : '인증번호 보내기',
+          _isSendConfirmMail ? '확인' : '인증번호 보내기',
           style: TextStyle(
             fontSize: 20.0,
             color: Colors.white,
@@ -177,19 +183,15 @@ class _RegisterPageState extends State<RegisterPage> {
 
   void _checkInputs(context) {
     if (formKey.currentState!.validate()) {
-      showSnackbar(context, "VALIDATE");
-      isSendConfirmMail ? _registerCheck() : _sendConfirmEmail();
+      _isSendConfirmMail ? _registerCheck() : _sendConfirmEmail();
       setState(() {
-        isSendConfirmMail = true;
+        _isSendConfirmMail = true;
       });
-    } else {
-      showSnackbar(context, "NOT!!!");
     }
   }
 
   void _registerCheck() async {
     final storage = FlutterSecureStorage();
-    String userNickName = _userConfirmNumber.text;
     String userEmail = _userEmailCtrl.text;
     String userPassword = _userPasswordCtrl.text;
 
@@ -197,15 +199,12 @@ class _RegisterPageState extends State<RegisterPage> {
     storage.write(key: 'password', value: userPassword);
     storage.write(key: 'token', value: "tokenrhcsky");
 
-    Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (BuildContext context) => MainPage(
-                  nickName: userNickName,
-                )));
+    Navigator.push(context, createRoute(RegisterPage()));
   }
 
-  void _sendConfirmEmail() {}
+  void _sendConfirmEmail() {
+    _emailConfirmNumber = '1234';
+  }
 }
 
 class CheckValidate {
@@ -250,6 +249,16 @@ class CheckValidate {
     } else {
       focusNode.requestFocus();
       return '비밀번호가 일치하지 않습니다.';
+    }
+  }
+
+  String? validateEmailConfirm(
+      FocusNode focusNode, String value, String confirm) {
+    if (value == confirm) {
+      return null;
+    } else {
+      focusNode.requestFocus();
+      return '인증번호가 일치하지 않습니다.';
     }
   }
 }

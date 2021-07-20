@@ -1,19 +1,16 @@
+import 'package:badges/badges.dart';
+import 'package:findmap/src/my_colors.dart';
 import 'package:findmap/views/alarm.dart';
 import 'package:findmap/views/archive.dart';
 import 'package:findmap/views/feed.dart';
 import 'package:findmap/views/search.dart';
 import 'package:findmap/views/userPage.dart';
-import 'package:findmap/src/my_colors.dart';
-
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:badges/badges.dart';
 
 class MainPage extends StatefulWidget {
-  final String nickName;
-
-  MainPage({Key? key, required this.nickName}) : super(key: key);
+  MainPage({Key? key}) : super(key: key);
 
   @override
   _MainPageState createState() => _MainPageState();
@@ -26,7 +23,7 @@ class _MainPageState extends State<MainPage> {
   final _padding = EdgeInsets.symmetric(horizontal: 18, vertical: 12);
 
   PageController _controller = PageController();
-  
+
   static const List<IconData> _widgetIcons = <IconData>[
     LineIcons.archive,
     LineIcons.search,
@@ -54,14 +51,14 @@ class _MainPageState extends State<MainPage> {
       "Search",
       "Feed",
       "Alarm",
-      widget.nickName,
+      "NICKNAME"
     ];
     List<Widget> _widgetOptions = <Widget>[
       ArchivePage(),
       SearchPage(),
       FeedPage(),
       AlarmPage(),
-      UserPage(nickName: widget.nickName),
+      UserPage(nickName: "NICKNAME"),
     ];
     return Scaffold(
       extendBody: false,
@@ -194,6 +191,7 @@ class _MainPageState extends State<MainPage> {
           ),
         ),
         text: widgetTitle[4],
+        textStyle: TextStyle(fontSize: 10),
       )
     ];
   }

@@ -1,10 +1,8 @@
 import 'package:findmap/views/first.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:findmap/views/email_login.dart';
 import 'package:findmap/views/mainPage.dart';
-import 'package:findmap/utils/utils.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,7 +12,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: Colors.transparent));
+    SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(statusBarColor: Colors.transparent));
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -48,23 +47,15 @@ class _SplashPageState extends State<SplashPage> {
 
   void _checkUser(context) async {
     final storage = new FlutterSecureStorage();
+    bool userStatus = false;
     print('${await storage.readAll()}');
     Map<String, String> allStorage = await storage.readAll();
-    String statusUser = '';
-    if (allStorage != null) {
-      allStorage.forEach((k, v) {
-        print('k : $k, v : $v');
-        if (v == STATUS_LOGIN) statusUser = k;
-      });
-    } else {
+
+    userStatus = allStorage.isEmpty ? false : true;
+
+    if (userStatus) {
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => FirstPage()));
-    }
-    if (statusUser != null && statusUser != '') {
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => MainPage(nickName: statusUser)));
+          context, MaterialPageRoute(builder: (context) => MainPage()));
     } else {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => FirstPage()));

@@ -104,7 +104,7 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
         ),
         InkWell(
           onTap: () => Navigator.push(
-              context, createRoute(RegisterPage())),
+              context, createRoute(EmailConfirmPage())),
           child: Text(
             '회원가입 하러가기',
             style: TextStyle(color: Colors.blue),
@@ -132,7 +132,7 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
           context,
           MaterialPageRoute(
               builder: (BuildContext context) =>
-                  MainPage(nickName: userNickName)));
+                  MainPage()));
     } else {
       print('로그인 실패');
       showSnackbar(context, '아이디가 존재하지 않거나 비밀번호가 맞지않습니다.');
