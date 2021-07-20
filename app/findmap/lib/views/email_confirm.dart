@@ -1,8 +1,12 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:findmap/utils/utils.dart';
 import 'package:findmap/views/register.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
 
 class EmailConfirmPage extends StatefulWidget {
   @override
@@ -13,6 +17,8 @@ class _EmailConfirmPageState extends State<EmailConfirmPage> {
   late TextEditingController _userConfirmNumber;
   late TextEditingController _userEmailCtrl;
   late TextEditingController _userPasswordCtrl;
+  late Future<String> authNumber;
+
   String _emailConfirmNumber = 'dlrj aksemfrl sjan glaemfek bb....';
 
   bool _passwordVisible = true;
@@ -59,23 +65,21 @@ class _EmailConfirmPageState extends State<EmailConfirmPage> {
               _passwordAgainWidget(),
               AnimatedSwitcher(
                 duration: Duration(milliseconds: 500),
+                transitionBuilder: (Widget child, Animation<double> animation) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
                 child: _isSendConfirmMail
                     ? Container(
-                        key: UniqueKey(),
-                        child: Column(children: [
-                          Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                          _confirmWidget(),
-                        ]),
-                      )
+                  key: UniqueKey(),
+                  child: Column(children: [
+                    Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                    _confirmWidget(),
+                  ]),
+                )
                     : Container(key: UniqueKey()),
               ),
               Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _confirmButton(context),
-                ],
-              ),
+              _confirmButton(context),
             ],
           ),
         ),
@@ -85,10 +89,11 @@ class _EmailConfirmPageState extends State<EmailConfirmPage> {
 
   Widget _confirmWidget() {
     return TextFormField(
-      keyboardType: TextInputType.text,
+      keyboardType: TextInputType.phone,
       focusNode: _confirmFocus,
-      validator: (val) => CheckValidate()
-          .validateEmailConfirm(_confirmFocus, val!, _emailConfirmNumber),
+      validator: (val) =>
+          CheckValidate()
+              .validateEmailConfirm(_confirmFocus, val!, _emailConfirmNumber),
       autovalidateMode: AutovalidateMode.onUserInteraction,
       controller: _userConfirmNumber,
       decoration: InputDecoration(
@@ -133,7 +138,8 @@ class _EmailConfirmPageState extends State<EmailConfirmPage> {
             icon: Icon(
                 _passwordVisible ? Icons.visibility : Icons.visibility_off,
                 color: Colors.grey),
-            onPressed: () => setState(() {
+            onPressed: () =>
+                setState(() {
                   _passwordVisible = !_passwordVisible;
                 })),
       ),
@@ -144,8 +150,9 @@ class _EmailConfirmPageState extends State<EmailConfirmPage> {
     return TextFormField(
       keyboardType: TextInputType.text,
       focusNode: _passwordAgainFocus,
-      validator: (val) => CheckValidate().validatePasswordAgain(
-          _passwordAgainFocus, val!, _userPasswordCtrl.text),
+      validator: (val) =>
+          CheckValidate().validatePasswordAgain(
+              _passwordAgainFocus, val!, _userPasswordCtrl.text),
       autovalidateMode: AutovalidateMode.onUserInteraction,
       obscureText: _passwordVisible,
       decoration: InputDecoration(
@@ -156,7 +163,8 @@ class _EmailConfirmPageState extends State<EmailConfirmPage> {
             icon: Icon(
                 _passwordVisible ? Icons.visibility : Icons.visibility_off,
                 color: Colors.grey),
-            onPressed: () => setState(() {
+            onPressed: () =>
+                setState(() {
                   _passwordVisible = !_passwordVisible;
                 })),
       ),
@@ -167,7 +175,10 @@ class _EmailConfirmPageState extends State<EmailConfirmPage> {
     return SizedBox(
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          fixedSize: Size(MediaQuery.of(context).size.width - 40, 45),
+          fixedSize: Size(MediaQuery
+              .of(context)
+              .size
+              .width - 40, 45),
         ),
         onPressed: () => _checkInputs(context),
         child: Text(
@@ -182,8 +193,11 @@ class _EmailConfirmPageState extends State<EmailConfirmPage> {
   }
 
   void _checkInputs(context) {
+    FocusScope.of(context).unfocus();
     if (formKey.currentState!.validate()) {
-      _isSendConfirmMail ? _registerCheck() : _sendConfirmEmail();
+      _isSendConfirmMail
+          ? _registerCheck()
+          : fetchEmailSend(_userEmailCtrl.text);
       setState(() {
         _isSendConfirmMail = true;
       });
@@ -197,27 +211,52 @@ class _EmailConfirmPageState extends State<EmailConfirmPage> {
 
     storage.write(key: 'email', value: userEmail);
     storage.write(key: 'password', value: userPassword);
-    storage.write(key: 'token', value: "tokenrhcsky");
 
-    Navigator.push(context, createRoute(RegisterPage()));
+    Navigator.push(
+        context,
+        createRoute(RegisterPage(
+          userEmail: userEmail,
+          userPassword: userPassword,
+        )));
   }
 
-  void _sendConfirmEmail() {
-    _emailConfirmNumber = '1234';
+  Future<String> fetchEmailSend(String email) async {
+    Map<String, dynamic> body = {
+      "email": email,
+    };
+    final response = await http.post(
+      Uri.http(BASEURL, '/users/email-send'),
+      headers: {
+        // HttpHeaders.authorizationHeader: "Basic your_api_token_here",
+        HttpHeaders.contentTypeHeader: "application/json"
+      },
+      body: json.encode(body),
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        _emailConfirmNumber =
+            jsonDecode(response.body)['result']['authNumber'].toString();
+      });
+
+      return response.body;
+    } else {
+      throw Exception('Failed to load post');
+    }
   }
 }
 
 class CheckValidate {
   String? validateEmail(FocusNode focusNode, String value) {
     if (value.isEmpty) {
-      focusNode.requestFocus();
+      // focusNode.requestFocus();
       return '이메일을 입력하세요.';
     } else {
       String pattern =
           r'^(([^<>()[\]\\,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
       RegExp regExp = new RegExp(pattern);
       if (!regExp.hasMatch(value)) {
-        focusNode.requestFocus(); //포커스를 해당 textformfield에 맞춘다.
+        // focusNode.requestFocus();
         return '잘못된 이메일 형식입니다.';
       } else {
         return null;
@@ -227,37 +266,38 @@ class CheckValidate {
 
   String? validatePassword(FocusNode focusNode, String value) {
     if (value.isEmpty) {
-      focusNode.requestFocus();
+      // focusNode.requestFocus();
       return '비밀번호를 입력하세요.';
     } else {
       String pattern =
-          r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?~^<>,.&+=])[A-Za-z\d$@$!%*#?~^<>,.&+=]{8,15}$';
+      // r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?~^<>,.&+=])[A-Za-z\d$@$!%*#?~^<>,.&+=]{8,15}$';
+          r'^(?=.*[A-Za-z])[A-Za-z\d]{8,15}$';
       RegExp regExp = new RegExp(pattern);
       if (!regExp.hasMatch(value)) {
-        focusNode.requestFocus();
-        return '특수문자, 대소문자, 숫자 포함 8자 이상 15자 이내로 입력하세요.';
+        // focusNode.requestFocus();
+        return '대소문자, 숫자 포함 8자 이상 15자 이내로 입력하세요.';
       } else {
         return null;
       }
     }
   }
 
-  String? validatePasswordAgain(
-      FocusNode focusNode, String value, String password) {
+  String? validatePasswordAgain(FocusNode focusNode, String value,
+      String password) {
     if (value == password) {
       return null;
     } else {
-      focusNode.requestFocus();
+      // focusNode.requestFocus();
       return '비밀번호가 일치하지 않습니다.';
     }
   }
 
-  String? validateEmailConfirm(
-      FocusNode focusNode, String value, String confirm) {
+  String? validateEmailConfirm(FocusNode focusNode, String value,
+      String confirm) {
     if (value == confirm) {
       return null;
     } else {
-      focusNode.requestFocus();
+      // focusNode.requestFocus();
       return '인증번호가 일치하지 않습니다.';
     }
   }

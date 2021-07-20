@@ -1,4 +1,5 @@
 import 'package:badges/badges.dart';
+import 'package:findmap/models/user.dart';
 import 'package:findmap/src/my_colors.dart';
 import 'package:findmap/views/alarm.dart';
 import 'package:findmap/views/archive.dart';
@@ -10,7 +11,9 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 
 class MainPage extends StatefulWidget {
-  MainPage({Key? key}) : super(key: key);
+  final User user;
+
+  MainPage({Key? key, required this.user}) : super(key: key);
 
   @override
   _MainPageState createState() => _MainPageState();
@@ -42,6 +45,7 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
+    print(widget.user.toJson().toString());
   }
 
   @override
@@ -51,14 +55,14 @@ class _MainPageState extends State<MainPage> {
       "Search",
       "Feed",
       "Alarm",
-      "NICKNAME"
+      widget.user.nickName,
     ];
     List<Widget> _widgetOptions = <Widget>[
       ArchivePage(),
       SearchPage(),
       FeedPage(),
       AlarmPage(),
-      UserPage(nickName: "NICKNAME"),
+      UserPage(user: widget.user),
     ];
     return Scaffold(
       extendBody: false,
@@ -191,7 +195,6 @@ class _MainPageState extends State<MainPage> {
           ),
         ),
         text: widgetTitle[4],
-        textStyle: TextStyle(fontSize: 10),
       )
     ];
   }

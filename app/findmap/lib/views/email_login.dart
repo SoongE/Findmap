@@ -1,8 +1,15 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:findmap/models/user.dart';
+import 'package:findmap/utils/utils.dart';
+import 'package:findmap/views/email_confirm.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:findmap/views/email_confirm.dart';
-import 'package:findmap/utils/utils.dart';
-import 'package:findmap/views/mainPage.dart';
+import 'package:http/http.dart' as http;
+
+import 'mainPage.dart';
 
 class EmailLoginPage extends StatefulWidget {
   @override
@@ -11,14 +18,17 @@ class EmailLoginPage extends StatefulWidget {
 
 class _EmailLoginPageState extends State<EmailLoginPage> {
   bool isLoading = false;
-  late TextEditingController _userEmailCtrl;
-  late TextEditingController _userPasswordCtrl;
+  bool _passwordVisible = true;
+  late TextEditingController _userEmail;
+  late TextEditingController _userPassword;
+
+  final GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
-    _userEmailCtrl = TextEditingController(text: '');
-    _userPasswordCtrl = TextEditingController(text: '');
+    _userEmail = TextEditingController(text: '');
+    _userPassword = TextEditingController(text: '');
   }
 
   @override
@@ -34,22 +44,29 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
           style: TextStyle(color: Colors.black),
         ),
       ),
-      body: Container(
-        padding: const EdgeInsets.all(20.0),
-        color: Colors.white,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Spacer(flex: 10,),
-            _emailWidget(),
-            Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-            _passwordWidget(),
-            Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-            _loginButton(context),
-            Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-            _registerButton(),
-            Spacer(flex: 10,),
-          ],
+      body: new Form(
+        key: loginFormKey,
+        child: Container(
+          padding: const EdgeInsets.all(20.0),
+          color: Colors.white,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Spacer(
+                flex: 10,
+              ),
+              _emailWidget(),
+              Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+              _passwordWidget(),
+              Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+              _loginButton(context),
+              Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+              _registerButton(),
+              Spacer(
+                flex: 10,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -57,7 +74,9 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
 
   Widget _emailWidget() {
     return TextFormField(
-      controller: _userEmailCtrl,
+      controller: _userEmail,
+      validator: (val) => CheckValidate().validateEmail(_userEmail.text),
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: InputDecoration(
         prefixIcon: Icon(Icons.email),
         labelText: "E-mail",
@@ -68,11 +87,21 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
 
   Widget _passwordWidget() {
     return TextFormField(
-      controller: _userPasswordCtrl,
+      controller: _userPassword,
+      validator: (val) => CheckValidate().validatePassword(_userPassword.text),
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      obscureText: _passwordVisible,
       decoration: InputDecoration(
         prefixIcon: Icon(Icons.vpn_key_rounded),
         labelText: "Password",
         border: OutlineInputBorder(),
+        suffixIcon: IconButton(
+            icon: Icon(
+                _passwordVisible ? Icons.visibility : Icons.visibility_off,
+                color: Colors.grey),
+            onPressed: () => setState(() {
+                  _passwordVisible = !_passwordVisible;
+                })),
       ),
     );
   }
@@ -80,16 +109,15 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
   Widget _loginButton(context) {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
-      child:
-      ElevatedButton(
-        onPressed: () => _loginCheck(),
+      child: ElevatedButton(
+        onPressed: () => _login(),
         child: Text(
-        isLoading ? '로그인 중...' : '로그인',
-        style: TextStyle(
-          fontSize: 20.0,
-          color: Colors.white,
+          isLoading ? '로그인 중...' : '로그인',
+          style: TextStyle(
+            fontSize: 20.0,
+            color: Colors.white,
+          ),
         ),
-      ),
       ),
     );
   }
@@ -103,8 +131,7 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
           width: 20,
         ),
         InkWell(
-          onTap: () => Navigator.push(
-              context, createRoute(EmailConfirmPage())),
+          onTap: () => Navigator.push(context, createRoute(EmailConfirmPage())),
           child: Text(
             '회원가입 하러가기',
             style: TextStyle(color: Colors.blue),
@@ -114,28 +141,90 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
     );
   }
 
-  void _loginCheck() async {
-    print('_userEmailCtrl.text : ${_userEmailCtrl.text}');
-    print('_userPasswordCtrl.text : ${_userPasswordCtrl.text}');
-    final storage = FlutterSecureStorage();
-    final String? storagePass = await storage.read(key: _userEmailCtrl.text);
-    if (storagePass != null &&
-        storagePass != '' &&
-        storagePass == _userPasswordCtrl.text) {
-      print('storagePass : $storagePass');
-      final String userNickName = await storage.read(
-          key: '${_userEmailCtrl.text}_$storagePass') as String;
-      storage.write(key: userNickName, value: STATUS_LOGIN);
-      print('로그인 성공');
-      showSnackbar(context, '환영합니다, $userNickName님');
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (BuildContext context) =>
-                  MainPage()));
+  void _login() {
+    if (loginFormKey.currentState!.validate()) {
+      Future<User> user = fetchSignIn();
+      user.then((value) => {
+            showSnackbar(context, "환영합니다! ${value.nickName}님"),
+            Navigator.pushAndRemoveUntil(
+                context, createRoute(MainPage(user: value)), (route) => false),
+          });
+    }
+  }
+
+  Future<User> fetchSignIn() async {
+    Map<String, dynamic> body = {
+      "email": _userEmail.text,
+      "password": _userPassword.text,
+    };
+
+    final response = await http.post(
+      Uri.http(BASEURL, '/users/signin'),
+      headers: {HttpHeaders.contentTypeHeader: "application/json"},
+      body: json.encode(body),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = jsonDecode(response.body);
+      if (responseBody['success']) {
+        // ToDo: erase later
+        responseBody['result']['taste'] = "Taste";
+        responseBody['result']['email'] = _userEmail.text;
+        responseBody['result']['password'] = _userPassword.text;
+        responseBody['result']['name'] = "SeungminOh";
+        responseBody['result']['nickName'] = "Rhcsky";
+        responseBody['result']['birthday'] = "2020-12-12";
+        responseBody['result']['gender'] = 'X';
+        responseBody['result']['phoneNum'] = "01011119999";
+        print(responseBody['result']);
+        // Todo: to here
+        _saveToSecurityStorage(responseBody['result']);
+        return User.fromJson(responseBody['result']);
+      } else
+        throw Exception(
+            'Response status is failure: ${responseBody['message']}');
     } else {
-      print('로그인 실패');
-      showSnackbar(context, '아이디가 존재하지 않거나 비밀번호가 맞지않습니다.');
+      throw Exception('Failed to load post');
+    }
+  }
+
+  void _saveToSecurityStorage(dynamic body) {
+    final storage = FlutterSecureStorage();
+
+    storage.write(key: 'userIdx', value: body['userIdx'].toString());
+    storage.write(key: 'accessToken', value: body['accessToken']);
+    storage.write(key: 'nickName', value: body['nickName']);
+    storage.write(key: 'name', value: body['name']);
+    storage.write(key: 'email', value: body['email']);
+    storage.write(key: 'password', value: body['password']);
+    storage.write(key: 'birthday', value: body['birthday']);
+    storage.write(key: 'gender', value: body['gender']);
+    storage.write(key: 'phoneNum', value: body['phoneNum']);
+    storage.write(key: 'taste', value: body['taste']);
+  }
+}
+
+class CheckValidate {
+  String? validateEmail(String value) {
+    if (value.isEmpty) {
+      return '이메일을 입력하세요.';
+    } else {
+      String pattern =
+          r'^(([^<>()[\]\\,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+      RegExp regExp = new RegExp(pattern);
+      if (!regExp.hasMatch(value)) {
+        return '잘못된 이메일 형식입니다.';
+      } else {
+        return null;
+      }
+    }
+  }
+
+  String? validatePassword(String value) {
+    if (value.isEmpty) {
+      return '비밀번호를 입력하세요.';
+    } else {
+      return null;
     }
   }
 }

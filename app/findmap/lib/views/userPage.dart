@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:findmap/models/user.dart';
@@ -6,39 +5,23 @@ import 'package:findmap/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:line_icons/line_icons.dart';
 
 import 'first.dart';
 
-Future<User> fetchUser() async {
-  var queryParameters = {
-    'postId': "1",
-  };
-  var url = Uri.https('jsonplaceholder.typicode.com', '/users/1');
-  final response = await http.get(url);
-
-  if (response.statusCode == 200) {
-    return User.fromJson(jsonDecode(response.body));
-  } else {
-    throw Exception('Failed to load post');
-  }
-}
-
 class UserPage extends StatefulWidget {
-  final String nickName;
+  final User user;
 
-  UserPage({Key? key, required this.nickName}) : super(key: key);
+  UserPage({Key? key, required this.user}) : super(key: key);
 
   @override
   _UserPageState createState() => _UserPageState();
 }
 
 class _UserPageState extends State<UserPage> {
-  late Future<User> user;
-
   @override
   void initState() {
     super.initState();
-    user = fetchUser();
   }
 
   @override
@@ -49,16 +32,7 @@ class _UserPageState extends State<UserPage> {
       color: Colors.lightGreen,
       child: Padding(
         padding: EdgeInsets.only(top: statusBarHeight),
-        child: FutureBuilder<User>(
-          future: fetchUser(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) print(snapshot.error);
-
-            return snapshot.hasData
-                ? UserPageBody(user: snapshot.data!, nickName: widget.nickName)
-                : Center(child: CircularProgressIndicator());
-          },
-        ),
+        child: UserPageBody(user: widget.user),
       ),
     );
   }
@@ -66,10 +40,8 @@ class _UserPageState extends State<UserPage> {
 
 class UserPageBody extends StatelessWidget {
   final User user;
-  final String nickName;
 
-  UserPageBody({Key? key, required this.user, required this.nickName})
-      : super(key: key);
+  UserPageBody({Key? key, required this.user}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +57,7 @@ class UserPageBody extends StatelessWidget {
           ),
           Padding(padding: EdgeInsets.symmetric(vertical: 15)),
           Text(
-            nickName,
+            user.nickName,
             style: TextStyle(
               fontSize: 40.0,
               color: Colors.yellowAccent,
@@ -94,7 +66,7 @@ class UserPageBody extends StatelessWidget {
             ),
           ),
           Text(
-            'Hi, Rhc',
+            user.name,
             style: TextStyle(
               color: Colors.yellow.shade300,
               fontSize: 20.0,
@@ -116,7 +88,7 @@ class UserPageBody extends StatelessWidget {
                     Icons.phone,
                     color: Colors.redAccent,
                   ),
-                  title: Text('+82 123 456 789',
+                  title: Text(user.phoneNum,
                       style: TextStyle(
                         fontSize: 20.0,
                         color: Colors.teal.shade900,
@@ -133,7 +105,7 @@ class UserPageBody extends StatelessWidget {
                 title: Text(
                   user.email,
                   style: TextStyle(
-                      fontSize: 20.0,
+                      fontSize: 18.0,
                       color: Colors.teal.shade900,
                       fontFamily: 'Source Sans Pro'),
                 ),
@@ -143,11 +115,11 @@ class UserPageBody extends StatelessWidget {
               margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
               child: ListTile(
                 leading: Icon(
-                  Icons.comment,
+                  LineIcons.cocktail,
                   color: Colors.redAccent,
                 ),
                 title: Text(
-                  'Hello World! Hello Flutter!',
+                  user.taste,
                   style: TextStyle(
                       fontSize: 20.0,
                       color: Colors.teal.shade900,
@@ -179,8 +151,30 @@ class UserPageBody extends StatelessWidget {
     final storage = new FlutterSecureStorage();
     await storage.deleteAll();
 
-    showSnackbar(context, "로그아웃 완료");
-    Navigator.pushAndRemoveUntil(
-        context, createRoute(FirstPage()), (route) => false);
+    var _isSignOutSafe = fetchSignOut();
+
+    _isSignOutSafe.then((value) => value
+        ? {
+            showSnackbar(context, "정상적으로 로그아웃 되었습니다"),
+            Navigator.pushAndRemoveUntil(
+                context, createRoute(FirstPage()), (route) => false),
+          }
+        : showSnackbar(context, "정상적으로 로그아웃되지 않았습니다"));
+  }
+
+  Future<bool> fetchSignOut() async {
+    final response = await http.get(
+      Uri.http(BASEURL, '/users/logout'),
+      headers: {
+        "token": user.accessToken,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print(response.body);
+      return jsonDecode(response.body)['success'];
+    } else {
+      throw Exception('Failed to load post');
+    }
   }
 }

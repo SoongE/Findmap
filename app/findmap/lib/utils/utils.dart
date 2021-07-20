@@ -1,7 +1,7 @@
+import 'package:findmap/models/user.dart';
 import 'package:flutter/material.dart';
 
-const STATUS_LOGIN = 'STATUS_LOGIN';
-const STATUS_LOGOUT = 'STATUS_LOGOUT';
+const String BASEURL = '3.36.176.1:3000';
 
 void showSnackbar(BuildContext context, String text) {
   final snackBar = SnackBar(

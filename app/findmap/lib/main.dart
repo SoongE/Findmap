@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:findmap/models/user.dart';
 import 'package:findmap/views/first.dart';
 import 'package:findmap/views/mainPage.dart';
 import 'package:flutter/material.dart';
@@ -48,14 +51,17 @@ class _SplashPageState extends State<SplashPage> {
   void _checkUser(context) async {
     final storage = new FlutterSecureStorage();
     bool userStatus = false;
-    print('${await storage.readAll()}');
     Map<String, String> allStorage = await storage.readAll();
 
     userStatus = allStorage.isEmpty ? false : true;
 
     if (userStatus) {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => MainPage()));
+      var jsonStorage = jsonDecode(json.encode(allStorage));
+      jsonStorage['userIdx'] = int.parse(jsonStorage['userIdx']);
+      var user = User.fromJson(jsonStorage);
+
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => MainPage(user: user)));
     } else {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => FirstPage()));
