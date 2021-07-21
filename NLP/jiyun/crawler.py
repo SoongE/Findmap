@@ -173,7 +173,7 @@ class Crawler:
         return title, " ".join(sentences), img_url
 
     def crawl(self):
-        scrap_page = []
+        scrap_page = dict()
 
         crawl_html = self.url_connect()
         if not crawl_html:
@@ -191,9 +191,9 @@ class Crawler:
 
         title, sentences, img_url = self.get_contents()
 
-        scrap_page.append(self.url)
-        scrap_page.append(title)
-        scrap_page.append(sentences)
-        scrap_page.append(img_url)
+        scrap_page['url'] = self.url
+        scrap_page['title'] = title
+        scrap_page['sentences'] = sentences
+        scrap_page['img_url'] = img_url
 
         return scrap_page
