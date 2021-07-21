@@ -2,8 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:findmap/models/user.dart';
+import 'package:findmap/src/my_colors.dart';
 import 'package:findmap/utils/utils.dart';
-import 'package:findmap/utils/validate.dart';
+import 'package:findmap/views/login/validate.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
@@ -11,6 +12,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:line_icons/line_icons.dart';
 
+import 'login/sign_bar.dart';
 import 'mainPage.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -31,10 +33,15 @@ class _RegisterPageState extends State<RegisterPage> {
   late TextEditingController _userGender;
   late TextEditingController _userPhoneNumber;
   late TextEditingController _userTaste;
+  late TextEditingController _userTOS1;
+  late TextEditingController _userTOS2;
+  late bool _userTOS1Agree;
+  late bool _userTOS2Agree;
 
-  final GlobalKey<FormState> formKey2 = GlobalKey<FormState>();
+  final GlobalKey<FormState> registerFormKey = GlobalKey<FormState>();
 
-  bool isInfoComplete = false;
+  bool _isInfoComplete = false;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -45,6 +52,10 @@ class _RegisterPageState extends State<RegisterPage> {
     _userGender = TextEditingController();
     _userPhoneNumber = TextEditingController();
     _userTaste = TextEditingController();
+    _userTOS1 = TextEditingController();
+    _userTOS2 = TextEditingController();
+    _userTOS1Agree = false;
+    _userTOS2Agree = false;
   }
 
   @override
@@ -55,15 +66,11 @@ class _RegisterPageState extends State<RegisterPage> {
         backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0.0,
-        title: Text(
-          '회원가입',
-          style: TextStyle(color: Colors.black),
-        ),
       ),
       body: new Form(
-        key: formKey2,
+        key: registerFormKey,
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(32.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
@@ -71,36 +78,22 @@ class _RegisterPageState extends State<RegisterPage> {
                 controller: _userName,
                 validator: (val) => CheckValidate().name(_userName.text),
                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                decoration: InputDecoration(
-                  prefixIcon: Icon(LineIcons.penNib),
-                  labelText: "이름",
-                  hintText: "홍길동",
-                  border: OutlineInputBorder(),
-                ),
+                decoration: inputDecorationBasic('이름', '홍길동', LineIcons.penNib),
               ),
-              Padding(padding: EdgeInsets.symmetric(vertical: 5)),
               TextFormField(
                 controller: _userNickName,
                 validator: (val) =>
                     CheckValidate().nickName(_userNickName.text),
                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                decoration: InputDecoration(
-                  prefixIcon: Icon(LineIcons.signature),
-                  labelText: "닉네임",
-                  hintText: "파인드맵",
-                  border: OutlineInputBorder(),
-                ),
+                decoration:
+                    inputDecorationBasic('닉네임', '파인드맵', LineIcons.signature),
               ),
-              Padding(padding: EdgeInsets.symmetric(vertical: 5)),
               TextFormField(
+                validator: (val) => CheckValidate().birth(val!),
                 controller: _userBirth,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                decoration: InputDecoration(
-                  prefixIcon: Icon(LineIcons.birthdayCake),
-                  labelText: "생년월일",
-                  hintText: "1997-04-01",
-                  border: OutlineInputBorder(),
-                ),
+                decoration: inputDecorationBasic(
+                    '생년월일', '1997-04-01', LineIcons.birthdayCake),
                 onTap: () async {
                   DateTime date = DateTime(1900);
                   FocusScope.of(context).requestFocus(new FocusNode());
@@ -114,7 +107,6 @@ class _RegisterPageState extends State<RegisterPage> {
                   _userBirth.text = date.toString().split(' ').elementAt(0);
                 },
               ),
-              Padding(padding: EdgeInsets.symmetric(vertical: 5)),
               DropdownButtonFormField(
                 validator: (val) => CheckValidate().gender(_userGender.text),
                 autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -125,12 +117,9 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: Text(value),
                   );
                 }).toList(),
-                decoration: InputDecoration(
-                  prefixIcon: Icon(LineIcons.users),
-                  labelText: "성별",
-                  isDense: true,
-                  border: OutlineInputBorder(),
-                ),
+                decoration: inputDecorationBasic(
+                    '성별', '남성/여성/비공개', LineIcons.users,
+                    isDence: true),
                 icon: const Icon(Icons.arrow_drop_down),
                 elevation: 16,
                 onChanged: (String? newValue) {
@@ -139,33 +128,59 @@ class _RegisterPageState extends State<RegisterPage> {
                   });
                 },
               ),
-              Padding(padding: EdgeInsets.symmetric(vertical: 5)),
               TextFormField(
                   keyboardType: TextInputType.phone,
                   controller: _userPhoneNumber,
                   validator: (val) =>
                       CheckValidate().phoneNumber(_userPhoneNumber.text),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(LineIcons.phoneSquare),
-                    labelText: "전화번호",
-                    hintText: "010-0000-0000",
-                    border: OutlineInputBorder(),
-                  ),
+                  decoration: inputDecorationBasic(
+                      '전화번호', '010-0000-0000', LineIcons.phone),
                   inputFormatters: [MaskedInputFormatter('###-####-####')]),
-              Padding(padding: EdgeInsets.symmetric(vertical: 5)),
               TextFormField(
                 controller: _userTaste,
+                validator: (val) => CheckValidate().taste(val!),
                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                decoration: InputDecoration(
-                  prefixIcon: Icon(LineIcons.cocktail),
-                  labelText: "관심주제/키워드",
-                  hintText: "클릭하여 선택해주세요",
-                  border: OutlineInputBorder(),
-                ),
+                decoration: inputDecorationBasic(
+                    '관심 주제/키워드', '클릭하여 선택해주세요', LineIcons.cocktail),
               ),
-              Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-              _confirmButton(context),
+              Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+              TextFormField(
+                controller: _userTOS1,
+                validator: (val) => CheckValidate().tos(_userTOS1Agree),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                decoration: inputDecorationTOS('[필수] 이용약관', _userTOS1Agree),
+                onTap: () => {
+                  FocusScope.of(context).requestFocus(new FocusNode()),
+                  TOSDialog('이용약관', '약관내용1', 1),
+                  _userTOS1.text = '[필수] 이용약관',
+                },
+              ),
+              TextFormField(
+                controller: _userTOS2,
+                validator: (val) => CheckValidate().tos(_userTOS2Agree),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                decoration:
+                    inputDecorationTOS('[필수] 개인정보 수집 및 이용', _userTOS2Agree),
+                onTap: () => {
+                  FocusScope.of(context).requestFocus(new FocusNode()),
+                  TOSDialog('개인정보 수집 및 이용', '약관내용2', 2),
+                  _userTOS2.text = '[필수] 개인정보 수집 및 이용',
+                },
+              ),
+              SignBarLight(
+                label: '개인정보 입력',
+                isLoading: _isLoading,
+                onPressed: () {
+                  setState(() {
+                    _isLoading = true;
+                  });
+                  _checkInput();
+                  setState(() {
+                    _isLoading = false;
+                  });
+                },
+              ),
             ],
           ),
         ),
@@ -173,26 +188,56 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  Widget _confirmButton(context) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        animationDuration: Duration(seconds: 1),
-        fixedSize: Size(MediaQuery.of(context).size.width, 45),
-      ),
-      onPressed: () => _checkInput(),
-      child: Text(
-        "가입하기",
-        style: TextStyle(
-          fontSize: 20.0,
-          fontWeight: FontWeight.w800,
-          color: Colors.white,
-        ),
-      ),
+  void TOSDialog(String title, String content, int tosNum) {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Align(
+            alignment: Alignment.center,
+            child: Text(
+              title,
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+          ),
+          content: Builder(
+            builder: (context) {
+              var height = MediaQuery.of(context).size.height;
+              var width = MediaQuery.of(context).size.width;
+
+              return Container(
+                  height: height, width: width, child: Text(content));
+            },
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('미동의', style: TextStyle(color: Colors.grey)),
+              onPressed: () {
+                Navigator.of(dialogContext).pop(); // Dismiss alert dialog
+              },
+            ),
+            TextButton(
+              child: Text('동의',
+                  style: TextStyle(
+                      color: Colors.black, fontWeight: FontWeight.w600)),
+              onPressed: () {
+                if (tosNum == 1) {
+                  _userTOS1Agree = true;
+                } else if (tosNum == 2) {
+                  _userTOS2Agree = true;
+                }
+                Navigator.of(dialogContext).pop(); // Dismiss alert dialog
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
   void _checkInput() {
-    if (formKey2.currentState!.validate()) {
+    if (registerFormKey.currentState!.validate()) {
       Future<bool> _isSignUpSuccess = fetchSignUp();
 
       _isSignUpSuccess.then((value) {
@@ -295,5 +340,56 @@ class _RegisterPageState extends State<RegisterPage> {
     storage.write(key: 'gender', value: body['gender']);
     storage.write(key: 'phoneNum', value: body['phoneNum']);
     storage.write(key: 'taste', value: body['taste']);
+  }
+
+  InputDecoration inputDecorationBasic(String label, String hint, IconData icon,
+      {bool isDence: false}) {
+    return InputDecoration(
+      isDense: isDence,
+      prefixIcon: Icon(icon),
+      contentPadding: const EdgeInsets.symmetric(vertical: 14.0),
+      labelText: label,
+      labelStyle: TextStyle(fontSize: 16, color: MyColors.darkBlue),
+      hintText: hint,
+      hintStyle: TextStyle(fontSize: 16),
+      focusedBorder: const UnderlineInputBorder(
+        borderSide: BorderSide(width: 2, color: MyColors.darkBlue),
+      ),
+      enabledBorder: const UnderlineInputBorder(
+        borderSide: BorderSide(color: MyColors.darkBlue),
+      ),
+      errorBorder: const UnderlineInputBorder(
+        borderSide: BorderSide(color: MyColors.darkBlue),
+      ),
+      focusedErrorBorder: const UnderlineInputBorder(
+        borderSide: BorderSide(width: 2.0, color: MyColors.darkBlue),
+      ),
+      errorStyle: const TextStyle(color: MyColors.darkBlue),
+    );
+  }
+
+  InputDecoration inputDecorationTOS(String label, bool agree) {
+    return InputDecoration(
+      contentPadding: const EdgeInsets.symmetric(vertical: 14.0),
+      suffixText: agree ? '동의' : '미동의',
+      suffixStyle: TextStyle(
+          color: agree ? Colors.green : Colors.grey,
+          fontWeight: agree ? FontWeight.bold : null),
+      hintText: label,
+      hintStyle: TextStyle(fontSize: 16, color: MyColors.darkBlue),
+      focusedBorder: const UnderlineInputBorder(
+        borderSide: BorderSide(width: 2, color: Colors.transparent),
+      ),
+      enabledBorder: const UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.transparent),
+      ),
+      errorBorder: const UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.transparent),
+      ),
+      focusedErrorBorder: const UnderlineInputBorder(
+        borderSide: BorderSide(width: 2.0, color: Colors.transparent),
+      ),
+      errorStyle: const TextStyle(color: MyColors.darkBlue),
+    );
   }
 }

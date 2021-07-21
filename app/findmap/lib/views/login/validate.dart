@@ -111,4 +111,28 @@ class CheckValidate {
       }
     }
   }
+
+  String? tos(bool value) {
+    if (value) {
+      return null;
+    } else {
+      return '약관에 동의해야 가입 가능합니다';
+    }
+  }
+
+  String? birth(String value) {
+    if (value.isEmpty) {
+      return '생일을 입력해주세요';
+    } else {
+      return null;
+    }
+  }
+
+  String? taste(String value) {
+    if (value.isEmpty) {
+      return '관심 주제를 설정해주세요';
+    } else {
+      return null;
+    }
+  }
 }
