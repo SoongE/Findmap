@@ -1,6 +1,7 @@
 import 'package:findmap/src/my_colors.dart';
 import 'package:findmap/utils/utils.dart';
 import 'package:findmap/views/email_login.dart';
+import 'package:findmap/views/login/first2.dart';
 import 'package:flutter/material.dart';
 
 class FirstPage extends StatelessWidget{
@@ -22,7 +23,7 @@ class FirstPage extends StatelessWidget{
                 Padding(padding: EdgeInsets.symmetric(vertical: 3)),
                 BuildBox(context, MyColors.myBlue, "구글로 로그인하기"),
                 Padding(padding: EdgeInsets.symmetric(vertical: 3)),
-                BuildBox(context, MyColors.myPurple, "이메일로 로그인하기", page: EmailLoginPage()),
+                BuildBox(context, MyColors.myPurple, "이메일로 로그인하기", page: FirstPage2()),
                 Padding(padding: EdgeInsets.symmetric(vertical: 3)),
                 BuildBox(context, MyColors.myPink, "AppleID로 로그인하기"),
               ],

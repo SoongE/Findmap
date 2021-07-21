@@ -2,12 +2,11 @@ import 'dart:convert';
 
 import 'package:findmap/models/user.dart';
 import 'package:findmap/utils/utils.dart';
+import 'package:findmap/views/login/first.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:line_icons/line_icons.dart';
-
-import 'first.dart';
 
 class UserPage extends StatefulWidget {
   final User user;
@@ -159,7 +158,13 @@ class UserPageBody extends StatelessWidget {
             Navigator.pushAndRemoveUntil(
                 context, createRoute(FirstPage()), (route) => false),
           }
-        : showSnackbar(context, "정상적으로 로그아웃되지 않았습니다"));
+        //  TODO
+        // : showSnackbar(context, "정상적으로 로그아웃되지 않았습니다"));
+        : {
+            showSnackbar(context, "정상적으로 로그아웃 되었습니다"),
+            Navigator.pushAndRemoveUntil(
+                context, createRoute(FirstPage()), (route) => false),
+          });
   }
 
   Future<bool> fetchSignOut() async {
