@@ -1,6 +1,6 @@
 import crawler
 import model
-
+import pymysql
 
 def main():
     # temporary url. It will get the current url from nodejs later.
@@ -36,7 +36,7 @@ def main():
         # this page doesn't admit crawling
         title = None
         summary = None
-        img_url = None
+        img_url = "default"
 
         scrap_page = list()
         scrap_page.append(url)
@@ -45,7 +45,18 @@ def main():
         scrap_page.append(img_url)
 
     # connect DB and insert "scrap_page" into ScrapTB
-
+    conn = pymysql.connect(host='findmap-first-db.c2jag33neij8.ap-northeast-2.rds.amazonaws.com',
+                           port=3306,
+                           user='admin',
+                           password='mypassword',
+                           db='findmap-first-db',
+                           charset='utf8')
+    cur = conn.cursor()
+    query = "INSERT INTO ScrapTB(idx, userIdx, title, contentUrl, thumbnailUrl, summary, comment, folderIdx, feedIdx) " \
+          "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);"
+    cur.execute(query, (2, 1, scrap_page[1], scrap_page[0], scrap_page[3], scrap_page[2], "COMMENT", 1, 1))
+    conn.commit()
+    conn.close()
 
 if __name__ == '__main__':
     main()

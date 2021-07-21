@@ -142,6 +142,7 @@ class Crawler:
                         img_url = self.get_image()
                         if img_url is None:
                             print("Error: get an image of the page")
+                            img_url = "default"
 
                     self.driver.switch_to_default_content()
 
@@ -167,7 +168,7 @@ class Crawler:
         if img_url == "":
             img_url = self.get_image()
             if img_url is None:
-                img_url = None
+                img_url = "default"
 
         return title, " ".join(sentences), img_url
 
