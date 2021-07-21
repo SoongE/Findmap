@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 const search = require('../controllers/seach');
-const authUtil = require('../middlewares/auth').checkToken;
+const auth = require('../middlewares/auth');
 //const upload = require('../../modules/multer');
 
 /*
@@ -13,16 +13,16 @@ router.get('/search', search.getSearch);
 router.get('/hot-search',search.getHotSearch);
 
 // 추천 검색어 조회
-router.post('/follow', search.follow);
+router.post('/follow',auth.checkToken, search.follow);
 
 // 검색하기 
-router.post('/seach',search.postUserSearch);
+router.post('/seach',auth.checkToken, search.postUserSearch);
 
 // 검색 기록 조회 
-router.get('/users/:userIdx/search/log',search.getUserSearch);
+router.get('/log',auth.checkToken, search.getUserSearch);
 
 // 검색 기록 삭제
-router.patch('/users/:userIdx/search/log',search.patchUserSearch);
+router.patch('/log/status',auth.checkToken, search.deleteUserSearch);
 */
 
 module.exports = router;

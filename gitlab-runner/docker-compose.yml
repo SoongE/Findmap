@@ -1,7 +1,0 @@
-gitlab-runner:
-  container_name: gitlab-runner
-  image: 'gitlab/gitlab-runner:v13.7.0'
-  restart: always
-  volumes:
-    - './config:/etc/gitlab-runner'
-    - '/var/run/docker.sock:/var/run/docker.sock'
