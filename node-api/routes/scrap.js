@@ -11,12 +11,17 @@ router.post('/', auth.checkToken, scrap.postScrap); //flask
 // 스크랩 전체 보기
 router.get("/", auth.checkToken, scrap.getScrap);
 
+// 스크랩 폴더별 보기
+router.get("/by-folder", auth.checkToken, scrap.getScrapByFolder);
+
+// 스크랩 카테고리별 보기
+router.get("/by-category", auth.checkToken, scrap.getScrapByCategory);
+
+// 스크랩 날짜별 보기
+router.get("/by-date", auth.checkToken, scrap.getScrapByDate);
+
 // 스크랩 자세히 보기
 router.get("/:scrapIdx/detail", auth.checkToken, scrap.getScrapDetail);
-
-// 스크랩 폴더별 보기
-// 스크랩 카테고리별 보기
-// 스크랩 날짜별 보기
 
 // 스크랩 제목 수정
 router.patch('/:scrapIdx/title', auth.checkToken, scrap.patchScrapTitle);

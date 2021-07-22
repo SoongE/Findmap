@@ -4,26 +4,22 @@ let scrapModel = require('../models/scrap');
 const scrap = {
     postScrap: async (req, res) => {
         const userIdx = req.decoded.userIdx;
-        let {title, contentUrl, thumbnailUrl, summary, comment, categoryIdx, folderIdx, feedIdx} = req.body;
+        let {title, contentUrl, thumbnailUrl, summary, comment, categoryIdx, folderIdx} = req.body;
+
+        if (!title || !contentUrl || !thumbnailUrl || !summary || !categoryIdx) {
+            return res.json({success: false, code: 2101, message: "스크랩할 내용을 넣어주세요."});
+        }
+        // comment = null
+        if (!folderIdx) {
+        //return res.json({success: false, code: 2103, message: "폴더를 지정해주세요."});
+            folderIdx = 0; //기본 폴더
+        }
 
         try{
-            if (!title || !contentUrl || !thumbnailUrl || !summary || !categoryIdx) {
-              return res.json({success: false, code: 2101, message: "스크랩할 내용을 넣어주세요."});
-            }
-            // if (!comment) {
-            //   //return res.json({success: false, code: 2102, message: "스크랩에 대한 의견을 적어주세요!"});
-            //   // comment = null
-            // }
-            if (!folderIdx) {
-              //return res.json({success: false, code: 2103, message: "폴더를 지정해주세요."});
-              folderIdx = 0; //기본 폴더
-            }
-
             const result = await scrapModel.postScrap(userIdx, title, contentUrl, thumbnailUrl, summary, comment, categoryIdx, folderIdx, feedIdx);
 
             return res.json({success: true, code: 1000, message: "스크랩 성공", result: {"insertId": result[0].insertId}});
-
-        }catch(err){
+        } catch(err){
           console.log(error);
           return res.status(4000).send(`Error: ${err.message}`);
         }
@@ -32,9 +28,82 @@ const scrap = {
         const userIdx = req.decoded.userIdx;
 
         try {
-            let selectMyArchive = ``;
-            selectMyArchive = await scrapModel.selectScrap(userIdx);
-            return res.json({success: true, code: 1000, message: "나의 스크랩 전체 조회 성공", result: selectMyArchive});
+            let result = ``;
+            result = await scrapModel.selectScrap(userIdx);
+            if (result[0] == undefined) {
+              return res.json({success: true, code: 3101, message: "스크랩이 존재하지 않습니다."});
+            }
+            return res.json({success: true, code: 1000, message: "스크랩 전체 조회 성공", result: result});
+        } catch (err) {
+            console.log(error);
+            return res.status(4000).send(`Error: ${err.message}`);
+        }
+    },
+    getScrapByFolder: async (req, res) => {
+        const userIdx = req.decoded.userIdx;
+        let {folderIdx} = req.body;
+
+        if (!folderIdx) {
+            return res.json({success: false, code: 2101, message: "조회할 folderIdx를 입력해 주세요."});
+        }
+
+        try {
+            let result = ``;
+            result = await scrapModel.selectScrapByFolder(userIdx,folderIdx);
+            if (result[0] == undefined) {
+              return res.json({success: true, code: 3101, message: "스크랩이 존재하지 않습니다."});
+            }
+            return res.json({success: true, code: 1000, message: "스크랩 폴더별 조회 성공", result: result});
+        } catch (err) {
+            console.log(error);
+            return res.status(4000).send(`Error: ${err.message}`);
+        }
+    },
+    getScrapByCategory: async (req, res) => {
+        const userIdx = req.decoded.userIdx;
+        let {categoryIdx} = req.body;
+        if (!categoryIdx) {
+            return res.json({success: false, code: 2101, message: "조회할 categoryIdx를 입력해 주세요."});
+        }
+
+        try {
+            let result = ``;
+            result = await scrapModel.selectScrapByCategory(userIdx,categoryIdx);
+            if (result[0] == undefined) {
+                return res.json({success: true, code: 3101, message: "스크랩이 존재하지 않습니다."});
+            }
+            return res.json({success: true, code: 1000, message: "스크랩 카테고리별 조회 성공", result: result});
+        } catch (err) {
+            console.log(error);
+            return res.status(4000).send(`Error: ${err.message}`);
+        }
+    },
+    getScrapByDate: async (req, res) => {
+        const userIdx = req.decoded.userIdx;
+        let {date} = req.body;
+        if (!date) {
+            return res.json({success: false, code: 2101, message: "조회할 date를 입력해 주세요. 이 때, 형식은 yyyymmdd 로 입력해주세요. (예시:20210723)"});
+        }
+        
+        //"yyyy-mm-dd"
+        const regexDate = /^(19|20)\d{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[0-1])$/; 
+        if(!regexDate .test(date)){
+            return res.json({success: false, code: 2101, message: "입력한 날짜 형식이 올바르지 않습니다. yyyymmdd 형태로 입력해주세요. (예시:20210723)"});
+        }
+
+        //"yyyy-mm-dd HH:MM"
+        // const regexDateTime = /^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[0-1]) (0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$/; 
+        // if(!regexDateTime .test(date)){
+        //     return res.json({success: false, code: 2101, message: "입력한 날짜 형식이 올바르지 않습니다."});
+        // }
+
+        try {
+            let result = ``;
+            result = await scrapModel.selectScrapByDate(userIdx,date);
+            if (result[0] == undefined) {
+                return res.json({success: true, code: 3101, message: "스크랩이 존재하지 않습니다."});
+            }
+            return res.json({success: true, code: 1000, message: "스크랩 날짜별 조회 성공", result: result});
         } catch (err) {
             console.log(error);
             return res.status(4000).send(`Error: ${err.message}`);
@@ -46,12 +115,10 @@ const scrap = {
 
       try {
           const scrapRow = await scrapModel.selectScrapDetail(userIdx,scrapIdx);
-
           if (scrapRow[0] == undefined) {
                 return res.json({success: true, code: 3101, message: "스크랩이 존재하지 않습니다."});
           }
-
-          return res.json({success: true, code: 1000, message: "나의 스크랩 상세 조회 성공", result: selectMyScrap});
+          return res.json({success: true, code: 1000, message: "스크랩 상세 조회 성공", result: scrapRow});
       } catch (err) {
           console.log(error);
           return res.status(4000).send(`Error: ${err.message}`);
