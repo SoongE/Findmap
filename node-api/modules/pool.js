@@ -1,13 +1,13 @@
 const poolPromise = require('../config/database');
 
 module.exports = {
-    queryParam: async (query,param) => {
+    queryParam: async (query,params) => {
         return new Promise ( async (resolve, reject) => {
             try {
                 const pool = await poolPromise;
                 const connection = await pool.getConnection();
                 try {
-                    const [result] = await connection.query(query,param);
+                    const [result] = await connection.query(query,params);
                     connection.release(connection);
                     resolve(result);
                 } catch (err) {
@@ -19,13 +19,13 @@ module.exports = {
             }
         });
     },
-    queryParamArr: async (query, value) => {
+    queryParamArr: async (query, values) => {
         return new Promise(async (resolve, reject) => {
             try {
                 const pool = await poolPromise;
                 const connection = await pool.getConnection();
                 try {
-                    const result = await connection.query(query, value);
+                    const result = await connection.query(query, values);
                     connection.release(connection);
                     resolve(result);
                 } catch (err) {
