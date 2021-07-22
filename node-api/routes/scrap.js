@@ -18,19 +18,20 @@ router.get("/:scrapIdx/detail", auth.checkToken, scrap.getScrapDetail);
 // 스크랩 카테고리별 보기
 // 스크랩 날짜별 보기
 
+// 스크랩 제목 수정
+router.patch('/:scrapIdx/title', auth.checkToken, scrap.patchScrapTitle);
+
+// 스크랩 줄거리 수정
+router.patch('/:scrapIdx/summary', auth.checkToken, scrap.patchScrapSummary);
+
 // 스크랩 코멘트 수정
 router.patch('/:scrapIdx/comment', auth.checkToken, scrap.patchScrapComment);
 
-// 스크랩 카테고리 수정
-router.patch('/:scrapIdx/category', auth.checkToken, scrap.patchScrapCategory);
-
 // 스크랩 폴더 수정
 router.patch('/:scrapIdx/folder', auth.checkToken, scrap.patchScrapFolder);
-
-// 스크랩 피드 수정
-router.patch('/:scrapIdx/feed', auth.checkToken, scrap.patchScrapFeed);
 
 // 스크랩 삭제
 router.patch('/:scrapIdx/delete', auth.checkToken, scrap.deleteScrap);
 
 module.exports = router;
+

@@ -40,6 +40,28 @@ const scrap = {
             throw err;
         }
     },
+    updateScrapTitle: async(userIdx, scrapIdx, title) => {
+        const query = `UPDATE ScrapTB SET title = ? WHERE userIdx = ? and idx = ?;`
+        const params = [title, userIdx, scrapIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('스크랩 feedIdx 수정 ERROR : ', err);
+            throw err;
+        }
+    },
+    updateScrapSummary: async(userIdx, scrapIdx, summary) => {
+        const query = `UPDATE ScrapTB SET summary = ? WHERE userIdx = ? and idx = ?;`
+        const params = [summary, userIdx, scrapIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('스크랩 categoryIdx 수정 ERROR : ', err);
+            throw err;
+        }
+    },
     updateScrapComment: async(userIdx, scrapIdx, comment) => {
         const query = `UPDATE ScrapTB SET comment = ? WHERE userIdx = ? and idx = ?;`
         const params = [comment, userIdx, scrapIdx];
@@ -51,17 +73,6 @@ const scrap = {
             throw err;
         }
     },
-    updateScrapCategory: async(userIdx, scrapIdx, categoryIdx) => {
-        const query = `UPDATE ScrapTB SET categoryIdx = ? WHERE userIdx = ? and idx = ?;`
-        const params = [categoryIdx, userIdx, scrapIdx];
-        try {
-            const result = await pool.queryParam(query,params);
-            return [result];
-        } catch (err) {
-            console.log('스크랩 categoryIdx 수정 ERROR : ', err);
-            throw err;
-        }
-    },
     updateScrapFolder: async(userIdx, scrapIdx, folderIdx) => {
         const query = `UPDATE ScrapTB SET folderIdx = ? WHERE userIdx = ? and idx = ?;`
         const params = [folderIdx, userIdx, scrapIdx];
@@ -70,17 +81,6 @@ const scrap = {
             return [result];
         } catch (err) {
             console.log('스크랩 folderIdx 수정 ERROR : ', err);
-            throw err;
-        }
-    },
-    updateScrapFeed: async(userIdx, scrapIdx, feedIdx) => {
-        const query = `UPDATE ScrapTB SET feedIdx = ? WHERE userIdx = ? and idx = ?;`
-        const params = [feedIdx, userIdx, scrapIdx];
-        try {
-            const result = await pool.queryParam(query,params);
-            return [result];
-        } catch (err) {
-            console.log('스크랩 feedIdx 수정 ERROR : ', err);
             throw err;
         }
     },
