@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:findmap/utils/utils.dart';
-import 'package:findmap/utils/validate.dart';
+import 'package:findmap/views/login/validate.dart';
 import 'package:findmap/views/register.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

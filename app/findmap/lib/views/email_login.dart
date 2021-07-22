@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:findmap/models/user.dart';
 import 'package:findmap/utils/utils.dart';
-import 'package:findmap/utils/validate.dart';
+import 'package:findmap/views/login/validate.dart';
 import 'package:findmap/views/email_confirm.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
