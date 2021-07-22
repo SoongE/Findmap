@@ -258,11 +258,7 @@ const users = {
             console.log(error);
             return res.status(4000).send(`Error: ${err.message}`);
         }
-<<<<<<< HEAD
-    },
-=======
     }
->>>>>>> fed6df75c75adc0aae3e828d199c7802731bb1cf
 }
 
 module.exports = users;

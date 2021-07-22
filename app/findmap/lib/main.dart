@@ -1,9 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:findmap/views/login.dart';
+import 'dart:convert';
+
+import 'package:findmap/models/user.dart';
+import 'package:findmap/views/login/first.dart';
 import 'package:findmap/views/mainPage.dart';
-import 'package:findmap/utils/utils.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 void main() {
   runApp(MyApp());
@@ -12,15 +14,17 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent, // 투명색
-    ));
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+    SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(statusBarColor: Colors.transparent));
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Find anything fitted with you',
       theme: ThemeData(
+        fontFamily: 'NanumBarunGothic',
         primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: Colors.white,
       ),
       home: SplashPage(),
     );
@@ -36,43 +40,33 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(milliseconds: 500), () => _checkUser(context));
+    _checkUser(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-          child: Icon(
-        Icons.stream,
-        size: 80,
-        color: Colors.blue,
-      )),
-    );
+    return Scaffold();
   }
 
   void _checkUser(context) async {
     final storage = new FlutterSecureStorage();
-    print('${await storage.readAll()}');
+    bool userStatus = false;
     Map<String, String> allStorage = await storage.readAll();
-    String statusUser = '';
-    if (allStorage != null) {
-      allStorage.forEach((k, v) {
-        print('k : $k, v : $v');
-        if (v == STATUS_LOGIN) statusUser = k;
-      });
+
+    userStatus = allStorage.isEmpty ? false : true;
+
+    if (userStatus) {
+      var jsonStorage = jsonDecode(json.encode(allStorage));
+      jsonStorage['userIdx'] = int.parse(jsonStorage['userIdx']);
+      var user = User.fromJson(jsonStorage);
+
+      WidgetsBinding.instance!.addPostFrameCallback((_) => Navigator.of(context)
+          .pushReplacement(
+              MaterialPageRoute(builder: (context) => MainPage(user: user))));
     } else {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => LoginPage()));
-    }
-    if (statusUser != null && statusUser != '') {
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => MainPage(nickName: statusUser)));
-    } else {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => LoginPage()));
+      WidgetsBinding.instance!.addPostFrameCallback((_) => Navigator.of(context)
+          .pushReplacement(
+              MaterialPageRoute(builder: (context) => FirstPage())));
     }
   }
 }
