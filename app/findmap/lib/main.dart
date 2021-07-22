@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:findmap/models/user.dart';
-import 'package:findmap/views/first.dart';
+import 'package:findmap/views/login/first.dart';
 import 'package:findmap/views/mainPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,7 +14,7 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
     SystemChrome.setSystemUIOverlayStyle(
         SystemUiOverlayStyle(statusBarColor: Colors.transparent));
 
@@ -60,11 +60,13 @@ class _SplashPageState extends State<SplashPage> {
       jsonStorage['userIdx'] = int.parse(jsonStorage['userIdx']);
       var user = User.fromJson(jsonStorage);
 
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (context) => MainPage(user: user)));
+      WidgetsBinding.instance!.addPostFrameCallback((_) => Navigator.of(context)
+          .pushReplacement(
+              MaterialPageRoute(builder: (context) => MainPage(user: user))));
     } else {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => FirstPage()));
+      WidgetsBinding.instance!.addPostFrameCallback((_) => Navigator.of(context)
+          .pushReplacement(
+              MaterialPageRoute(builder: (context) => FirstPage())));
     }
   }
 }
