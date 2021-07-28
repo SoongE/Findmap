@@ -52,58 +52,88 @@ class Crawler:
             print("parsing success!")
             return True
 
-    def get_title(self):
-        # get title of page
+    def og_crawl(self, target):
+        # crawl og tag like og:title, og:url, og:title ... etc
         try:
-            title = self.soup.find('title')
+            meta_target = self.soup.select_one('meta[property="og:' + target + '"]')['content']
         except:
             return False
         else:
-            return title.text
+            return meta_target
+
+    def get_title(self):
+        # get title of page
+        try:
+            title = self.og_crawl('title')
+            if title is False:
+                # if this page doesn't specify meta og tag
+                try:
+                    title = self.soup.find('title')
+                except:
+                    return False
+                else:
+                    return title.text
+        except:
+            return False
+        else:
+            return title
 
     def get_image(self):
         # get image of the page
-        class_ignore = ["profile", "thumb", "thumbnail", "ads", "sidebar", "loading", "comment", "scroll"]
-        images = self.soup.find_all('img', class_=lambda x: x not in class_ignore)
-
-        imgUrl = None
-        if images:
-            # when the image file exists in page
-            for image in images:
+        try:
+            imgUrl = self.og_crawl('image')
+            if imgUrl is False:
+                # if this page doesn't specify meta og tag
                 try:
-                    imgUrl = image['src']
-                except:
-                    try:
-                        imgUrl = image['data-src']
-                    except:
-                        try:
-                            imgUrl = image['srcset']
-                        except:
-                            imgUrl = None
-                            continue
+                    class_ignore = ["profile", "thumb", "thumbnail", "ads", "sidebar", "loading", "comment", "scroll"]
+                    images = self.soup.find_all('img', class_=lambda x: x not in class_ignore)
 
-                if re.search('gif$', imgUrl) is not None:
                     imgUrl = None
-                    continue
+                    if images:
+                        # when the image file exists in page
+                        for image in images:
+                            try:
+                                imgUrl = image['src']
+                            except:
+                                try:
+                                    imgUrl = image['data-src']
+                                except:
+                                    try:
+                                        imgUrl = image['srcset']
+                                    except:
+                                        imgUrl = None
+                                        continue
 
-                cp = False
-                not_includes = ["toast", "thumb", "profile", "load", "ads", "comment"]
-                for x in not_includes:
-                    if x in imgUrl:
-                        cp = True
-                        imgUrl = None
-                        break
-                if cp:
-                    continue
+                            if re.search('gif$', imgUrl) is not None:
+                                imgUrl = None
+                                continue
 
-            if imgUrl:
-                return imgUrl
-            else:
-                return None
+                            cp = False
+                            not_includes = ["toast", "thumb", "profile", "load", "ads", "comment"]
+                            for x in not_includes:
+                                if x in imgUrl:
+                                    cp = True
+                                    imgUrl = None
+                                    break
+                            if cp:
+                                continue
 
-        else:
-            # when the image file doesn't exist in page
+                        if imgUrl:
+                            return imgUrl
+                        else:
+                            return None
+
+                    else:
+                        # when the image file doesn't exist in page
+                        return None
+                except:
+                    return None
+                else:
+                    return imgUrl.text
+        except:
             return None
+        else:
+            return imgUrl
 
     def get_contents(self):
         # get contents of the page
@@ -168,7 +198,7 @@ class Crawler:
         if img_url == "":
             img_url = self.get_image()
             if img_url is None:
-                img_url = "default"
+                img_url = None
 
         return title, " ".join(sentences), img_url
 
