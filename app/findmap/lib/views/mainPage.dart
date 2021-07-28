@@ -1,19 +1,19 @@
+import 'package:badges/badges.dart';
+import 'package:findmap/models/user.dart';
+import 'package:findmap/src/my_colors.dart';
 import 'package:findmap/views/alarm.dart';
 import 'package:findmap/views/archive.dart';
 import 'package:findmap/views/feed.dart';
 import 'package:findmap/views/search.dart';
 import 'package:findmap/views/userPage.dart';
-import 'package:findmap/src/my_colors.dart';
-
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:badges/badges.dart';
 
 class MainPage extends StatefulWidget {
-  final String nickName;
+  final User user;
 
-  MainPage({Key? key, required this.nickName}) : super(key: key);
+  MainPage({Key? key, required this.user}) : super(key: key);
 
   @override
   _MainPageState createState() => _MainPageState();
@@ -45,6 +45,7 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
+    print(widget.user.toJson().toString());
   }
 
   @override
@@ -54,14 +55,14 @@ class _MainPageState extends State<MainPage> {
       "Search",
       "Feed",
       "Alarm",
-      widget.nickName,
+      widget.user.nickName,
     ];
     List<Widget> _widgetOptions = <Widget>[
       ArchivePage(),
       SearchPage(),
       FeedPage(),
       AlarmPage(),
-      UserPage(nickName: widget.nickName),
+      UserPage(user: widget.user),
     ];
     return Scaffold(
       extendBody: false,
