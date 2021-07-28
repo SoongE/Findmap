@@ -3,7 +3,7 @@ const db = require('../config/database');
 
 const users = {
     userEmailCheck: async(email) => {
-        const query = `SELECT idx,email,password,status FROM UserTB WHERE email = ?`;
+        const query = `SELECT * FROM UserTB WHERE email = ?`;
         const params = [email];
         try {
             const result = await pool.queryParam(query,params);
@@ -13,20 +13,20 @@ const users = {
             throw err;
         }
     },
-    userPhoneNumCheck: async(phoneNum) => {
-        const query = `SELECT phoneNum FROM UserTB WHERE phoneNum = ?`;
-        const params = [phoneNum];
+    userIdxCheck: async(userIdx) => {
+        const query = `SELECT * FROM UserTB WHERE idx = ?`;
+        const params = [userIdx];
         try {
             const result = await pool.queryParam(query,params);
             return result;
         } catch (err) {
-            console.log('phoneNumCheck ERROR: ', err);
+            console.log('userIdxCheck ERROR: ', err);
             throw err;
         }
     },
     selectUserInfoByEmail: async(email) => {
         const query = `
-            SELECT idx, name, email, phoneNum 
+            SELECT idx, name, email
             FROM UserTB
             WHERE email = ? and status = 'Y';`;
         const params = [email];
@@ -38,15 +38,38 @@ const users = {
             throw err;
         }
     },
-    signUp: async (email, password, name, nickName, profileUrl, birthday, gender, phoneNum) => {
-        const fields = 'email, password, name, nickName, profileUrl, birthday, gender,  phoneNum';
-        const values = [email, password, name, nickName, profileUrl, birthday, gender, phoneNum];
-        const query = `INSERT INTO UserTB(${fields}) VALUES(?,?,?,?,?,?,?,?)`;
+    selectUserInfo: async(userIdx) => {
+        const query = `SELECT * FROM UserTB WHERE idx = ? and status = 'Y';`;
+        const params = [userIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('유저 정보 조회 ERROR: ', err);
+            throw err;
+        }
+    },
+    signUp: async (email, password, hashedPassword, name, nickName, profileUrl, birthday, gender,loginType) => {
+        const fields = 'email, password, hashedPassword, name, nickName, profileUrl, birthday, gender,loginType';
+        const values = [email, password, hashedPassword, name, nickName, profileUrl, birthday, gender,loginType];
+        const query = `INSERT INTO UserTB(${fields}) VALUES(?,?,?,?,?,?,?,?,?)`;
         try {
             const result = await pool.queryParamArr(query, values);
             return result;
         } catch (err) {
             console.log('signUp ERROR: ', err);
+            throw err;
+        }
+    },
+    signUpSimple: async (email, password, hashedPassword,loginType) => {
+        const fields = 'email, password, hashedPassword,loginType';
+        const values = [email, password, hashedPassword,loginType];
+        const query = `INSERT INTO UserTB(${fields}) VALUES(?,?,?,?)`;
+        try {
+            const result = await pool.queryParamArr(query, values);
+            return result;
+        } catch (err) {
+            console.log('signup ERROR: ', err);
             throw err;
         }
     },
@@ -80,7 +103,7 @@ const users = {
             const result = await pool.queryParam(query,params);
             return [result];
         } catch (err) {
-            console.log('checkJWT ERROR: ', err);
+            console.log('deleteJWT ERROR: ', err);
             throw err;
         }
     },
@@ -91,7 +114,108 @@ const users = {
             const result = await pool.queryParam(query,params);
             return [result];
         } catch (err) {
-            console.log('checkJWT ERROR: ', err);
+            console.log('withdraw ERROR: ', err);
+            throw err;
+        }
+    },
+    updateUserInfo: async(userIdx, name, nickName, profileUrl, birthday, gender) => { 
+        const query = `UPDATE UserTB SET name = ?, nickName = ?, profileUrl = ?, birthday = ?, gender = ? 
+        WHERE idx = ? and status = 'Y';`
+        const params = [name, nickName, profileUrl, birthday, gender, userIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('유저 info 수정 ERROR : ', err);
+            throw err;
+        }
+    },
+    updateUserName: async(userIdx, name) => {
+        const query = `UPDATE UserTB SET name = ? WHERE idx = ? and status = 'Y';`
+        const params = [name, userIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('유저 name 수정 ERROR : ', err);
+            throw err;
+        }
+    },
+    updateUserNickName: async(userIdx, nickName) => {
+        const query = `UPDATE UserTB SET nickName = ? WHERE idx = ? and status = 'Y';`
+        const params = [nickName, userIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('유저 nickName 수정 ERROR : ', err);
+            throw err;
+        }
+    },
+    updateUserProfileUrl: async(userIdx, profileUrl) => {
+        const query = `UPDATE UserTB SET profileUrl = ? WHERE idx = ? and status = 'Y';`
+        const params = [profileUrl, userIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('유저 profileUrl 수정 ERROR : ', err);
+            throw err;
+        }
+    },
+    updateUserBirthDay: async(userIdx, birthday) => {
+        const query = `UPDATE UserTB SET birthday = ? WHERE idx = ? and status = 'Y';`
+        const params = [birthday, userIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('유저 birthday 수정 ERROR : ', err);
+            throw err;
+        }
+    },
+    updateUserGender: async(userIdx, gender) => {
+        const query = `UPDATE UserTB SET gender = ? WHERE idx = ? and status = 'Y';`
+        const params = [gender, userIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('유저 gender 수정 ERROR : ', err);
+            throw err;
+        }
+    },
+    postUserInterest: async(userIdx, categoryIdx) => {
+        const fields = 'userIdx, categoryIdx';
+        const values = [userIdx, categoryIdx];
+        const query = `INSERT INTO UserInterestTB(${fields}) VALUES(?,?)`;
+        try {
+            const result = await pool.queryParamArr(query, values);
+            return result;
+        } catch (err) {
+            console.log('UserInterest 생성 ERROR: ', err);
+            throw err;
+        }
+    },
+    selectUserInterest: async(userIdx) => {
+        const query = `SELECT * FROM UserTB WHERE userIdx = ?;`;
+        const params = [userIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('유저 정보 조회 ERROR: ', err);
+            throw err;
+        }
+    },
+    updateUserInterest: async(userIdx, interestIdx) => {
+        const query = `UPDATE UserInterestTB SET interestIdx = ? WHERE userIdx = ?;`
+        const params = [interestIdx, userIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('유저 interestIdx 수정 ERROR : ', err);
             throw err;
         }
     }
