@@ -24,8 +24,8 @@ class CheckValidate {
       return '비밀번호를 입력하세요.';
     } else {
       String pattern =
-          // r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?~^<>,.&+=])[A-Za-z\d$@$!%*#?~^<>,.&+=]{8,15}$';
-          r'^(?=.*[A-Za-z])[A-Za-z\d]{8,15}$';
+          r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?~^<>,.&+=])[A-Za-z\d$@$!%*#?~^<>,.&+=]{8,15}$';
+      // r'^(?=.*[A-Za-z])[A-Za-z\d]{8,15}$';
       RegExp regExp = new RegExp(pattern);
       if (!regExp.hasMatch(value)) {
         // focusNode.requestFocus();
