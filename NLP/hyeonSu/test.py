@@ -9,7 +9,7 @@ import pymysql
 
 app = Flask(__name__)
 
-/////////////////////추가된부분
+
 host_name = "findmap-first-db.c2jag33neij8.ap-northeast-2.rds.amazonaws.com"
 user_name = "admin"
 password = "mypassword"
@@ -27,13 +27,13 @@ db = pymysql.connect(
     charset = 'utf8'
 )
 
-SQL = "select st.userIdx, st.keywordidx , count(st.keywordidx) as rating from SearchTB st "  ///논의 해봐야할 부분
-///////////////////////////
+SQL = " select st.userIdx, st.categoryIdx as keywordidx, count(*) as rating from ScrapTB st  group by categoryIdx  "  
+
 
 ##rating_path = './'
 ##ratings_df = pd.read_csv(os.path.join(rating_path, 'ratings.csv'), encoding='utf-8')
 
-df  = pd.read_sql(SQL,db, encoding ='utf-8')
+df  = pd.read_sql(SQL,db)
 
 train_df, test_df = train_test_split(df, test_size=0.2, random_state=1234)
 
@@ -48,7 +48,17 @@ print(test_df.shape)
 sparse_matrix = train_df.groupby('keywordidx').apply(lambda x: pd.Series(x['rating'].values, index=x['userIdx'])).unstack()
 sparse_matrix.index.name = 'keywordidx'
 
-sparse_matrix_withsearch = sparse_matrix.apply(lambda x: x.fillna(x.mean()), axis=1)
+
+print("여기까진 됨")
+checker = sparse_matrix.isnull().values.any()
+if(True == checker) :
+
+    sparse_matrix_withsearch = sparse_matrix.apply(lambda x: x.fillna(0), axis=1)
+
+else :
+
+    sparse_matrix_withsearch = sparse_matrix
+
 search_cos_df = cos_matrix(sparse_matrix_withsearch, sparse_matrix_withsearch)
 
 userId_grouped = train_df.groupby('userIdx')
@@ -64,11 +74,18 @@ for userId, group in userId_grouped:
     # userId의 전체 rating predictions 
     pred_ratings = np.matmul(user_sim.T.to_numpy(), user_rating) / (sim_sum+1)
     search_prediction_.loc[userId] = pred_ratings
+max_rating_num = search_prediction_.loc[43].max()
+search_ctg_idx = search_prediction_.columns.tolist()
+recommend_list = [] 
 
+for i in search_ctg_idx :
+    if search_prediction_[i].loc[43] == max_rating_num :
+        recommend_list.append(i)
+print(recommend_list)
 @app.route('/')
 def recommendation():
-    return search_prediction_.loc[userid].idxmax(axis = 1)
+    return "hello"
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(port=4000) 
