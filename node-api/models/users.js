@@ -253,7 +253,12 @@ const users = {
         }
     },
     selectUserInterest: async(userIdx) => {
-        const query = `SELECT categoryIdx FROM UserInterestTB WHERE userIdx = ? and status = 'Y';`;
+        const query = `
+            SELECT categoryIdx, name
+            FROM UserInterestTB UI
+                INNER JOIN CategoryTB C ON C.idx = UI.categoryIdx
+            WHERE UI.userIdx = ? and UI.status = 'Y'
+        `;
         const params = [userIdx];
         try {
             const result = await pool.queryParam(query,params);
