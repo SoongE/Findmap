@@ -73,7 +73,7 @@ router.post('/kakao', user.kakaoSignUp);
 router.post('/google', user.googleSignUp);
 
 // 애플 회원가입+로그인 API
-router.post('/google', user.appleSignUp);
+router.post('/apple', user.appleSignUp);
 */
 
 module.exports = router;

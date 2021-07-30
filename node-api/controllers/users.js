@@ -26,13 +26,13 @@ const users = {
         if (!password) return res.json({success: false, code: 2003, message: "비밀번호를 입력해 주세요."});
         if (!regexPwd.test(password)) return res.json({success: false,code: 2004,message: "비밀번호는 6자리~20자리로 최소 하나의 문자, 숫자, 특수 문자를 포함해야 합니다."});
 
-        if (!name) return res.json({success: false, code: 2005, message: "이름을 입력해 주세요."});
-        if (!regexName.test(name)) return res.json({success: false, code: 2006, message: "이름은 2~10자리의 한글,영문만 입력이 가능합니다."});
-        if (name.search(/\s/) != -1 || regexSpc.test(name) == true ) return res.json({success: false, code: 2007, message: "이름에는 공백 또는 특수문자를 입력할 수 없습니다."});
+        if (!name) return res.json({success: false, code: 2005, message: "name을 입력해 주세요."});
+        if (!regexName.test(name)) return res.json({success: false, code: 2006, message: "name은 2~10자리의 한글,영문만 입력이 가능합니다."});
+        if (name.search(/\s/) != -1 || regexSpc.test(name) == true ) return res.json({success: false, code: 2007, message: "name에는 공백 또는 특수문자를 입력할 수 없습니다."});
 
-        if (!nickName) return res.json({success: false, code: 2008, message: "닉네임을 입력해 주세요."});
-        if (!regexNickName.test(nickName)) return res.json({success: false, code: 2009, message: "닉네임은 2~10자리의 한글,영문,숫자로만 입력이 가능합니다."});
-        if (regexSpc.test(nickName)) return res.json({success: false, code: 2010, message: "닉네임에는 공백 또는 특수문자를 입력할 수 없습니다."});
+        if (!nickName) return res.json({success: false, code: 2008, message: "nickName을 입력해 주세요."});
+        if (!regexNickName.test(nickName)) return res.json({success: false, code: 2009, message: "nickName은 2~10자리의 한글,영문,숫자로만 입력이 가능합니다."});
+        if (regexSpc.test(nickName)) return res.json({success: false, code: 2010, message: "nickName에는 공백 또는 특수문자를 입력할 수 없습니다."});
 
         // if (!profileUrl) profileUrl = 'default image';
         // var img='';
@@ -40,13 +40,13 @@ const users = {
         //     img = req.file.location;
         // if (!profileUrl) return res.json({success: false, code: 2011, message: "profileUrl을 입력해주세요."});
 
-        if (profileUrl && !regexUrl.test(profileUrl)) return res.json({success: false, code: 2012, message: "url형식에 맞게 입력해주세요."});
+        if (profileUrl && !regexUrl.test(profileUrl)) return res.json({success: false, code: 2012, message: "profileUrl 형식이 올바르지 않습니다."});
 
-        if (!birthday) return res.json({success: false, code: 2013, message: "생일을 입력해 주세요."});
-        if (!regexBirthday.test(birthday)) return res.json({success: false, code: 2014, message: "생일 형식이 올바르지 않습니다.0000-00-00 형태로 입력해주세요."});
+        if (!birthday) return res.json({success: false, code: 2013, message: "birthday를 입력해 주세요."});
+        if (!regexBirthday.test(birthday)) return res.json({success: false, code: 2014, message: "birthday 형식이 올바르지 않습니다.0000-00-00 형태로 입력해주세요."});
 
-        if (!gender) return res.json({success: false, code: 2015, message: "성별을 입력해 주세요.(M/W)"});
-        if (!regexGender.test(gender)) return res.json({success: false, code: 2016, message: "성별은 M 혹은 W의 형태로 입력해주세요."});
+        if (!gender) return res.json({success: false, code: 2015, message: "gender를 입력해 주세요.(M/W)"});
+        if (!regexGender.test(gender)) return res.json({success: false, code: 2016, message: "gender는 M 혹은 W의 형태로 입력해주세요."});
 
         const loginType = 1;
 
@@ -97,14 +97,14 @@ const users = {
             const [userInfoRow] = await userModel.selectUserInfoByEmail(email);
 
             // 회원 가입 성공
-            return res.json({success: true, code: 1000, message: "회원가입 성공", result: {userIdx: userInfoRow[0].idx}});
+            return res.json({success: true, code: 1000, message: "간편 회원가입 성공", result: {userIdx: userInfoRow[0].idx}});
         } catch (err) {
             console.log(error);
             return res.status(4000).send(`Error: ${err.message}`);
         }
     },
     signIn: async (req, res) => {
-        const {email, password} = req.body;
+        let {email, password} = req.body;
 
         if (!email) return res.json({success: false, code: 2001, message: "이메일을 입력해 주세요."});
         if (!password) return res.json({success: false, code: 2004, message: "비밀번호를 입력해 주세요."});
@@ -153,7 +153,7 @@ const users = {
                 success: true, code: 1000, message: "로그인 성공",
                 result: {
                     userIdx: userIdx,
-                    accessToken: token
+                    token: token
                 }
             });
 
@@ -168,7 +168,7 @@ const users = {
         */
         const authNum = Math.floor((Math.random() * (999999 - 100000 + 1)) + 100000);
 
-        const {email} = req.body;
+        let {email} = req.body;
 
         if (!email) return res.json({success: false, code: 2001, message: "이메일을 입력해 주세요."});
         if (!regexEmail.test(email)) return res.json({success: false,code: 2002,message: "올바르지 않은 이메일 형식입니다."});
@@ -197,7 +197,7 @@ const users = {
         });
     },
     emailVerify: async (req, res) => {
-        const {email, verifyCode} = req.body;
+        let {email, verifyCode} = req.body;
 
         if (!email) return res.json({success: false, code: 2001, message: "이메일을 입력해 주세요."});
         if (!regexEmail.test(email)) return res.json({success: false,code: 2002,message: "올바르지 않은 이메일 형식입니다."});
@@ -207,14 +207,10 @@ const users = {
 
         const CacheData = ncache.get(email);
 
-        if (!CacheData) return res.json({success: false, code: 2022, message: "인증번호가 일치하지 않습니다."});
+        if (!CacheData) return res.json({success: false, code: 2022, message: "인증 캐시 데이터를 가져오지 못했습니다."});
         if (CacheData != verifyCode) return res.json({success: false, code: 2023, message: "인증번호가 일치하지 않습니다."});
 
-        /*
-        // 이메일 유저 정보가 없다면 생성
-        // 이메일 유저 정보가 있다면 loginType 1로 수정
-        */
-        return res.json({success: false, code: 1000, message: "이메일 인증에 성공했습니다."});
+        return res.json({success: false, code: 1000, message: "이메일 검증 성공"});
 
     },
     logout: async (req, res) => {
@@ -225,7 +221,7 @@ const users = {
             if (checkJWT[0].length < 1) return res.json({success: false, code: 3007, message: "로그인되어 있지 않습니다."});
     
             const deleteJWTResult = await userModel.deleteJWT(userIdx);
-            return res.json({success: true, code: 1000, message: "로그아웃 성공"});
+            return res.json({success: true, code: 1000, message: "로그아웃 성공", result: {"userIdx": userIdx}});
         } catch (err) {
             console.log(error);
             return res.status(4000).send(`Error: ${err.message}`);
@@ -269,13 +265,13 @@ const users = {
 
         let {name, nickName, profileUrl, birthday, gender} = req.body;
         
-        if (!name) return res.json({success: false, code: 2005, message: "이름을 입력해 주세요."});
-        if (!regexName.test(name)) return res.json({success: false, code: 2006, message: "이름은 2~10자리의 한글,영문만 입력이 가능합니다."});
-        if (name.search(/\s/) != -1 || regexSpc.test(name) == true ) return res.json({success: false, code: 2007, message: "이름에는 공백 또는 특수문자를 입력할 수 없습니다."});
+        if (!name) return res.json({success: false, code: 2005, message: "name을 입력해 주세요."});
+        if (!regexName.test(name)) return res.json({success: false, code: 2006, message: "name은 2~10자리의 한글,영문만 입력이 가능합니다."});
+        if (name.search(/\s/) != -1 || regexSpc.test(name) == true ) return res.json({success: false, code: 2007, message: "name에는 공백 또는 특수문자를 입력할 수 없습니다."});
 
-        if (!nickName) return res.json({success: false, code: 2008, message: "닉네임을 입력해 주세요."});
-        if (!regexNickName.test(nickName)) return res.json({success: false, code: 2009, message: "닉네임은 2~10자리의 한글,영문,숫자로만 입력이 가능합니다."});
-        if (regexSpc.test(nickName)) return res.json({success: false, code: 2010, message: "닉네임에는 공백 또는 특수문자를 입력할 수 없습니다."});
+        if (!nickName) return res.json({success: false, code: 2008, message: "nickName을 입력해 주세요."});
+        if (!regexNickName.test(nickName)) return res.json({success: false, code: 2009, message: "nickName은 2~10자리의 한글,영문,숫자로만 입력이 가능합니다."});
+        if (regexSpc.test(nickName)) return res.json({success: false, code: 2010, message: "nickName에는 공백 또는 특수문자를 입력할 수 없습니다."});
 
         // if (!profileUrl) profileUrl = 'default image';
         // var img='';
@@ -283,13 +279,13 @@ const users = {
         //     img = req.file.location;
         // if (!profileUrl) return res.json({success: false, code: 2011, message: "profileUrl을 입력해주세요."});
 
-        if (profileUrl && !regexUrl.test(profileUrl)) return res.json({success: false, code: 2012, message: "url형식에 맞게 입력해주세요."});
+        if (profileUrl && !regexUrl.test(profileUrl)) return res.json({success: false, code: 2012, message: "profileUrl 형식이 올바르지 않습니다."});
 
-        if (!birthday) return res.json({success: false, code: 2013, message: "생일을 입력해 주세요."});
-        if (!regexBirthday.test(birthday)) return res.json({success: false, code: 2014, message: "생일 형식이 올바르지 않습니다.0000-00-00 형태로 입력해주세요."});
+        if (!birthday) return res.json({success: false, code: 2013, message: "birthday를 입력해 주세요."});
+        if (!regexBirthday.test(birthday)) return res.json({success: false, code: 2014, message: "birthday 형식이 올바르지 않습니다.0000-00-00 형태로 입력해주세요."});
 
-        if (!gender) return res.json({success: false, code: 2015, message: "성별을 입력해 주세요.(M/W)"});
-        if (!regexGender.test(gender)) return res.json({success: false, code: 2016, message: "성별은 M 혹은 W의 형태로 입력해주세요."});
+        if (!gender) return res.json({success: false, code: 2015, message: "gender를 입력해 주세요.(M/W)"});
+        if (!regexGender.test(gender)) return res.json({success: false, code: 2016, message: "gender는 M 혹은 W의 형태로 입력해주세요."});
 
         try {
             // userIdx 존재 확인
@@ -313,9 +309,9 @@ const users = {
 
         let {name} = req.body;
         
-        if (!name) return res.json({success: false, code: 2005, message: "이름을 입력해 주세요."});
-        if (!regexName.test(name)) return res.json({success: false, code: 2006, message: "이름은 2~10자리의 한글,영문만 입력이 가능합니다."});
-        if (name.search(/\s/) != -1 || regexSpc.test(name) == true ) return res.json({success: false, code: 2007, message: "이름에는 공백 또는 특수문자를 입력할 수 없습니다."});
+        if (!name) return res.json({success: false, code: 2005, message: "name을 입력해 주세요."});
+        if (!regexName.test(name)) return res.json({success: false, code: 2006, message: "name은 2~10자리의 한글,영문만 입력이 가능합니다."});
+        if (name.search(/\s/) != -1 || regexSpc.test(name) == true ) return res.json({success: false, code: 2007, message: "name에는 공백 또는 특수문자를 입력할 수 없습니다."});
         
         try {
             // userIdx 존재 확인
@@ -327,7 +323,7 @@ const users = {
 
             const result = await userModel.updateUserName(userIdx, name);
             const resultRow = await userModel.userIdxCheck(userIdx);
-            return res.json({success: true, code: 1000, message: "유저 이름 수정 성공", result: resultRow[0]});
+            return res.json({success: true, code: 1000, message: "유저 name 수정 성공", result: resultRow[0]});
         } catch (err) {
             console.log(error);
             return res.status(4000).send(`Error: ${err.message}`);
@@ -338,9 +334,9 @@ const users = {
 
         let {nickName} = req.body;
 
-        if (!nickName) return res.json({success: false, code: 2008, message: "닉네임을 입력해 주세요."});
-        if (!regexNickName.test(nickName)) return res.json({success: false, code: 2009, message: "닉네임은 2~10자리의 한글,영문,숫자로만 입력이 가능합니다."});
-        if (regexSpc.test(nickName)) return res.json({success: false, code: 2010, message: "닉네임에는 공백 또는 특수문자를 입력할 수 없습니다."});
+        if (!nickName) return res.json({success: false, code: 2008, message: "nickName을 입력해 주세요."});
+        if (!regexNickName.test(nickName)) return res.json({success: false, code: 2009, message: "nickName은 2~10자리의 한글,영문,숫자로만 입력이 가능합니다."});
+        if (regexSpc.test(nickName)) return res.json({success: false, code: 2010, message: "nickName에는 공백 또는 특수문자를 입력할 수 없습니다."});
 
         try {
             // userIdx 존재 확인
@@ -352,7 +348,7 @@ const users = {
 
             const result = await userModel.updateUserNickName(userIdx, nickName);
             const resultRow = await userModel.userIdxCheck(userIdx);
-            return res.json({success: true, code: 1000, message: "유저 닉네임 수정 성공", result: resultRow[0]});
+            return res.json({success: true, code: 1000, message: "유저 nickName 수정 성공", result: resultRow[0]});
         } catch (err) {
             console.log(error);
             return res.status(4000).send(`Error: ${err.message}`);
@@ -364,7 +360,7 @@ const users = {
         let {profileUrl} = req.body;
         
         if (!profileUrl) return res.json({success: false, code: 2011, message: "profileUrl을 입력해주세요."});
-        if (profileUrl && !regexUrl.test(profileUrl)) return res.json({success: false, code: 2012, message: "url형식에 맞게 입력해주세요."});
+        if (profileUrl && !regexUrl.test(profileUrl)) return res.json({success: false, code: 2012, message: "profileUrl 형식이 올바르지 않습니다."});
 
         try {
             // userIdx 존재 확인
@@ -376,7 +372,7 @@ const users = {
 
             const result = await userModel.updateUserProfileUrl(userIdx, profileUrl);
             const resultRow = await userModel.userIdxCheck(userIdx);
-            return res.json({success: true, code: 1000, message: "유저 프로필 사진 수정 성공", result: resultRow[0]});
+            return res.json({success: true, code: 1000, message: "유저 profileUrl 수정 성공", result: resultRow[0]});
         } catch (err) {
             console.log(error);
             return res.status(4000).send(`Error: ${err.message}`);
@@ -387,8 +383,8 @@ const users = {
 
         let {birthday} = req.body;
         
-        if (!birthday) return res.json({success: false, code: 2013, message: "생일을 입력해 주세요."});
-        if (!regexBirthday.test(birthday)) return res.json({success: false, code: 2014, message: "생일 형식이 올바르지 않습니다.0000-00-00 형태로 입력해주세요."});
+        if (!birthday) return res.json({success: false, code: 2013, message: "birthday를 입력해 주세요."});
+        if (!regexBirthday.test(birthday)) return res.json({success: false, code: 2014, message: "birthday 형식이 올바르지 않습니다.0000-00-00 형태로 입력해주세요."});
 
         try {
             // userIdx 존재 확인
@@ -401,7 +397,7 @@ const users = {
             const result = await userModel.updateUserBirthDay(userIdx, birthday);
             
             const resultRow = await userModel.userIdxCheck(userIdx);
-            return res.json({success: true, code: 1000, message: "유저 생일 수정 성공", result: resultRow[0]});
+            return res.json({success: true, code: 1000, message: "유저 birthday 수정 성공", result: resultRow[0]});
         } catch (err) {
             console.log(error);
             return res.status(4000).send(`Error: ${err.message}`);
@@ -412,8 +408,8 @@ const users = {
 
         let {gender} = req.body;
         
-        if (!gender) return res.json({success: false, code: 2015, message: "성별을 입력해 주세요.(M/W)"});
-        if (!regexGender.test(gender)) return res.json({success: false, code: 2016, message: "성별은 M 혹은 W의 형태로 입력해주세요."});
+        if (!gender) return res.json({success: false, code: 2015, message: "gender를 입력해 주세요.(M/W)"});
+        if (!regexGender.test(gender)) return res.json({success: false, code: 2016, message: "gender는 M 혹은 W의 형태로 입력해주세요."});
 
         try {
             // userIdx 존재 확인
