@@ -1,5 +1,4 @@
 import 'package:findmap/src/my_colors.dart';
-import 'package:findmap/utils/utils.dart';
 import 'package:flutter/material.dart';
 
 class SearchPage extends StatelessWidget {

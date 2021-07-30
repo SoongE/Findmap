@@ -4,7 +4,7 @@ import 'package:findmap/src/my_colors.dart';
 import 'package:findmap/views/alarm.dart';
 import 'package:findmap/views/archive.dart';
 import 'package:findmap/views/feed.dart';
-import 'package:findmap/views/search.dart';
+import 'package:findmap/views/search/search.dart';
 import 'package:findmap/views/userPage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
