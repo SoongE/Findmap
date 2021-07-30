@@ -20,7 +20,7 @@ router.post('/email-send', user.authSendEmail);
 router.get("/email-check", user.emailVerify);
 
 // 로그아웃
-router.get('/logout', auth.checkToken, user.logout);
+router.patch('/logout', auth.checkToken, user.logout);
 
 // 탈퇴
 router.patch('/withdraw', auth.checkToken, user.withdraw);
@@ -77,3 +77,4 @@ router.post('/apple', user.appleSignUp);
 */
 
 module.exports = router;
+

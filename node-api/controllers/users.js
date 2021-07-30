@@ -61,7 +61,7 @@ const users = {
             const hashedPassword = await crypto.createHash('sha512').update(password).digest('hex');
 
             // 회원 가입
-            const insertUserRow = await userModel.signUp(email, password, hashedPassword, name, nickName, profileUrl, birthday, gender, loginType);
+            const result = await userModel.signUp(email, password, hashedPassword, name, nickName, profileUrl, birthday, gender, loginType);
             const [userInfoRow] = await userModel.selectUserInfoByEmail(email);
 
             // 회원 가입 성공
@@ -93,7 +93,7 @@ const users = {
             const hashedPassword = await crypto.createHash('sha512').update(password).digest('hex');
 
             // 회원 가입
-            const insertUserRow = await userModel.signUpSimple(email, password, hashedPassword, loginType);
+            const result = await userModel.signUpSimple(email, password, hashedPassword, loginType);
             const [userInfoRow] = await userModel.selectUserInfoByEmail(email);
 
             // 회원 가입 성공
@@ -142,20 +142,37 @@ const users = {
                 return res.json({success: false, code: 3006, message: "이미 로그인된 계정입니다."});
             }
 
-            // 로그인 (refreshToken이 아닌 accessToken만 사용)
-            const {token, _} = await jwt.sign(userIdx);
+            const checkIsJWT = await userModel.checkIsJWT(userIdx);
 
-            // token db에 넣기
-            const tokenResult = await userModel.insertToken(userIdx, token);
+            if (checkIsJWT[0].length < 1) { // 처음으로 로그인 함, token 발급 필요
+                // 토큰 발급 (refreshToken이 아닌 accessToken만 사용)
+                const {token, _} = await jwt.sign(userIdx);
 
-            // 로그인 성공
-            return res.json({
-                success: true, code: 1000, message: "로그인 성공",
-                result: {
-                    userIdx: userIdx,
-                    token: token
-                }
-            });
+                // token db에 넣기
+                const result = await userModel.insertToken(userIdx, token);
+                const [tokenResult] = await userModel.checkJWT(userIdx);
+
+                // 로그인 성공
+                return res.json({
+                    success: true, code: 1000, message: "로그인 성공",
+                    result: { 
+                        "token": tokenResult[0].token, 
+                        "userInfo":emailRow[0]
+                    }
+                });
+            } else { // token 이미 존재, 존재하는 token으로 로그인
+                // 로그인 성공
+                const result = await userModel.reuseJWT(userIdx);
+                const [tokenResult] = await userModel.checkJWT(userIdx);
+
+                return res.json({
+                    success: true, code: 1000, message: "로그인 성공",
+                    result: { 
+                        "token": tokenResult[0].token, 
+                        "userInfo":emailRow[0]
+                    }
+                });
+            }
 
         } catch (err) {
             console.log(error);
@@ -220,7 +237,7 @@ const users = {
             const checkJWT = await userModel.checkJWT(userIdx);
             if (checkJWT[0].length < 1) return res.json({success: false, code: 3007, message: "로그인되어 있지 않습니다."});
     
-            const deleteJWTResult = await userModel.deleteJWT(userIdx);
+            const result = await userModel.deleteJWT(userIdx);
             return res.json({success: true, code: 1000, message: "로그아웃 성공", result: {"userIdx": userIdx}});
         } catch (err) {
             console.log(error);
@@ -236,6 +253,7 @@ const users = {
 
             const deleteUserResult = await userModel.withdraw(userIdx);
             const deleteJWTResult = await userModel.deleteJWT(userIdx);
+            
             return res.json({success: false, code: 1000, message: "회원 탈퇴 성공", result: {"userIdx": userIdx}});
         } catch (err) {
             console.log(error);
@@ -246,15 +264,12 @@ const users = {
         const userIdx = req.decoded.userIdx;
         
         try {
-            // userIdx 존재 확인
-            const userRow = await userModel.userIdxCheck(userIdx);
-            if (userRow.length == 0) { return res.json({success: false, code: 3008, message: "존재하지 않는 userIdx입니다."});}
-            // 계정 상태 확인
-            if (userRow[0].status === "N") { return res.json({success: false, code: 3009, message: "비활성화 계정입니다."});}
-            if (userRow[0].status === "D") { return res.json({success: false, code: 3010, message: "탈퇴된 계정입니다."});}
+            // 로그인 확인
+            const checkJWT = await userModel.checkJWT(userIdx);
+            if (checkJWT[0].length < 1) return res.json({success: false, code: 3007, message: "로그인되어 있지 않습니다."});
 
-            const result = await userModel.selectUserInfo(userIdx);
-            return res.json({success: true, code: 1000, message: "유저 정보 조회 성공", result: result[0]});
+            const userInfoRow = await userModel.selectUserInfo(userIdx);
+            return res.json({success: true, code: 1000, message: "유저 정보 조회 성공", result: userInfoRow[0]});
         } catch (err) {
             console.log(error);
             return res.status(4000).send(`Error: ${err.message}`);
@@ -288,17 +303,14 @@ const users = {
         if (!regexGender.test(gender)) return res.json({success: false, code: 2016, message: "gender는 M 혹은 W의 형태로 입력해주세요."});
 
         try {
-            // userIdx 존재 확인
-            const userRow = await userModel.userIdxCheck(userIdx);
-            if (userRow.length == 0) return res.json({success: false, code: 3008, message: "존재하지 않는 userIdx입니다."});
-            // 계정 상태 확인
-            if (userRow[0].status === "N") return res.json({success: false, code: 3009, message: "비활성화 계정입니다."});
-            if (userRow[0].status === "D") return res.json({success: false, code: 3010, message: "탈퇴된 계정입니다."});
+            // 로그인 확인
+            const checkJWT = await userModel.checkJWT(userIdx);
+            if (checkJWT[0].length < 1) return res.json({success: false, code: 3007, message: "로그인되어 있지 않습니다."});
 
             const result = await userModel.updateUserInfo(userIdx, name, nickName, profileUrl, birthday, gender);
-            const resultRow = await userModel.userIdxCheck(userIdx);
-            console.log(resultRow);
-            return res.json({success: true, code: 1000, message: "유저 정보 수정 성공", result: resultRow[0]});
+            const userInfoRow = await userModel.userIdxCheck(userIdx);
+
+            return res.json({success: true, code: 1000, message: "유저 정보 수정 성공", result: userInfoRow[0]});
         } catch (err) {
             console.log(error);
             return res.status(4000).send(`Error: ${err.message}`);
@@ -314,16 +326,14 @@ const users = {
         if (name.search(/\s/) != -1 || regexSpc.test(name) == true ) return res.json({success: false, code: 2007, message: "name에는 공백 또는 특수문자를 입력할 수 없습니다."});
         
         try {
-            // userIdx 존재 확인
-            const userRow = await userModel.userIdxCheck(userIdx);
-            if (userRow.length == 0) return res.json({success: false, code: 3008, message: "존재하지 않는 userIdx입니다."});
-            // 계정 상태 확인
-            if (userRow[0].status === "N") return res.json({success: false, code: 3009, message: "비활성화 계정입니다."});
-            if (userRow[0].status === "D") return res.json({success: false, code: 3010, message: "탈퇴된 계정입니다."});
+            // 로그인 확인
+            const checkJWT = await userModel.checkJWT(userIdx);
+            if (checkJWT[0].length < 1) return res.json({success: false, code: 3007, message: "로그인되어 있지 않습니다."});
 
             const result = await userModel.updateUserName(userIdx, name);
-            const resultRow = await userModel.userIdxCheck(userIdx);
-            return res.json({success: true, code: 1000, message: "유저 name 수정 성공", result: resultRow[0]});
+            const userInfoRow = await userModel.userIdxCheck(userIdx);
+
+            return res.json({success: true, code: 1000, message: "유저 name 수정 성공", result: userInfoRow[0]});
         } catch (err) {
             console.log(error);
             return res.status(4000).send(`Error: ${err.message}`);
@@ -339,16 +349,14 @@ const users = {
         if (regexSpc.test(nickName)) return res.json({success: false, code: 2010, message: "nickName에는 공백 또는 특수문자를 입력할 수 없습니다."});
 
         try {
-            // userIdx 존재 확인
-            const userRow = await userModel.userIdxCheck(userIdx);
-            if (userRow.length == 0) return res.json({success: false, code: 3008, message: "존재하지 않는 userIdx입니다."});
-            // 계정 상태 확인
-            if (userRow[0].status === "N") return res.json({success: false, code: 3009, message: "비활성화 계정입니다."});
-            if (userRow[0].status === "D") return res.json({success: false, code: 3010, message: "탈퇴된 계정입니다."});
+            // 로그인 확인
+            const checkJWT = await userModel.checkJWT(userIdx);
+            if (checkJWT[0].length < 1) return res.json({success: false, code: 3007, message: "로그인되어 있지 않습니다."});
 
             const result = await userModel.updateUserNickName(userIdx, nickName);
-            const resultRow = await userModel.userIdxCheck(userIdx);
-            return res.json({success: true, code: 1000, message: "유저 nickName 수정 성공", result: resultRow[0]});
+            const userInfoRow = await userModel.userIdxCheck(userIdx);
+
+            return res.json({success: true, code: 1000, message: "유저 nickName 수정 성공", result: userInfoRow[0]});
         } catch (err) {
             console.log(error);
             return res.status(4000).send(`Error: ${err.message}`);
@@ -363,16 +371,14 @@ const users = {
         if (profileUrl && !regexUrl.test(profileUrl)) return res.json({success: false, code: 2012, message: "profileUrl 형식이 올바르지 않습니다."});
 
         try {
-            // userIdx 존재 확인
-            const userRow = await userModel.userIdxCheck(userIdx);
-            if (userRow.length == 0) return res.json({success: false, code: 3008, message: "존재하지 않는 userIdx입니다."});
-            // 계정 상태 확인
-            if (userRow[0].status === "N") return res.json({success: false, code: 3009, message: "비활성화 계정입니다."});
-            if (userRow[0].status === "D") return res.json({success: false, code: 3010, message: "탈퇴된 계정입니다."});
+            // 로그인 확인
+            const checkJWT = await userModel.checkJWT(userIdx);
+            if (checkJWT[0].length < 1) return res.json({success: false, code: 3007, message: "로그인되어 있지 않습니다."});
 
             const result = await userModel.updateUserProfileUrl(userIdx, profileUrl);
-            const resultRow = await userModel.userIdxCheck(userIdx);
-            return res.json({success: true, code: 1000, message: "유저 profileUrl 수정 성공", result: resultRow[0]});
+            const userInfoRow = await userModel.userIdxCheck(userIdx);
+
+            return res.json({success: true, code: 1000, message: "유저 profileUrl 수정 성공", result: userInfoRow[0]});
         } catch (err) {
             console.log(error);
             return res.status(4000).send(`Error: ${err.message}`);
@@ -387,17 +393,14 @@ const users = {
         if (!regexBirthday.test(birthday)) return res.json({success: false, code: 2014, message: "birthday 형식이 올바르지 않습니다.0000-00-00 형태로 입력해주세요."});
 
         try {
-            // userIdx 존재 확인
-            const userRow = await userModel.userIdxCheck(userIdx);
-            if (userRow.length == 0) return res.json({success: false, code: 3008, message: "존재하지 않는 userIdx입니다."});
-            // 계정 상태 확인
-            if (userRow[0].status === "N") return res.json({success: false, code: 3009, message: "비활성화 계정입니다."});
-            if (userRow[0].status === "D") return res.json({success: false, code: 3010, message: "탈퇴된 계정입니다."});
+            // 로그인 확인
+            const checkJWT = await userModel.checkJWT(userIdx);
+            if (checkJWT[0].length < 1) return res.json({success: false, code: 3007, message: "로그인되어 있지 않습니다."});
 
-            const result = await userModel.updateUserBirthDay(userIdx, birthday);
-            
-            const resultRow = await userModel.userIdxCheck(userIdx);
-            return res.json({success: true, code: 1000, message: "유저 birthday 수정 성공", result: resultRow[0]});
+            const result = await userModel.updateUserBirthDay(userIdx, birthday);  
+            const userInfoRow = await userModel.userIdxCheck(userIdx);
+
+            return res.json({success: true, code: 1000, message: "유저 birthday 수정 성공", result: userInfoRow[0]});
         } catch (err) {
             console.log(error);
             return res.status(4000).send(`Error: ${err.message}`);
@@ -412,40 +415,38 @@ const users = {
         if (!regexGender.test(gender)) return res.json({success: false, code: 2016, message: "gender는 M 혹은 W의 형태로 입력해주세요."});
 
         try {
-            // userIdx 존재 확인
-            const userRow = await userModel.userIdxCheck(userIdx);
-            if (userRow.length == 0) return res.json({success: false, code: 3008, message: "존재하지 않는 userIdx입니다."});
-            // 계정 상태 확인
-            if (userRow[0].status === "N") return res.json({success: false, code: 3009, message: "비활성화 계정입니다."});
-            if (userRow[0].status === "D") return res.json({success: false, code: 3010, message: "탈퇴된 계정입니다."});
+            // 로그인 확인
+            const checkJWT = await userModel.checkJWT(userIdx);
+            if (checkJWT[0].length < 1) return res.json({success: false, code: 3007, message: "로그인되어 있지 않습니다."});
 
             const result = await userModel.updateUserGender(userIdx, gender);
-            const resultRow = await userModel.userIdxCheck(userIdx);
-            return res.json({success: true, code: 1000, message: "유저 성별 수정 성공", result: resultRow[0]});
+            const userInfoRow = await userModel.userIdxCheck(userIdx);
+
+            return res.json({success: true, code: 1000, message: "유저 gender 수정 성공", result: userInfoRow[0]});
         } catch (err) {
             console.log(error);
             return res.status(4000).send(`Error: ${err.message}`);
         }
     },
-    postUserInterest: async (req, res) => { // 관심 분야 입력
+    patchUserInterest: async (req, res) => { // 관심 분야 선택
         const userIdx = req.decoded.userIdx;
         let {interestIdx} = req.body;
 
-        if (!interestIdx) return res.json({success: false, code: 2030, message: "interestIdx를 입력해주세요."});
+        if (!interestIdx) return res.json({success: false, code: 2030, message: "관심 분야를 선택해주세요."});
 
-        if (interestIdx<1||interestIdx>36) return res.json({success: false, code: 2030, message: "선택할 수 있는 범위를 넘어섰습니다. 5~36의 숫자를 입력해주세요."});
-        if (1<=interestIdx<=4) return res.json({success: false, code: 2030, message: "1~4는 상위 관심 분야를 나타냅니다. 5~36의 하위 관심 분야를 선택해주세요."});
+        if(!regexNumber.test(interestIdx)) return res.json({success: false, code: 2030, message: "두 자리의 숫자로 입력해주세요."});
         
+        if (1<=interestIdx<=4) return res.json({success: false, code: 2030, message: "1~4는 상위 관심 분야를 나타냅니다. 5~36의 하위 관심 분야를 선택해주세요."});
+        if (interestIdx<1||interestIdx>36) return res.json({success: false, code: 2030, message: "선택할 수 있는 범위를 넘어섰습니다. 5~36의 숫자를 입력해주세요."});
+
         try {
-            // userIdx 존재 확인
-            const userRow = await userModel.userIdxCheck(userIdx);
-            if (userRow.length == 0) return res.json({success: false, code: 3008, message: "존재하지 않는 userIdx입니다."});
-            // 계정 상태 확인
-            if (userRow[0].status === "N") return res.json({success: false, code: 3009, message: "비활성화 계정입니다."});
-            if (userRow[0].status === "D") return res.json({success: false, code: 3010, message: "탈퇴된 계정입니다."});
+            // 로그인 확인
+            const checkJWT = await userModel.checkJWT(userIdx);
+            if (checkJWT[0].length < 1) return res.json({success: false, code: 3007, message: "로그인되어 있지 않습니다."});
 
             const result = await userModel.postUserInterest(userIdx, interestIdx);
-            return res.json({success: false, code: 1000, message: "관심사 선택 성공", restut: result});
+            
+            return res.json({success: false, code: 1000, message: "관심사 선택 성공", result: {"insertId": result[0].insertId}});
         } catch (err) {
             console.log(error);
             return res.status(4000).send(`Error: ${err.message}`);
@@ -455,22 +456,19 @@ const users = {
         const userIdx = req.decoded.userIdx;
 
         try {
-            // userIdx 존재 확인
-            const userRow = await userModel.userIdxCheck(userIdx);
-            if (userRow.length == 0) return res.json({success: false, code: 3008, message: "존재하지 않는 userIdx입니다."});
-            // 계정 상태 확인
-            if (userRow[0].status === "N") return res.json({success: false, code: 3009, message: "비활성화 계정입니다."});
-            if (userRow[0].status === "D") return res.json({success: false, code: 3010, message: "탈퇴된 계정입니다."});
+            // 로그인 확인
+            const checkJWT = await userModel.checkJWT(userIdx);
+            if (checkJWT[0].length < 1) return res.json({success: false, code: 3007, message: "로그인되어 있지 않습니다."});
 
-            const result = await userModel.selectUserInterest(userIdx);
+            const userInterestRow = await userModel.selectUserInterest(userIdx);
 
-            return res.json({success: true, code: 1000, message: "유저 관심 분야 조회 성공", result: result});
+            return res.json({success: true, code: 1000, message: "유저 관심 분야 조회 성공", result: {"userInterest": userInterestRow[0]}});
         } catch (err) {
             console.log(error);
             return res.status(4000).send(`Error: ${err.message}`);
         }
     },
-    patchUserInterest: async (req, res) => { // 관심 분야 수정
+    patchUserInterest: async (req, res) => { // 관심 분야 선택
         const userIdx = req.decoded.userIdx;
         let {interestIdx} = req.body;
 
@@ -488,15 +486,17 @@ const users = {
         // 이미 삭제된 관심 분야입니다. 삭제된 전적이 있다면 status만 y로 바꾸기
 
         try {
-            // userIdx 존재 확인
-            const userRow = await userModel.userIdxCheck(userIdx);
-            if (userRow.length == 0) return res.json({success: false, code: 3008, message: "존재하지 않는 userIdx입니다."});
-            // 계정 상태 확인
-            if (userRow[0].status === "N") return res.json({success: false, code: 3009, message: "비활성화 계정입니다."});
-            if (userRow[0].status === "D") return res.json({success: false, code: 3010, message: "탈퇴된 계정입니다."});
+            // 로그인 확인
+            const checkJWT = await userModel.checkJWT(userIdx);
+            if (checkJWT[0].length < 1) return res.json({success: false, code: 3007, message: "로그인되어 있지 않습니다."});
 
             const result = await userModel.updateUserInterest(userIdx, interestIdx);
-            return res.json({success: false, code: 1000, message: "관심 분야 삭제 성공", restut: result});
+
+            return res.json({success: false, code: 1000, message: "유저 관심 분야 삭제 성공"});
+
+            // const result = await userModel.postUserInterest(userIdx, interestIdx);
+            
+            // return res.json({success: false, code: 1000, message: "관심사 선택 성공", result: {"insertId": result[0].insertId}});
         } catch (err) {
             console.log(error);
             return res.status(4000).send(`Error: ${err.message}`);
@@ -506,3 +506,9 @@ const users = {
 
 module.exports = users;
 
+// // userIdx 존재 확인
+// const userRow = await userModel.userIdxCheck(userIdx);
+// if (userRow.length == 0) return res.json({success: false, code: 3008, message: "존재하지 않는 userIdx입니다."});
+// // 계정 상태 확인
+// if (userRow[0].status === "N") return res.json({success: false, code: 3009, message: "비활성화 계정입니다."});
+// if (userRow[0].status === "D") return res.json({success: false, code: 3010, message: "탈퇴된 계정입니다."});

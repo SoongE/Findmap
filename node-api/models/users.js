@@ -85,8 +85,8 @@ const users = {
             throw err;
         }
     },
-    checkJWT: async(userIdx) => {
-        const query = `SELECT userIdx,token FROM TokenTB WHERE userIdx = ?;`;
+    checkIsJWT: async(userIdx) => {
+        const query = `SELECT * FROM TokenTB WHERE userIdx = ?;`;
         const params = [userIdx];
         try {
             const result = await pool.queryParam(query,params);
@@ -96,8 +96,30 @@ const users = {
             throw err;
         }
     },
+    checkJWT: async(userIdx) => {
+        const query = `SELECT * FROM TokenTB WHERE userIdx = ? and status = 'Y';`;
+        const params = [userIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('checkJWT ERROR: ', err);
+            throw err;
+        }
+    },
+    reuseJWT: async(userIdx) => {
+        const query = `UPDATE TokenTB SET status = 'Y' WHERE userIdx = ?;`;
+        const params = [userIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('updateJWT ERROR: ', err);
+            throw err;
+        }
+    },
     deleteJWT: async(userIdx) => {
-        const query = `DELETE FROM TokenTB WHERE userIdx = ?;`;
+        const query = `UPDATE TokenTB SET status = 'D' WHERE userIdx = ?;`;
         const params = [userIdx];
         try {
             const result = await pool.queryParam(query,params);
