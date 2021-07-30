@@ -16,11 +16,11 @@ class SearchPage extends StatelessWidget {
         appBar: TabBar(
           isScrollable: true,
           labelPadding: EdgeInsets.symmetric(horizontal: 0),
-          labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+          labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
           labelColor: Colors.black,
           unselectedLabelColor: Colors.grey,
           unselectedLabelStyle:
-              TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
+              TextStyle(fontWeight: FontWeight.normal, fontSize: 20),
           indicatorColor: MyColors.search,
           indicator: UnderlineTabIndicator(
               insets: const EdgeInsets.only(left: 10, right: 10, bottom: 4),
