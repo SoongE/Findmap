@@ -35,10 +35,10 @@ class SearchPage extends StatelessWidget {
 
 class SearchTap extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _searchTapState();
+  State<StatefulWidget> createState() => _SearchTapState();
 }
 
-class _searchTapState extends State<SearchTap> {
+class _SearchTapState extends State<SearchTap> {
   late TextEditingController _searchKeyword;
   bool _visibleSearchInput = false;
 
