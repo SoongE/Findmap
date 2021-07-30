@@ -2,7 +2,7 @@ import 'package:badges/badges.dart';
 import 'package:findmap/models/user.dart';
 import 'package:findmap/src/my_colors.dart';
 import 'package:findmap/views/alarm.dart';
-import 'package:findmap/views/archive.dart';
+import 'package:findmap/views/archive/archive.dart';
 import 'package:findmap/views/feed.dart';
 import 'package:findmap/views/search/search.dart';
 import 'package:findmap/views/userPage.dart';
