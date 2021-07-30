@@ -267,7 +267,7 @@ const users = {
             // 로그인 확인
             const checkJWT = await userModel.checkJWT(userIdx);
             if (checkJWT[0].length < 1) return res.json({success: false, code: 3007, message: "로그인되어 있지 않습니다."});
-
+            
             const userInfoRow = await userModel.selectUserInfo(userIdx);
             return res.json({success: true, code: 1000, message: "유저 정보 조회 성공", result: userInfoRow[0]});
         } catch (err) {
@@ -428,30 +428,6 @@ const users = {
             return res.status(4000).send(`Error: ${err.message}`);
         }
     },
-    patchUserInterest: async (req, res) => { // 관심 분야 선택
-        const userIdx = req.decoded.userIdx;
-        let {interestIdx} = req.body;
-
-        if (!interestIdx) return res.json({success: false, code: 2030, message: "관심 분야를 선택해주세요."});
-
-        if(!regexNumber.test(interestIdx)) return res.json({success: false, code: 2030, message: "두 자리의 숫자로 입력해주세요."});
-        
-        if (1<=interestIdx<=4) return res.json({success: false, code: 2030, message: "1~4는 상위 관심 분야를 나타냅니다. 5~36의 하위 관심 분야를 선택해주세요."});
-        if (interestIdx<1||interestIdx>36) return res.json({success: false, code: 2030, message: "선택할 수 있는 범위를 넘어섰습니다. 5~36의 숫자를 입력해주세요."});
-
-        try {
-            // 로그인 확인
-            const checkJWT = await userModel.checkJWT(userIdx);
-            if (checkJWT[0].length < 1) return res.json({success: false, code: 3007, message: "로그인되어 있지 않습니다."});
-
-            const result = await userModel.postUserInterest(userIdx, interestIdx);
-            
-            return res.json({success: false, code: 1000, message: "관심사 선택 성공", result: {"insertId": result[0].insertId}});
-        } catch (err) {
-            console.log(error);
-            return res.status(4000).send(`Error: ${err.message}`);
-        }
-    },
     getUserInterest: async (req, res) => {
         const userIdx = req.decoded.userIdx;
 
@@ -460,43 +436,52 @@ const users = {
             const checkJWT = await userModel.checkJWT(userIdx);
             if (checkJWT[0].length < 1) return res.json({success: false, code: 3007, message: "로그인되어 있지 않습니다."});
 
-            const userInterestRow = await userModel.selectUserInterest(userIdx);
+            const [userInterestRow] = await userModel.selectUserInterest(userIdx);
 
-            return res.json({success: true, code: 1000, message: "유저 관심 분야 조회 성공", result: {"userInterest": userInterestRow[0]}});
+            if (userInterestRow[0] == undefined){
+                return res.json({success: true, code: 3011, message: "유저 관심 카테고리가 존재하지 않습니다."});
+            }
+
+            return res.json({success: true, code: 1000, message: "유저 관심 카테고리 조회 성공", result: userInterestRow});
         } catch (err) {
             console.log(error);
             return res.status(4000).send(`Error: ${err.message}`);
         }
     },
-    patchUserInterest: async (req, res) => { // 관심 분야 선택
+    patchUserInterest: async (req, res) => { // 관심 카테고리 선택
         const userIdx = req.decoded.userIdx;
-        let {interestIdx} = req.body;
+        let {categoryIdx} = req.body;
 
-        if (!interestIdx) return res.json({success: false, code: 2030, message: "관심 분야를 선택해주세요."});
-
-        if(!regexNumber.test(interestIdx)) return res.json({success: false, code: 2030, message: "두 자리의 숫자로 입력해주세요."});
+        if (!categoryIdx) return res.json({success: false, code: 2030, message: "관심 카테고리를 선택해주세요."});
         
-        if (1<=interestIdx<=4) return res.json({success: false, code: 2030, message: "1~4는 상위 관심 분야를 나타냅니다. 5~36의 하위 관심 분야를 선택해주세요."});
-        if (interestIdx<1||interestIdx>36) return res.json({success: false, code: 2030, message: "선택할 수 있는 범위를 넘어섰습니다. 5~36의 숫자를 입력해주세요."});
-
-
-        // 정보가 없습니다. 
-
-        // 정보가 있다면 삭제
-        // 이미 삭제된 관심 분야입니다. 삭제된 전적이 있다면 status만 y로 바꾸기
+        if (1<=categoryIdx && categoryIdx<=4) return res.json({success: false, code: 2030, message: "1~4는 상위 관심 카테고리를 나타냅니다. 5~36의 하위 관심 카테고리를 선택해주세요."});
+        if (categoryIdx<1 || categoryIdx>36) return res.json({success: false, code: 2030, message: "선택할 수 있는 범위를 넘어섰습니다. 5~36의 숫자를 입력해주세요."});
+        
 
         try {
             // 로그인 확인
             const checkJWT = await userModel.checkJWT(userIdx);
             if (checkJWT[0].length < 1) return res.json({success: false, code: 3007, message: "로그인되어 있지 않습니다."});
 
-            const result = await userModel.updateUserInterest(userIdx, interestIdx);
+            const [checkUserInterest] = await userModel.checkUserInterest(userIdx, categoryIdx);
 
-            return res.json({success: false, code: 1000, message: "유저 관심 분야 삭제 성공"});
+            if (checkUserInterest.length < 1) { //userInterest가 존재하지 않는다면
 
-            // const result = await userModel.postUserInterest(userIdx, interestIdx);
-            
-            // return res.json({success: false, code: 1000, message: "관심사 선택 성공", result: {"insertId": result[0].insertId}});
+                const result = await userModel.postUserInterest(userIdx, categoryIdx);
+                return res.json({success: true, code: 1000, message: "유저 관심 카테고리 추가 성공"});
+
+            } else { //userInterest가 존재한다면
+
+                if (checkUserInterest[0].status == 'Y'){
+                    const result = await userModel.deleteUserInterest(userIdx, categoryIdx);
+                    return res.json({success: true, code: 1000, message: "유저 관심 카테고리 삭제 성공"});
+                } 
+                if (checkUserInterest[0].status == 'D'){
+                    const result = await userModel.reuseUserInterest(userIdx, categoryIdx);
+                    return res.json({success: true, code: 1000, message: "유저 관심 카테고리 선택 성공"});
+                }
+            }
+
         } catch (err) {
             console.log(error);
             return res.status(4000).send(`Error: ${err.message}`);
@@ -505,10 +490,3 @@ const users = {
 }
 
 module.exports = users;
-
-// // userIdx 존재 확인
-// const userRow = await userModel.userIdxCheck(userIdx);
-// if (userRow.length == 0) return res.json({success: false, code: 3008, message: "존재하지 않는 userIdx입니다."});
-// // 계정 상태 확인
-// if (userRow[0].status === "N") return res.json({success: false, code: 3009, message: "비활성화 계정입니다."});
-// if (userRow[0].status === "D") return res.json({success: false, code: 3010, message: "탈퇴된 계정입니다."});

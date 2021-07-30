@@ -42,13 +42,10 @@ router.patch('/info-birthday', auth.checkToken, user.patchUserBirthDay);
 // 유저 정보 수정 (성별)
 router.patch('/info-gender', auth.checkToken, user.patchUserGender);
 
-// 관심분야 등록
-router.post('/interest', auth.checkToken, user.postUserInterest);
-
 // 관심분야 조회
 router.get('/interest', auth.checkToken, user.getUserInterest);
 
-// 관심분야 수정 (status Y라면 D, D이라면 Y)
+// 관심분야 선택
 router.patch('/interest', auth.checkToken, user.patchUserInterest);
 
 /*

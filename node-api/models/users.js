@@ -207,6 +207,17 @@ const users = {
             throw err;
         }
     },
+    checkUserInterest: async(userIdx, categoryIdx) => {
+        const query = `SELECT * FROM UserInterestTB WHERE userIdx = ? and categoryIdx = ?;`
+        const params = [userIdx, categoryIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('유저 interestIdx check ERROR: ', err);
+            throw err;
+        }
+    },
     postUserInterest: async(userIdx, categoryIdx) => {
         const fields = 'userIdx, categoryIdx';
         const values = [userIdx, categoryIdx];
@@ -219,25 +230,36 @@ const users = {
             throw err;
         }
     },
+    deleteUserInterest: async(userIdx, categoryIdx) => {
+        const query = `UPDATE UserInterestTB SET status = 'D' WHERE userIdx = ? and categoryIdx = ?;`
+        const params = [userIdx,categoryIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('유저 관심 카테고리 수정 ERROR : ', err);
+            throw err;
+        }
+    },
+    reuseUserInterest: async(userIdx, categoryIdx) => {
+        const query = `UPDATE UserInterestTB SET status = 'Y' WHERE userIdx = ? and categoryIdx = ?;`
+        const params = [userIdx,categoryIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('유저 관심 카테고리 수정 ERROR : ', err);
+            throw err;
+        }
+    },
     selectUserInterest: async(userIdx) => {
-        const query = `SELECT * FROM UserTB WHERE userIdx = ?;`;
+        const query = `SELECT categoryIdx FROM UserInterestTB WHERE userIdx = ? and status = 'Y';`;
         const params = [userIdx];
         try {
             const result = await pool.queryParam(query,params);
             return [result];
         } catch (err) {
-            console.log('유저 정보 조회 ERROR: ', err);
-            throw err;
-        }
-    },
-    updateUserInterest: async(userIdx, interestIdx) => {
-        const query = `UPDATE UserInterestTB SET interestIdx = ? WHERE userIdx = ?;`
-        const params = [interestIdx, userIdx];
-        try {
-            const result = await pool.queryParam(query,params);
-            return [result];
-        } catch (err) {
-            console.log('유저 interestIdx 수정 ERROR : ', err);
+            console.log('유저 관심 카테고리 조회 ERROR: ', err);
             throw err;
         }
     }
