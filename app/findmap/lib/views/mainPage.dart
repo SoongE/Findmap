@@ -7,6 +7,7 @@ import 'package:findmap/views/feed.dart';
 import 'package:findmap/views/search/search.dart';
 import 'package:findmap/views/userPage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 
@@ -50,6 +51,10 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+    SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(statusBarColor: Colors.white));
+
     List<String> _widgetTitle = <String>[
       "Archive",
       "Search",
@@ -64,24 +69,26 @@ class _MainPageState extends State<MainPage> {
       AlarmPage(),
       UserPage(user: widget.user),
     ];
-    return Scaffold(
-      extendBody: false,
-      backgroundColor: Colors.white,
-      body: PageView.builder(
-        onPageChanged: (page) {
-          setState(() {
-            _selectedIndex = page;
-            _badge = _badge + 1;
-            if (_selectedIndex == 3) _badge = -1;
-          });
-        },
-        controller: _controller,
-        itemBuilder: (context, position) {
-          return _widgetOptions.elementAt(position);
-        },
-        itemCount: 5,
+    return SafeArea(
+      child: Scaffold(
+        extendBody: false,
+        backgroundColor: Colors.white,
+        body: PageView.builder(
+          onPageChanged: (page) {
+            setState(() {
+              _selectedIndex = page;
+              _badge = _badge + 1;
+              if (_selectedIndex == 3) _badge = -1;
+            });
+          },
+          controller: _controller,
+          itemBuilder: (context, position) {
+            return _widgetOptions.elementAt(position);
+          },
+          itemCount: 5,
+        ),
+        bottomNavigationBar: gNavContainer(_widgetTitle),
       ),
-      bottomNavigationBar: gNavContainer(_widgetTitle),
     );
   }
 

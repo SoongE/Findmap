@@ -1,165 +1,73 @@
+import 'package:findmap/src/my_colors.dart';
+import 'package:findmap/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
-class RealtimeSearchTap extends StatefulWidget {
+class RealtimeSearchTab extends StatefulWidget {
   @override
-  _RealtimeSearchTapState createState() => _RealtimeSearchTapState();
+  _RealtimeSearchTabState createState() => _RealtimeSearchTabState();
 }
 
-class _RealtimeSearchTapState extends State<RealtimeSearchTap> {
-  int pressed = 1;
-
-  /*@override
-  void initState() {
-    super.initState();
-    mainList.addAll(sampleMenList);
-  }*/
-  String textHolder = 'Old Sample Text';
-
-  showList() {
-    setState(() {
-      textHolder = "New Sample Text...";
-    });
-  }
+class _RealtimeSearchTabState extends State<RealtimeSearchTab>
+    with SingleTickerProviderStateMixin {
+  List<String> _tabs = ['종합', '뉴스', '음악', '영화', '스포츠', '책'];
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: Stack(
-        children: <Widget>[
-          Container(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                TextButton(
-                  child: Text("종합"),
-                  style: TextButton.styleFrom(
-                    primary: Colors.black54,
-                    padding: EdgeInsets.all(8.0),
-                    textStyle: TextStyle(
-                      fontWeight:
-                          pressed == 1 ? FontWeight.bold : FontWeight.normal,
-                      fontSize: 16.5,
-                      decoration: pressed == 1
-                          ? TextDecoration.underline
-                          : TextDecoration.none,
-                    ),
-                  ),
-                  onPressed: () {
-                    showList();
-                    setState(() {
-                      pressed = 1;
-                    });
-                  },
-                ),
-                TextButton(
-                  child: Text("뉴스"),
-                  style: TextButton.styleFrom(
-                    primary: Colors.black54,
-                    padding: EdgeInsets.all(8.0),
-                    textStyle: TextStyle(
-                      fontWeight:
-                          pressed == 2 ? FontWeight.bold : FontWeight.normal,
-                      fontSize: 16.5,
-                      decoration: pressed == 2
-                          ? TextDecoration.underline
-                          : TextDecoration.none,
-                    ),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      pressed = 2;
-                    });
-                  },
-                ),
-                TextButton(
-                  child: Text("음악"),
-                  style: TextButton.styleFrom(
-                    primary: Colors.black54,
-                    padding: EdgeInsets.all(8.0),
-                    textStyle: TextStyle(
-                      fontWeight:
-                          pressed == 3 ? FontWeight.bold : FontWeight.normal,
-                      fontSize: 16.5,
-                      decoration: pressed == 3
-                          ? TextDecoration.underline
-                          : TextDecoration.none,
-                    ),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      pressed = 3;
-                    });
-                  },
-                ),
-                TextButton(
-                  child: Text("영화"),
-                  style: TextButton.styleFrom(
-                    primary: Colors.black54,
-                    padding: EdgeInsets.all(8.0),
-                    textStyle: TextStyle(
-                      fontWeight:
-                          pressed == 4 ? FontWeight.bold : FontWeight.normal,
-                      fontSize: 16.5,
-                      decoration: pressed == 4
-                          ? TextDecoration.underline
-                          : TextDecoration.none,
-                    ),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      pressed = 4;
-                    });
-                  },
-                ),
-                TextButton(
-                  child: Text("스포츠"),
-                  style: TextButton.styleFrom(
-                    primary: Colors.black54,
-                    padding: EdgeInsets.all(8.0),
-                    textStyle: TextStyle(
-                      fontWeight:
-                          pressed == 5 ? FontWeight.bold : FontWeight.normal,
-                      fontSize: 16.5,
-                      decoration: pressed == 5
-                          ? TextDecoration.underline
-                          : TextDecoration.none,
-                    ),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      pressed = 5;
-                    });
-                  },
-                ),
-                TextButton(
-                  child: Text("책"),
-                  style: TextButton.styleFrom(
-                    primary: Colors.black54,
-                    padding: EdgeInsets.all(8.0),
-                    textStyle: TextStyle(
-                      fontWeight:
-                          pressed == 6 ? FontWeight.bold : FontWeight.normal,
-                      fontSize: 16.5,
-                      decoration: pressed == 6
-                          ? TextDecoration.underline
-                          : TextDecoration.none,
-                    ),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      pressed = 6;
-                    });
-                  },
-                ),
-              ],
-            ),
+    return DefaultTabController(
+      key: const ValueKey('child'),
+      length: _tabs.length,
+      child: Scaffold(
+        appBar: TabBar(
+          isScrollable: true,
+          labelPadding: EdgeInsets.symmetric(horizontal: 0),
+          labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+          labelColor: Colors.black,
+          unselectedLabelColor: Colors.grey,
+          unselectedLabelStyle:
+              TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
+          indicatorColor: MyColors.search,
+          indicator: UnderlineTabIndicator(
+              insets: const EdgeInsets.only(left: 10, right: 10, bottom: 4),
+              borderSide: BorderSide(
+                width: 3,
+                color: MyColors.search,
+              )),
+          tabs: _tabs
+              .map((e) => Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Tab(text: "$e"),
+                  ))
+              .toList(),
+        ),
+        body: NotificationListener<OverscrollIndicatorNotification>(
+          onNotification: (overscroll) {
+            overscroll.disallowGlow();
+            return false;
+          },
+          child: TabBarView(
+            children: [
+              GetRealtimeSearch(
+                categoryID: 0,
+              ),
+              GetRealtimeSearch(
+                categoryID: 1,
+              ),
+              GetRealtimeSearch(
+                categoryID: 2,
+              ),
+              GetRealtimeSearch(
+                categoryID: 3,
+              ),
+              GetRealtimeSearch(
+                categoryID: 4,
+              ),
+              GetRealtimeSearch(
+                categoryID: 5,
+              ),
+            ],
           ),
-          Container(
-            child: GetRealtimeSearch(categoryID: pressed),
-            padding: EdgeInsets.only(top: 40),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -196,7 +104,7 @@ class _GetRealtimeSearchState extends State<GetRealtimeSearch> {
     'Django',
     'Scikit-learn',
     'Django',
-    'Numpy',
+    'NumPy',
     'Pandas',
   ];
   final List<String> keyword3 = <String>[
@@ -275,13 +183,17 @@ class _GetRealtimeSearchState extends State<GetRealtimeSearch> {
           height: 40,
           child: Row(
             children: [
-              Text(
-                (index + 1).toString() +
-                    '      ' +
-                    '${keywords.elementAt(id)[index]}',
-                style: new TextStyle(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 15.3,
+              InkWell(
+                onTap: () => Navigator.push(context,
+                    createRoute(_webView(keywords.elementAt(id)[index]))),
+                child: Text(
+                  (index + 1).toString() +
+                      '      ' +
+                      '${keywords.elementAt(id)[index]}',
+                  style: new TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 15.3,
+                  ),
                 ),
               ),
             ],
@@ -291,6 +203,16 @@ class _GetRealtimeSearchState extends State<GetRealtimeSearch> {
       separatorBuilder: (BuildContext context, int index) => const Divider(
         thickness: 1,
         color: Colors.black54,
+      ),
+    );
+  }
+
+  Widget _webView(String search) {
+    return SafeArea(
+      child: WebView(
+        initialUrl:
+            'https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=1&ie=utf8&query=$search',
+        javascriptMode: JavascriptMode.unrestricted,
       ),
     );
   }
