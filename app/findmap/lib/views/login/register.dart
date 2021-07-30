@@ -12,8 +12,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:line_icons/line_icons.dart';
 
-import 'login/sign_bar.dart';
-import 'mainPage.dart';
+import 'sign_bar.dart';
+import '../mainPage.dart';
 
 class RegisterPage extends StatefulWidget {
   final String userEmail;

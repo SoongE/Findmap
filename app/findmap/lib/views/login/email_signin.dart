@@ -184,7 +184,8 @@ class _SignInState extends State<SignIn> {
         showSnackbar(context, "비밀번호가 일치하지 않습니다");
         throw Exception('Password is not correct: ${responseBody['message']}');
       } else
-        throw Exception('Response status is failure: $responseBody');
+        showSnackbar(context, responseBody['message']);
+      throw Exception('Response status is failure: $responseBody');
     } else
       throw Exception('Failed to load post');
   }

@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:line_icons/line_icons.dart';
 
-import '../register.dart';
+import 'register.dart';
 
 class EmailConfirm extends StatefulWidget {
   final VoidCallback onSignInPressed;
