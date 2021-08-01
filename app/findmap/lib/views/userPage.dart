@@ -158,17 +158,11 @@ class UserPageBody extends StatelessWidget {
             Navigator.pushAndRemoveUntil(
                 context, createRoute(FirstPage()), (route) => false),
           }
-        //  TODO
-        // : showSnackbar(context, "정상적으로 로그아웃되지 않았습니다"));
-        : {
-            showSnackbar(context, "정상적으로 로그아웃 되었습니다"),
-            Navigator.pushAndRemoveUntil(
-                context, createRoute(FirstPage()), (route) => false),
-          });
+        : showSnackbar(context, "정상적으로 로그아웃되지 않았습니다"));
   }
 
   Future<bool> fetchSignOut() async {
-    final response = await http.get(
+    final response = await http.patch(
       Uri.http(BASEURL, '/users/logout'),
       headers: {
         "token": user.accessToken,
