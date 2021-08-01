@@ -188,8 +188,8 @@ class _SignInState extends State<SignIn> {
   void _saveToSecurityStorage(dynamic body) {
     final storage = FlutterSecureStorage();
 
-    storage.write(key: 'userIdx', value: body['idx'].toString());
-    storage.write(key: 'accessToken', value: body['accessToken']);
+    storage.write(key: 'idx', value: body['idx'].toString());
+    storage.write(key: 'token', value: body['token']);
     storage.write(key: 'nickName', value: body['nickName']);
     storage.write(key: 'name', value: body['name']);
     storage.write(key: 'email', value: body['email']);
