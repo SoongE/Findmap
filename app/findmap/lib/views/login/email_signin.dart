@@ -157,19 +157,11 @@ class _SignInState extends State<SignIn> {
     if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
       if (responseBody['success']) {
-        // ToDo: erase later
-        responseBody['result']['taste'] = "Taste";
-        responseBody['result']['email'] = _userEmail.text;
-        responseBody['result']['password'] = _userPassword.text;
-        responseBody['result']['name'] = "SeungminOh";
-        responseBody['result']['nickName'] = "Rhcsky";
-        responseBody['result']['birthday'] = "2020-12-12";
-        responseBody['result']['gender'] = 'X';
-        responseBody['result']['phoneNum'] = "01011119999";
-        print(responseBody['result']);
-        // Todo: to here
-        _saveToSecurityStorage(responseBody['result']);
-        return User.fromJson(responseBody['result']);
+        responseBody['result']['userInfo']['token'] =
+            responseBody['result']['token'];
+
+        _saveToSecurityStorage(responseBody['result']['userInfo']);
+        return User.fromJson(responseBody['result']['userInfo']);
       } else if (responseBody['code'] == 3004) {
         final snackBar = SnackBar(
           content: Text("등록된 계정이 없습니다. 회원가입을 진행하세요!"),
@@ -183,17 +175,20 @@ class _SignInState extends State<SignIn> {
       } else if (responseBody['code'] == 3005) {
         showSnackbar(context, "비밀번호가 일치하지 않습니다");
         throw Exception('Password is not correct: ${responseBody['message']}');
-      } else
+      } else {
         showSnackbar(context, responseBody['message']);
-      throw Exception('Response status is failure: $responseBody');
-    } else
+        throw Exception('Response status is failure: $responseBody');
+      }
+    } else {
+      showSnackbar(context, '서버와 연결이 불안정합니다');
       throw Exception('Failed to load post');
+    }
   }
 
   void _saveToSecurityStorage(dynamic body) {
     final storage = FlutterSecureStorage();
 
-    storage.write(key: 'userIdx', value: body['userIdx'].toString());
+    storage.write(key: 'userIdx', value: body['idx'].toString());
     storage.write(key: 'accessToken', value: body['accessToken']);
     storage.write(key: 'nickName', value: body['nickName']);
     storage.write(key: 'name', value: body['name']);

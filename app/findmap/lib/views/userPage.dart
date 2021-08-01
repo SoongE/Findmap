@@ -87,7 +87,7 @@ class UserPageBody extends StatelessWidget {
                     Icons.phone,
                     color: Colors.redAccent,
                   ),
-                  title: Text(user.phoneNum,
+                  title: Text("10000",
                       style: TextStyle(
                         fontSize: 20.0,
                         color: Colors.teal.shade900,
@@ -118,7 +118,7 @@ class UserPageBody extends StatelessWidget {
                   color: Colors.redAccent,
                 ),
                 title: Text(
-                  user.taste,
+                  "taste",
                   style: TextStyle(
                       fontSize: 20.0,
                       color: Colors.teal.shade900,
@@ -150,7 +150,7 @@ class UserPageBody extends StatelessWidget {
     final storage = new FlutterSecureStorage();
     await storage.deleteAll();
 
-    var _isSignOutSafe = fetchSignOut();
+    var _isSignOutSafe = fetchSignOut(context);
 
     _isSignOutSafe.then((value) => value
         ? {
@@ -158,10 +158,12 @@ class UserPageBody extends StatelessWidget {
             Navigator.pushAndRemoveUntil(
                 context, createRoute(FirstPage()), (route) => false),
           }
-        : showSnackbar(context, "정상적으로 로그아웃되지 않았습니다"));
+        // : showSnackbar(context, "정상적으로 로그아웃되지 않았습니다"));
+        : Navigator.pushAndRemoveUntil(
+            context, createRoute(FirstPage()), (route) => false));
   }
 
-  Future<bool> fetchSignOut() async {
+  Future<bool> fetchSignOut(BuildContext context) async {
     final response = await http.patch(
       Uri.http(BASEURL, '/users/logout'),
       headers: {
@@ -170,9 +172,9 @@ class UserPageBody extends StatelessWidget {
     );
 
     if (response.statusCode == 200) {
-      print(response.body);
       return jsonDecode(response.body)['success'];
     } else {
+      showSnackbar(context, '서버와 연결이 불안정합니다');
       throw Exception('Failed to load post');
     }
   }

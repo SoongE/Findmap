@@ -37,10 +37,16 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
+  final _storage = new FlutterSecureStorage();
+  bool _userStatus = false;
+
   @override
   void initState() {
     super.initState();
-    _checkUser(context);
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      _checkUser(context);
+    });
+    // _checkUser(context);
   }
 
   @override
@@ -49,24 +55,20 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   void _checkUser(context) async {
-    final storage = new FlutterSecureStorage();
-    bool userStatus = false;
-    Map<String, String> allStorage = await storage.readAll();
+    Map<String, String> userInfo = await _storage.readAll();
 
-    userStatus = allStorage.isEmpty ? false : true;
+    _userStatus = userInfo.isEmpty ? false : true;
 
-    if (userStatus) {
-      var jsonStorage = jsonDecode(json.encode(allStorage));
+    if (_userStatus) {
+      var jsonStorage = jsonDecode(json.encode(userInfo));
       jsonStorage['userIdx'] = int.parse(jsonStorage['userIdx']);
       var user = User.fromJson(jsonStorage);
 
-      WidgetsBinding.instance!.addPostFrameCallback((_) => Navigator.of(context)
-          .pushReplacement(
-              MaterialPageRoute(builder: (context) => MainPage(user: user))));
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => MainPage(user: user)));
     } else {
-      WidgetsBinding.instance!.addPostFrameCallback((_) => Navigator.of(context)
-          .pushReplacement(
-              MaterialPageRoute(builder: (context) => FirstPage())));
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => FirstPage()));
     }
   }
 }
