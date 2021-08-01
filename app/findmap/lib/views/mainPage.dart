@@ -63,7 +63,7 @@ class _MainPageState extends State<MainPage> {
       widget.user.nickName,
     ];
     List<Widget> _widgetOptions = <Widget>[
-      ArchivePage(),
+      ArchivePage(user: widget.user),
       SearchPage(),
       FeedPage(),
       AlarmPage(),
