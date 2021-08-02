@@ -41,12 +41,14 @@ def main():
             scrap_page['title'] = None
             scrap_page['description'] = None
             scrap_page['img_url'] = None
+            scrap_page['category'] = None
     except:
         scrap_page = dict()
         scrap_page['url'] = url
         scrap_page['title'] = None
         scrap_page['description'] = None
         scrap_page['img_url'] = None
+        scrap_page['category'] = None
 
     print(scrap_page)
 
