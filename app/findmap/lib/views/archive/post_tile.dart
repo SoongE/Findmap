@@ -112,6 +112,7 @@ class _PostTileState extends State<PostTile>
     super.initState();
   }
 
+  
   @override
   Widget build(BuildContext context) {
     return Padding(
