@@ -20,7 +20,7 @@ router.post('/email-send', user.authSendEmail);
 router.get("/email-check", user.emailVerify);
 
 // 로그아웃
-router.get('/logout', auth.checkToken, user.logout);
+router.patch('/logout', auth.checkToken, user.logout);
 
 // 탈퇴
 router.patch('/withdraw', auth.checkToken, user.withdraw);
@@ -42,13 +42,10 @@ router.patch('/info-birthday', auth.checkToken, user.patchUserBirthDay);
 // 유저 정보 수정 (성별)
 router.patch('/info-gender', auth.checkToken, user.patchUserGender);
 
-// 관심분야 등록
-router.post('/interest', auth.checkToken, user.postUserInterest);
-
 // 관심분야 조회
 router.get('/interest', auth.checkToken, user.getUserInterest);
 
-// 관심분야 수정 (status Y라면 D, D이라면 Y)
+// 관심분야 선택
 router.patch('/interest', auth.checkToken, user.patchUserInterest);
 
 /*
@@ -73,7 +70,8 @@ router.post('/kakao', user.kakaoSignUp);
 router.post('/google', user.googleSignUp);
 
 // 애플 회원가입+로그인 API
-router.post('/google', user.appleSignUp);
+router.post('/apple', user.appleSignUp);
 */
 
 module.exports = router;
+
