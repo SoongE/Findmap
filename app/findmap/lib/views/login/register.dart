@@ -12,8 +12,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:line_icons/line_icons.dart';
 
-import 'login/sign_bar.dart';
-import 'mainPage.dart';
+import 'sign_bar.dart';
+import '../mainPage.dart';
 
 class RegisterPage extends StatefulWidget {
   final String userEmail;
@@ -40,7 +40,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
   final GlobalKey<FormState> registerFormKey = GlobalKey<FormState>();
 
-  bool _isInfoComplete = false;
   bool _isLoading = false;
 
   @override
@@ -152,7 +151,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 decoration: inputDecorationTOS('[필수] 이용약관', _userTOS1Agree),
                 onTap: () => {
                   FocusScope.of(context).requestFocus(new FocusNode()),
-                  TOSDialog('이용약관', '약관내용1', 1),
+                  _tosDialog('이용약관', '약관내용1', 1),
                   _userTOS1.text = '[필수] 이용약관',
                 },
               ),
@@ -164,7 +163,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     inputDecorationTOS('[필수] 개인정보 수집 및 이용', _userTOS2Agree),
                 onTap: () => {
                   FocusScope.of(context).requestFocus(new FocusNode()),
-                  TOSDialog('개인정보 수집 및 이용', '약관내용2', 2),
+                  _tosDialog('개인정보 수집 및 이용', '약관내용2', 2),
                   _userTOS2.text = '[필수] 개인정보 수집 및 이용',
                 },
               ),
@@ -188,7 +187,7 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  void TOSDialog(String title, String content, int tosNum) {
+  void _tosDialog(String title, String content, int tosNum) {
     showDialog<void>(
       context: context,
       barrierDismissible: true,

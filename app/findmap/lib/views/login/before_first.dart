@@ -31,15 +31,15 @@ class BeforeFirstPage extends StatelessWidget {
             Spacer(flex: 1),
             Column(
               children: [
-                BuildBox(context, MyColors.myYellow, "카카오로 로그인하기",
+                _buildBox(context, MyColors.myYellow, "카카오로 로그인하기",
                     textColor: Colors.black),
                 Padding(padding: EdgeInsets.symmetric(vertical: 3)),
-                BuildBox(context, MyColors.myBlue, "구글로 로그인하기"),
+                _buildBox(context, MyColors.myBlue, "구글로 로그인하기"),
                 Padding(padding: EdgeInsets.symmetric(vertical: 3)),
-                BuildBox(context, MyColors.myPurple, "이메일로 로그인하기",
+                _buildBox(context, MyColors.myPurple, "이메일로 로그인하기",
                     page: FirstPage()),
                 Padding(padding: EdgeInsets.symmetric(vertical: 3)),
-                BuildBox(context, MyColors.myPink, "AppleID로 로그인하기"),
+                _buildBox(context, MyColors.myPink, "AppleID로 로그인하기"),
               ],
             ),
             Spacer(flex: 2),
@@ -49,7 +49,7 @@ class BeforeFirstPage extends StatelessWidget {
     );
   }
 
-  Widget BuildBox(BuildContext context, Color color, String string,
+  Widget _buildBox(BuildContext context, Color color, String string,
       {Color textColor: Colors.white, Widget? page}) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
