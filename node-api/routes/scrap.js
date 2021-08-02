@@ -5,25 +5,38 @@ const scrap = require('../controllers/scrap');
 const auth = require('../middlewares/auth');
 //const upload = require('../../modules/multer');
 
-/*
 // 스크랩 등록
-router.post('/', auth.checkToken, scrap.postScrap);
+router.post('/', auth.checkToken, scrap.postScrap); //flask
 
 // 스크랩 전체 보기
-app.get("/", auth.checkToken, scrap.getScrap);
+router.get("/", auth.checkToken, scrap.getScrap);
 
-// 스크랩 보기
-app.get("/:scrapIdx", auth.checkToken, scrap.getScrapDetail);
+// 스크랩 폴더별 보기
+router.get("/by-folder", auth.checkToken, scrap.getScrapByFolder);
 
-// 스크랩 수정
-router.patch('/:scrapIdx',scrap.patchScrap);
+// 스크랩 카테고리별 보기
+router.get("/by-category", auth.checkToken, scrap.getScrapByCategory);
+
+// 스크랩 날짜별 보기
+router.get("/by-date", auth.checkToken, scrap.getScrapByDate);
+
+// 스크랩 자세히 보기
+router.get("/:scrapIdx/detail", auth.checkToken, scrap.getScrapDetail);
+
+// 스크랩 제목 수정
+router.patch('/:scrapIdx/title', auth.checkToken, scrap.patchScrapTitle);
+
+// 스크랩 줄거리 수정
+router.patch('/:scrapIdx/summary', auth.checkToken, scrap.patchScrapSummary);
+
+// 스크랩 코멘트 수정
+router.patch('/:scrapIdx/comment', auth.checkToken, scrap.patchScrapComment);
+
+// 스크랩 폴더 수정
+router.patch('/:scrapIdx/folder', auth.checkToken, scrap.patchScrapFolder);
 
 // 스크랩 삭제
-router.patch('/:scrapIdx/status',scrap.deleteScrap);
-
-// 스크랩 피드 등록
-router.post('/scrapToFeed', scrap.postScrapToFeed);
- */
+router.patch('/:scrapIdx/delete', auth.checkToken, scrap.deleteScrap);
 
 module.exports = router;
 
