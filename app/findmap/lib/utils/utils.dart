@@ -50,8 +50,6 @@ Route createRouteRight(Widget secondPage) {
   );
 }
 
-
-
 class HeroDialogRoute<T> extends PageRoute<T> {
   HeroDialogRoute({required this.builder}) : super();
 

@@ -88,7 +88,7 @@ const scrap = {
         //"yyyy-mm-dd"
         const regexDate = /^(19|20)\d{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[0-1])$/; 
         if(!regexDate .test(date)){
-            return res.json({success: false, code: 2101, message: "입력한 날짜 형식이 올바르지 않습니다. yyyymmdd 형태로 입력해주세요. (예시:20210723)"});
+            return res.json({success: false, code: 2101, message: "입력한 date 형식이 올바르지 않습니다. yyyymmdd 형태로 입력해주세요. (예시:20210723)"});
         }
 
         //"yyyy-mm-dd HH:MM"
@@ -130,7 +130,7 @@ const scrap = {
         let {title} = req.body;
         try{
               if(!title){
-                  return res.json({success: false, code: 2111, message: "title을 입력해주세요"});
+                  return res.json({success: false, code: 2111, message: "title을 입력해 주세요"});
               }
               const result = await scrapModel.updateScrapTitle(userIdx, scrapIdx, title);
               const scrapRow = await scrapModel.selectScrapDetail(userIdx, scrapIdx);
@@ -150,7 +150,7 @@ const scrap = {
         let {summary} = req.body;
         try{
             if(!summary){
-                return res.json({success: false, code: 2112, message: "summary를 입력해주세요"});
+                return res.json({success: false, code: 2112, message: "summary를 입력해 주세요"});
             }
   
             const result = await scrapModel.updateScrapSummary(userIdx, scrapIdx, summary);

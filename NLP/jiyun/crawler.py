@@ -6,7 +6,6 @@ from bs4 import BeautifulSoup as bs
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-
 class Crawler:
 
     def __init__(self, url):
@@ -21,11 +20,16 @@ class Crawler:
         self.driver = webdriver.Chrome('/workspace/chromedriver', chrome_options=chrome_options)
 
     def robots_check(self):
+        domain_name = self.get_host_domain()
         rp = urllib.robotparser.RobotFileParser()
-        rp.set_url(self.url)
+        rp.set_url('https://' + domain_name + '/robots.txt')
         rp.read()
         check = rp.can_fetch("*", self.url)
         return check
+
+    def get_host_domain(self):
+        tmp = self.url.split('/')
+        return tmp[2]
 
     def url_connect(self):
         try:
@@ -70,11 +74,11 @@ class Crawler:
                 try:
                     title = self.soup.find('title')
                 except:
-                    return False
+                    return None
                 else:
                     return title.text
         except:
-            return False
+            return None
         else:
             return title
 
@@ -137,13 +141,42 @@ class Crawler:
 
     def get_contents(self):
         # get contents of the page
-        iframe_check = self.soup.find('iframe')
         sentences = list()
-        title = ""
-        img_url = ""
+        description = None
+        title = None
+        img_url = None
         self.driver.get(self.url)
 
-        if iframe_check:
+        # get sentences
+        if description is None:
+            try:
+                og_description = self.og_crawl('description')
+                if og_description is False:
+                    p_list = self.driver.find_elements_by_tag_name("p")
+                    for x in p_list:
+                        p_text = x.text.strip()
+                        if p_text == '':
+                            continue
+                        sentences.append(p_text)
+                else:
+                    description = og_description
+            except:
+                sentences = None
+
+        # get title
+        if title is None:
+            title = self.get_title()
+            if title is None:
+                print("Error: get the title of the page")
+
+        # get image url
+        if img_url is None:
+            img_url = self.get_image()
+            if title is None:
+                print("Error: get the image of the page")
+
+        iframe_check = self.soup.find('iframe')
+        if iframe_check and (img_url is None or title is None or description is None):
             iframes = self.driver.find_elements_by_tag_name('iframe')
 
             for i, iframe in enumerate(iframes):
@@ -153,58 +186,53 @@ class Crawler:
                     self.html_parse()
 
                     # get sentences
-                    p_list = self.driver.find_elements_by_tag_name("p")
-                    for x in p_list:
-                        p_text = x.text.strip()
-                        if p_text == '':
-                            continue
-                        sentences.append(p_text)
+                    if description is None:
+                        try:
+                            og_description = self.og_crawl('description')
+                            if og_description is False:
+                                p_list = self.driver.find_elements_by_tag_name("p")
+                                for x in p_list:
+                                    p_text = x.text.strip()
+                                    if p_text == '':
+                                        continue
+                                    sentences.append(p_text)
+                            else:
+                                description = og_description
+                        except:
+                            description = None
 
                     # get title
-                    if title == "":
+                    if title is None:
                         title = self.get_title()
-                        print(title)
                         if title is None:
                             print("Error: get the title of the page")
 
                     # get image url
-                    if img_url == "":
+                    if img_url is None:
                         img_url = self.get_image()
                         if img_url is None:
                             print("Error: get an image of the page")
-                            img_url = "default"
 
                     self.driver.switch_to_default_content()
 
                 except:
                     self.driver.switch_to_default_content()
 
-        # get sentences
-        p_list = self.driver.find_elements_by_tag_name("p")
-
-        for x in p_list:
-            p_text = x.text.strip()
-            if p_text == '':
-                continue
-            sentences.append(p_text)
-
-        # get title
-        if title == "":
-            title = self.get_title()
-            if title is None:
-                print("Error: get the title of the page")
-
-        # get image url
-        if img_url == "":
-            img_url = self.get_image()
-            if img_url is None:
-                img_url = None
-
-        return title, " ".join(sentences), img_url
+        # return contents
+        scrap_page = dict()
+        scrap_page['title'] = title
+        scrap_page['img_url'] = img_url
+        if description is not None:
+            scrap_page['description'] = description
+            return scrap_page
+        else:
+            if sentences is not None:
+                scrap_page['sentences'] = " ".join(sentences)
+            else:
+                scrap_page['description'] = None
+            return scrap_page
 
     def crawl(self):
-        scrap_page = dict()
-
         crawl_html = self.url_connect()
         if not crawl_html:
             print("Error: connect to url")
@@ -217,13 +245,4 @@ class Crawler:
             # exit will be changed into sending an error message to nodejs server.
             exit(0)
 
-        # print(self.soup)
-
-        title, sentences, img_url = self.get_contents()
-
-        scrap_page['url'] = self.url
-        scrap_page['title'] = title
-        scrap_page['sentences'] = sentences
-        scrap_page['img_url'] = img_url
-
-        return scrap_page
+        return self.get_contents()
