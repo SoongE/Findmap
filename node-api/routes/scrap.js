@@ -35,6 +35,12 @@ router.patch('/:scrapIdx/comment', auth.checkToken, scrap.patchScrapComment);
 // 스크랩 폴더 수정
 router.patch('/:scrapIdx/folder', auth.checkToken, scrap.patchScrapFolder);
 
+// 스크랩 피드 올리기
+router.patch('/:scrapIdx/feed-upload', auth.checkToken, scrap.patchScrapFeedUp);
+
+// 스크랩 피드 내리기
+router.patch('/:scrapIdx/feed-down', auth.checkToken, scrap.patchScrapFeedDown);
+
 // 스크랩 삭제
 router.patch('/:scrapIdx/delete', auth.checkToken, scrap.deleteScrap);
 

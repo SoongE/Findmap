@@ -112,6 +112,28 @@ const scrap = {
             throw err;
         }
     },
+    updateScrapFeedUp: async(userIdx, scrapIdx) => {
+        const query = `UPDATE ScrapTB SET isFeed = 'Y' WHERE userIdx = ? and idx = ?;`
+        const params = [userIdx, scrapIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('스크랩 isFeed 수정 ERROR : ', err);
+            throw err;
+        }
+    },
+    updateScrapFeedDown: async(userIdx, scrapIdx) => {
+        const query = `UPDATE ScrapTB SET isFeed = 'N' WHERE userIdx = ? and idx = ?;`
+        const params = [userIdx, scrapIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('스크랩 isFeed 수정 ERROR : ', err);
+            throw err;
+        }
+    },
     deleteScrap: async(userIdx, scrapIdx) => {
         const query = `UPDATE ScrapTB SET status = 'D' WHERE userIdx = ? and idx = ?;`
         const params = [userIdx, scrapIdx];
