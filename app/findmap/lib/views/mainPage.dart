@@ -3,6 +3,7 @@ import 'package:findmap/models/user.dart';
 import 'package:findmap/src/my_colors.dart';
 import 'package:findmap/views/alarm.dart';
 import 'package:findmap/views/archive/archive.dart';
+import 'package:findmap/views/archive/share.dart';
 import 'package:findmap/views/feed.dart';
 import 'package:findmap/views/search/search.dart';
 import 'package:findmap/views/userPage.dart';
@@ -10,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
+
+import 'archive/share_service.dart';
 
 class MainPage extends StatefulWidget {
   final User user;
@@ -46,6 +49,9 @@ class _MainPageState extends State<MainPage> {
 
   @override
   void initState() {
+    ShareService()
+      ..onDataReceived = _handleSharedData
+      ..getSharedData().then(_handleSharedData);
     _widgetOptions = <Widget>[
       ArchivePage(user: widget.user),
       SearchPage(),
@@ -54,6 +60,13 @@ class _MainPageState extends State<MainPage> {
       UserPage(user: widget.user),
     ];
     super.initState();
+  }
+
+  void _handleSharedData(String sharedData) {
+    sharedData.startsWith("http")
+        ? Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => SharePage(url: sharedData)))
+        : null;
   }
 
   @override

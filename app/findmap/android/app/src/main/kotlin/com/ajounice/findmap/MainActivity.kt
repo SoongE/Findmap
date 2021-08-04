@@ -19,7 +19,7 @@ class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger,
-                "com.example.share").setMethodCallHandler { call, result ->
+                "com.ajounice.findmap").setMethodCallHandler { call, result ->
             if (call.method == "getSharedData") {
                 handleIntent()
                 result.success(sharedData)

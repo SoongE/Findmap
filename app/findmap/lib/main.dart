@@ -15,8 +15,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
-    SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(statusBarColor: Colors.transparent));
+    // SystemChrome.setSystemUIOverlayStyle(
+    //     SystemUiOverlayStyle(statusBarColor: Colors.transparent));
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -46,7 +46,6 @@ class _SplashPageState extends State<SplashPage> {
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
       _checkUser(context);
     });
-    // _checkUser(context);
   }
 
   @override
