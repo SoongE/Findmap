@@ -1,22 +1,33 @@
 let userModel = require('../models/users');
 let scrapModel = require('../models/scrap');
+const regexTest = /^(Y|N)/;
 
 const scrap = {
     postScrap: async (req, res) => {
         const userIdx = req.decoded.userIdx;
-        let {title, contentUrl, thumbnailUrl, summary, comment, categoryIdx, folderIdx} = req.body;
+        let {title, contentUrl, thumbnailUrl, summary, comment, categoryIdx, folderIdx, isFeed} = req.body;
 
         if (!title || !contentUrl || !thumbnailUrl || !summary || !categoryIdx) {
             return res.json({success: false, code: 2101, message: "스크랩할 내용을 넣어주세요."});
         }
+        if (categoryIdx) {
+            if (1<=categoryIdx && categoryIdx<=4) return res.json({success: false, code: 2102, message: "1~4는 상위 관심 카테고리를 나타냅니다. 5~36의 하위 관심 카테고리를 선택해주세요."});
+            if (categoryIdx<1 || categoryIdx>36) return res.json({success: false, code: 2103, message: "선택할 수 있는 범위를 넘어섰습니다. 5~36의 숫자를 입력해주세요."});
+        } 
+
         // comment = null
         if (!folderIdx) {
-        //return res.json({success: false, code: 2103, message: "폴더를 지정해주세요."});
+        //return res.json({success: false, code: 2104, message: "folderIdx를 입력해주세요."});
             folderIdx = 0; //기본 폴더
         }
+        //if (folderTest) return res.json({success: false, code: 2105, message: "존재하지 않는 folderIdx입니다."});
+
+        if (!isFeed) return res.json({success: false, code: 2103, message: "isFeed 값을 입력해 주세요."});
+        if(!regexTest.test(isFeed)) return res.json({success: false, code: 2103, message: "isFeed 형식이 올바르지 않습니다. Y 혹은 N의 형태로 입력해주세요."});
+        
 
         try{
-            const result = await scrapModel.postScrap(userIdx, title, contentUrl, thumbnailUrl, summary, comment, categoryIdx, folderIdx, feedIdx);
+            const result = await scrapModel.postScrap(userIdx, title, contentUrl, thumbnailUrl, summary, comment, categoryIdx, folderIdx, isFeed);
 
             return res.json({success: true, code: 1000, message: "스크랩 성공", result: {"insertId": result[0].insertId}});
         } catch(err){
@@ -194,6 +205,7 @@ const scrap = {
             if(!folderIdx){
                 return res.json({success: false, code: 2114, message: "folderIdx를 입력해주세요"});
             }
+            //if (folderTest) return res.json({success: false, code: 2105, message: "존재하지 않는 folderIdx입니다."});
             
             const result = await scrapModel.updateScrapFolder(userIdx, scrapIdx, folderIdx);
             const scrapRow = await scrapModel.selectScrapDetail(userIdx, scrapIdx);
