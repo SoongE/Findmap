@@ -126,7 +126,6 @@ class _ArchivePageState extends State<ArchivePage> {
     return Slidable(
       key: UniqueKey(),
 
-      // The start action pane is the one at the left or the top side.
       startActionPane: ActionPane(
         extentRatio: 0.5,
         motion: const DrawerMotion(),
@@ -149,14 +148,12 @@ class _ArchivePageState extends State<ArchivePage> {
         ],
       ),
 
-      // The end action pane is the one at the right or the bottom side.
       endActionPane: ActionPane(
         extentRatio: 0.2,
         motion: const DrawerMotion(),
-        // A pane can dismiss the Slidable.
-        dismissible: DismissiblePane(onDismissed: () {
-          print("DISSMISS");
-        }),
+        dismissible: DismissiblePane(
+          onDismissed: () => fetchDelete(context, post),
+        ),
         children: [
           SlidableAction(
             backgroundColor: Color(0xFFFE4A49),
@@ -168,8 +165,6 @@ class _ArchivePageState extends State<ArchivePage> {
         ],
       ),
 
-      // The child of the Slidable is what the user sees when the
-      // component is not dragged.
       child: PostTile(
           url: post.contentUrl,
           thumbnail: post.thumbnailUrl,
@@ -178,5 +173,24 @@ class _ArchivePageState extends State<ArchivePage> {
           author: post.comment,
           source: post.contentUrl.substring(0, 5)),
     );
+  }
+
+  void fetchDelete(BuildContext context, Post post) async {
+    final response = await http.patch(
+      Uri.http(BASEURL, '/scrap/${post.idx}/delete'),
+      headers: {
+        "token": widget.user.accessToken,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = jsonDecode(response.body);
+      if (responseBody['success'] == false) {
+        showSnackbar(context, responseBody['message']);
+      }
+    } else {
+      showSnackbar(context, '서버와 연결이 불안정합니다');
+      throw Exception('Failed to load post');
+    }
   }
 }

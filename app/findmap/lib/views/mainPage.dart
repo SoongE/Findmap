@@ -42,9 +42,17 @@ class _MainPageState extends State<MainPage> {
     MyColors.alarm,
     MyColors.user,
   ];
+  late List<Widget> _widgetOptions;
 
   @override
   void initState() {
+    _widgetOptions = <Widget>[
+      ArchivePage(user: widget.user),
+      SearchPage(),
+      FeedPage(),
+      AlarmPage(),
+      UserPage(user: widget.user),
+    ];
     super.initState();
   }
 
@@ -61,13 +69,7 @@ class _MainPageState extends State<MainPage> {
       "Alarm",
       widget.user.nickName,
     ];
-    List<Widget> _widgetOptions = <Widget>[
-      ArchivePage(user: widget.user),
-      SearchPage(),
-      FeedPage(),
-      AlarmPage(),
-      UserPage(user: widget.user),
-    ];
+
     return SafeArea(
       child: Scaffold(
         extendBody: false,
