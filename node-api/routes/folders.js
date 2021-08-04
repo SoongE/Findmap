@@ -2,29 +2,22 @@ var express = require('express');
 var router = express.Router();
 
 const folder = require('../controllers/folders');
-const scrap = require('../controllers/scrap');
 const auth = require('../middlewares/auth');
-//const upload = require('../../modules/multer');
 
-/*
 // 폴더 등록
-app.post("/", auth.checkToken, folder.insertFolder);
+router.post("/", auth.checkToken, folder.postFolder);
 
-// 폴더 보기
-app.get("/:folderIdx", auth.checkToken, folder.getFolder);
+// 폴더 전체 보기
+router.get("/", auth.checkToken, folder.getFolder);
 
-// 폴더 수정
-app.patch("/:folderIdx", auth.checkToken, folder.patchFolder);
+// 폴더 상세 보기
+router.get("/:folderIdx/detail", auth.checkToken, folder.getFolderDetail);
+
+// 폴더 이름 수정
+router.patch("/:folderIdx/name", auth.checkToken, folder.patchFolder);
 
 // 폴더 삭제
-app.patch("/:folderIdx/status", auth.checkToken, folder.deleteFolder);
-
-// 스크랩 등록
-app.post("/:folderIdx/link", auth.checkToken, scrap.postScrap);
-
-// 폴더 서치
-app.get("/search", auth.checkToken, folder.searchFolder);
- */
+router.patch("/:folderIdx/delete", auth.checkToken, folder.deleteFolder);
 
 module.exports = router;
 
