@@ -46,7 +46,7 @@ Widget imageLoader(AnimationController controller, String url) {
               ],
             ),
             onTap: () {
-              state.reLoadImage();
+              // state.reLoadImage();
             },
           );
       }
