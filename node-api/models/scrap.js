@@ -144,6 +144,28 @@ const scrap = {
             console.log('스크랩 삭제 ERROR : ', err);
             throw err;
         }
+    },
+    moveFolderScrap: async(userIdx, folderIdx, moveFolderIdx) => {
+        const query = `UPDATE ScrapTB SET folderIdx = ? WHERE userIdx = ? and folderIdx = ?;`
+        const params = [moveFolderIdx, userIdx, folderIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('폴더 안 스크랩 이동 ERROR : ', err);
+            throw err;
+        }
+    },
+    deleteFolderScrap: async(userIdx, folderIdx) => {
+        const query = `UPDATE ScrapTB SET status = 'D' WHERE userIdx = ? and folderIdx = ?;`
+        const params = [userIdx, folderIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('폴더 안 스크랩 삭제 ERROR : ', err);
+            throw err;
+        }
     }
 }
 

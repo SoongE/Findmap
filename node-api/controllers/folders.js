@@ -1,4 +1,5 @@
 let folderModel = require('../models/folders');
+let scrapModel = require('../models/scrap');
 
 const folder = {
     postFolder: async (req, res) => {
@@ -73,7 +74,46 @@ const folder = {
                 return res.json({success: true, code: 3201, message: "폴더가 존재하지 않습니다."});
             }
             const result = await folderModel.deleteFolder(userIdx,folderIdx);
+
             return res.json({success: true, code: 1000, message: "폴더 삭제 성공"});
+        }catch(err){
+            console.log(error);
+            return res.status(4000).send(`Error: ${err.message}`);
+        }
+    },
+    deleteFolderOnly: async (req, res) => {
+        const userIdx = req.decoded.userIdx;
+        const folderIdx = req.params.folderIdx;
+        let {moveFolderIdx} = req.body;
+        if(!moveFolderIdx) return res.json({success: true, code: 2202, message: "moveFolderIdx를 입력해 주세요."});
+
+        try{
+            const checkFolder = await folderModel.selectFolderDetail(userIdx,folderIdx);
+            if (checkFolder[0] == undefined){
+                return res.json({success: true, code: 3201, message: "폴더가 존재하지 않습니다."});
+            }
+            const scrapResult = await scrapModel.moveFolderScrap(userIdx,folderIdx,moveFolderIdx);
+            const result = await folderModel.deleteFolder(userIdx,folderIdx);
+
+            return res.json({success: true, code: 1000, message: "폴더 삭제 및 하위 스크랩 이동 성공"});
+        }catch(err){
+            console.log(error);
+            return res.status(4000).send(`Error: ${err.message}`);
+        }
+    },
+    deleteFolderAll: async (req, res) => {
+        const userIdx = req.decoded.userIdx;
+        const folderIdx = req.params.folderIdx;
+        try{
+            const checkFolder = await folderModel.selectFolderDetail(userIdx,folderIdx);
+            if (checkFolder[0] == undefined){
+                return res.json({success: true, code: 3201, message: "폴더가 존재하지 않습니다."});
+            }
+
+            const scrapResult = await scrapModel.deleteFolderScrap(userIdx,folderIdx);
+            const result = await folderModel.deleteFolder(userIdx,folderIdx);
+
+            return res.json({success: true, code: 1000, message: "폴더 삭제 및 하위 스크랩 삭제 성공"});
         }catch(err){
             console.log(error);
             return res.status(4000).send(`Error: ${err.message}`);
