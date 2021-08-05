@@ -1,14 +1,17 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:findmap/models/user.dart';
 import 'package:findmap/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
 class SharePage extends StatefulWidget {
-  SharePage({Key? key, required this.url}) : super(key: key);
+  SharePage({Key? key, required this.url, required this.user})
+      : super(key: key);
   final String url;
+  final User user;
 
   @override
   _SharePageState createState() => _SharePageState();
@@ -25,6 +28,7 @@ class _SharePageState extends State<SharePage> {
 
   @override
   void initState() {
+
     super.initState();
   }
 
@@ -65,7 +69,6 @@ class _SharePageState extends State<SharePage> {
             onPressed: () {
               fetchSaveScrap(_titleScrapPage.text, _newFolderName.text,
                   _commentScrapPage.text, _isPublic);
-              SystemNavigator.pop();
             },
           ),
         ],
@@ -328,7 +331,7 @@ class _SharePageState extends State<SharePage> {
     );
   }
 
-  _showDialog() async {
+  void _showDialog() async {
     await showDialog<String>(
       context: context,
       builder: (context) {
@@ -379,25 +382,54 @@ class _SharePageState extends State<SharePage> {
     Map<String, dynamic> body = {
       "title": title,
       "comment": comment,
+      "summary": "SUMMARY",
       "contentUrl": widget.url,
       "thumbnailUrl": "thumbnailUrl",
-      "folderIdx": '12',
+      "folderIdx": '1',
       "categoryIdx": '23',
+      "isFeed": _isPublic ? 'Y' : 'N',
     };
     final response = await http.post(
-      Uri.http(BASEURL, '/scarp'),
-      headers: {HttpHeaders.contentTypeHeader: "application/json"},
+      Uri.http(BASEURL, '/scrap'),
+      headers: {
+        HttpHeaders.contentTypeHeader: "application/json",
+        "token": widget.user.accessToken,
+      },
       body: json.encode(body),
     );
 
     if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
+      print(responseBody);
       if (responseBody['success'] == false) {
         showSnackbar(context, responseBody['message']);
       }
+      SystemNavigator.pop();
     } else {
       showSnackbar(context, '서버와 연결이 불안정합니다');
-      throw Exception('Failed to load post');
+      throw Exception('Failed to load post!!! ${response.body}');
     }
   }
+
+// Future<> fetchGetFolderList() async {
+//   final response = await http.get(
+//     Uri.http(BASEURL, '/folders'),
+//     headers: {
+//       HttpHeaders.contentTypeHeader: "application/json",
+//       "token": widget.user.accessToken,
+//     },
+//   );
+//
+//   if (response.statusCode == 200) {
+//     var responseBody = jsonDecode(response.body);
+//     print(responseBody);
+//
+//     if (responseBody['success'] == false) {
+//       showSnackbar(context, responseBody['message']);
+//     }
+//   } else {
+//     showSnackbar(context, '서버와 연결이 불안정합니다');
+//     throw Exception('Failed to load post!!! ${response.body}');
+//   }
+// }
 }

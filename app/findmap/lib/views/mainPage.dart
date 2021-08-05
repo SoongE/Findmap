@@ -64,8 +64,9 @@ class _MainPageState extends State<MainPage> {
 
   void _handleSharedData(String sharedData) {
     sharedData.startsWith("http")
-        ? Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => SharePage(url: sharedData)))
+        ? Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) =>
+                SharePage(url: sharedData, user: widget.user)))
         : null;
   }
 
