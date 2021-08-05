@@ -1,11 +1,9 @@
 const pool = require('../modules/pool');
-const db = require('../config/database');
-const { param } = require('../routes');
 
 const scrap = {
-    postScrap: async(userIdx, title, contentUrl, thumbnailUrl, summary, comment, categoryIdx, folderIdx) => {
-        const fields = 'userIdx, title, contentUrl, thumbnailUrl, summary, comment, categoryIdx, folderIdx';
-        const values = [userIdx, title, contentUrl, thumbnailUrl, summary, comment, categoryIdx, folderIdx];
+    postScrap: async(userIdx, title, contentUrl, thumbnailUrl, summary, comment, categoryIdx, folderIdx, isFeed) => {
+        const fields = 'userIdx, title, contentUrl, thumbnailUrl, summary, comment, categoryIdx, folderIdx, isFeed';
+        const values = [userIdx, title, contentUrl, thumbnailUrl, summary, comment, categoryIdx, folderIdx, isFeed];
         const query = `INSERT INTO ScrapTB(${fields}) VALUES(?,?,?,?,?,?,?,?,?)`;
         try {
             const result = await pool.queryParamArr(query, values);
@@ -16,8 +14,7 @@ const scrap = {
         }
     },
     selectScrap: async(userIdx) => {
-        const query = `SELECT idx, title, contentUrl, thumbnailUrl, summary, comment, categoryIdx, folderIdx
-        FROM ScrapTB WHERE userIdx = ? and status = 'Y' ORDER BY updatedAt DESC`;
+        const query = `SELECT * FROM ScrapTB WHERE userIdx = ? and status = 'Y' ORDER BY createdAt DESC`;
         const params = [userIdx];
         try {
             const result = await pool.queryParam(query,params);
@@ -28,8 +25,7 @@ const scrap = {
         }
     },
     selectScrapByFolder: async(userIdx,folderIdx) => {
-        const query = `SELECT idx, title, contentUrl, thumbnailUrl, summary, comment, categoryIdx, folderIdx 
-        FROM ScrapTB WHERE userIdx = ? and folderIdx = ? and status = 'Y' ORDER BY updatedAt DESC`;
+        const query = `SELECT * FROM ScrapTB WHERE userIdx = ? and folderIdx = ? and status = 'Y' ORDER BY createdAt DESC`;
         const params = [userIdx,folderIdx];
         try {
             const result = await pool.queryParam(query,params);
@@ -40,8 +36,7 @@ const scrap = {
         }
     },
     selectScrapByCategory: async(userIdx,categoryIdx) => {
-        const query = `SELECT idx, title, contentUrl, thumbnailUrl, summary, comment, categoryIdx, folderIdx 
-        FROM ScrapTB WHERE userIdx = ? and categoryIdx = ? and status = 'Y'ORDER BY updatedAt DESC`;
+        const query = `SELECT * FROM ScrapTB WHERE userIdx = ? and categoryIdx = ? and status = 'Y'ORDER BY createdAt DESC`;
         const params = [userIdx,categoryIdx];
         try {
             const result = await pool.queryParam(query,params);
@@ -52,8 +47,7 @@ const scrap = {
         }
     },
     selectScrapByDate: async(userIdx,date) => {
-        const query = `SELECT idx, title, contentUrl, thumbnailUrl, summary, comment, categoryIdx, folderIdx
-        FROM ScrapTB WHERE userIdx = ? and date_format(updatedAt, '%Y%m%d')= ? and status = 'Y' ORDER BY updatedAt DESC`;
+        const query = `SELECT * FROM ScrapTB WHERE userIdx = ? and date_format(updatedAt, '%Y%m%d')= ? and status = 'Y' ORDER BY createdAt DESC`;
         const params = [userIdx,date];
         try {
             const result = await pool.queryParam(query,params);
@@ -64,8 +58,7 @@ const scrap = {
         }
     },
     selectScrapDetail: async(userIdx, scrapIdx) => {
-        const query = `SELECT idx, title, contentUrl, thumbnailUrl, summary, comment, categoryIdx, folderIdx, createdAt, updatedAt, status 
-        FROM ScrapTB WHERE userIdx = ? and idx = ? and status = 'Y'ORDER BY updatedAt DESC`;
+        const query = `SELECT * FROM ScrapTB WHERE userIdx = ? and idx = ? and status = 'Y'`;
         const params = [userIdx, scrapIdx];
         try {
             const result = await pool.queryParam(query,params);
@@ -119,6 +112,28 @@ const scrap = {
             throw err;
         }
     },
+    updateScrapFeedUp: async(userIdx, scrapIdx) => {
+        const query = `UPDATE ScrapTB SET isFeed = 'Y' WHERE userIdx = ? and idx = ?;`
+        const params = [userIdx, scrapIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('스크랩 isFeed 수정 ERROR : ', err);
+            throw err;
+        }
+    },
+    updateScrapFeedDown: async(userIdx, scrapIdx) => {
+        const query = `UPDATE ScrapTB SET isFeed = 'N' WHERE userIdx = ? and idx = ?;`
+        const params = [userIdx, scrapIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('스크랩 isFeed 수정 ERROR : ', err);
+            throw err;
+        }
+    },
     deleteScrap: async(userIdx, scrapIdx) => {
         const query = `UPDATE ScrapTB SET status = 'D' WHERE userIdx = ? and idx = ?;`
         const params = [userIdx, scrapIdx];
@@ -129,24 +144,29 @@ const scrap = {
             console.log('스크랩 삭제 ERROR : ', err);
             throw err;
         }
+    },
+    moveFolderScrap: async(userIdx, folderIdx, moveFolderIdx) => {
+        const query = `UPDATE ScrapTB SET folderIdx = ? WHERE userIdx = ? and folderIdx = ?;`
+        const params = [moveFolderIdx, userIdx, folderIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('폴더 안 스크랩 이동 ERROR : ', err);
+            throw err;
+        }
+    },
+    deleteFolderScrap: async(userIdx, folderIdx) => {
+        const query = `UPDATE ScrapTB SET status = 'D' WHERE userIdx = ? and folderIdx = ?;`
+        const params = [userIdx, folderIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('폴더 안 스크랩 삭제 ERROR : ', err);
+            throw err;
+        }
     }
 }
 
 module.exports = scrap;
-
-/*
-    checkScrap: async(userIdx) => {
-        const query = `SELECT idx FROM ScrapTB 
-        WHERE userIdx = ? and title = ? and contentUrl = ? and thumbnailUrl = ? and summary = ? and comment = ? 
-        and categoryIdx = ? and folderIdx = ? and feedIdx = ?`;
-        const params = [userIdx, title, contentUrl, thumbnailUrl, summary, comment, categoryIdx, folderIdx, feedIdx];
-        try {
-            const result = await pool.queryParam(query,params);
-            return result;
-        } catch (err) {
-            console.log('scrap 확인 ERROR: ', err);
-            throw err;
-        }
-    }
-*/
-
