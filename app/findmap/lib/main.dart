@@ -15,8 +15,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
-    SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(statusBarColor: Colors.transparent));
+    // SystemChrome.setSystemUIOverlayStyle(
+    //     SystemUiOverlayStyle(statusBarColor: Colors.transparent));
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -46,7 +46,6 @@ class _SplashPageState extends State<SplashPage> {
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
       _checkUser(context);
     });
-    // _checkUser(context);
   }
 
   @override
@@ -62,7 +61,6 @@ class _SplashPageState extends State<SplashPage> {
     if (_userStatus) {
       var jsonStorage = jsonDecode(json.encode(userInfo));
       jsonStorage['idx'] = int.parse(jsonStorage['idx']);
-      print(jsonStorage);
       var user = User.fromJson(jsonStorage);
 
       Navigator.of(context).pushReplacement(

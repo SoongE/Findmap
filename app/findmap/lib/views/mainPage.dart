@@ -3,6 +3,7 @@ import 'package:findmap/models/user.dart';
 import 'package:findmap/src/my_colors.dart';
 import 'package:findmap/views/alarm.dart';
 import 'package:findmap/views/archive/archive.dart';
+import 'package:findmap/views/archive/share.dart';
 import 'package:findmap/views/feed.dart';
 import 'package:findmap/views/search/search.dart';
 import 'package:findmap/views/userPage.dart';
@@ -10,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
+
+import 'archive/share_service.dart';
 
 class MainPage extends StatefulWidget {
   final User user;
@@ -42,11 +45,29 @@ class _MainPageState extends State<MainPage> {
     MyColors.alarm,
     MyColors.user,
   ];
+  late List<Widget> _widgetOptions;
 
   @override
   void initState() {
+    ShareService()
+      ..onDataReceived = _handleSharedData
+      ..getSharedData().then(_handleSharedData);
+    _widgetOptions = <Widget>[
+      ArchivePage(user: widget.user),
+      SearchPage(),
+      FeedPage(),
+      AlarmPage(),
+      UserPage(user: widget.user),
+    ];
     super.initState();
-    print(widget.user.toJson().toString());
+  }
+
+  void _handleSharedData(String sharedData) {
+    sharedData.startsWith("http")
+        ? Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) =>
+                SharePage(url: sharedData, user: widget.user)))
+        : null;
   }
 
   @override
@@ -62,13 +83,7 @@ class _MainPageState extends State<MainPage> {
       "Alarm",
       widget.user.nickName,
     ];
-    List<Widget> _widgetOptions = <Widget>[
-      ArchivePage(user: widget.user),
-      SearchPage(),
-      FeedPage(),
-      AlarmPage(),
-      UserPage(user: widget.user),
-    ];
+
     return SafeArea(
       child: Scaffold(
         extendBody: false,

@@ -14,7 +14,6 @@ Widget imageLoader(AnimationController controller, String url) {
             "assets/loading.gif",
             fit: BoxFit.fill,
           );
-          break;
 
         case LoadState.completed:
           controller.forward();
@@ -24,7 +23,7 @@ Widget imageLoader(AnimationController controller, String url) {
               image: state.extendedImageInfo?.image,
             ),
           );
-          break;
+
         case LoadState.failed:
           controller.reset();
           return GestureDetector(
@@ -47,10 +46,9 @@ Widget imageLoader(AnimationController controller, String url) {
               ],
             ),
             onTap: () {
-              state.reLoadImage();
+              // state.reLoadImage();
             },
           );
-          break;
       }
     },
   );
