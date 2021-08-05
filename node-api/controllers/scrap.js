@@ -18,10 +18,8 @@ const scrap = {
             if (categoryIdx<1 || categoryIdx>36) return res.json({success: false, code: 2103, message: "선택할 수 있는 범위를 넘어섰습니다. 5~36의 숫자를 입력해주세요."});
         } 
 
-        if (!folderIdx) {
-            //return res.json({success: false, code: 2104, message: "folderIdx를 입력해주세요."});
-            folderIdx = 0; //기본 폴더
-        }
+        // folderIdx = null
+        // if (!folderIdx) return res.json({success: false, code: 2104, message: "folderIdx를 입력해주세요."});
 
         if (!isFeed) return res.json({success: false, code: 2105, message: "isFeed 값을 입력해 주세요."});
         if(!regexTest.test(isFeed)) return res.json({success: false, code: 2106, message: "isFeed 형식이 올바르지 않습니다. Y 혹은 N의 형태로 입력해주세요."});
@@ -29,7 +27,7 @@ const scrap = {
 
         try{
             const checkFolder = await folderModel.selectFolderDetail(userIdx,folderIdx);
-            if (checkFolder[0] == undefined){
+            if (folderIdx && (checkFolder[0] == undefined)){
                 return res.json({success: true, code: 3102, message: "폴더가 존재하지 않습니다."});
             }
 
