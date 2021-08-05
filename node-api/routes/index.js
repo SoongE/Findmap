@@ -9,5 +9,6 @@ router.get('/', function(req, res, next) {
 router.use('/test', require('./test'));
 router.use('/users', require('./users'));
 router.use('/scrap',require('./scrap'));
+router.use('/folders',require('./folders'));
 
 module.exports = router;
