@@ -112,6 +112,17 @@ const scrap = {
             throw err;
         }
     },
+    updateScrapFeed: async(userIdx, scrapIdx, isFeed) => {
+        const query = `UPDATE ScrapTB SET isFeed = ? WHERE userIdx = ? and idx = ?;`
+        const params = [isFeed, userIdx, scrapIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('스크랩 isFeed 수정 ERROR : ', err);
+            throw err;
+        }
+    },
     updateScrapFeedUp: async(userIdx, scrapIdx) => {
         const query = `UPDATE ScrapTB SET isFeed = 'Y' WHERE userIdx = ? and idx = ?;`
         const params = [userIdx, scrapIdx];

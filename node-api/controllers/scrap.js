@@ -131,6 +131,44 @@ const scrap = {
           return res.status(4000).send(`Error: ${err.message}`);
       }
     },
+    patchScrap: async (req, res) => {
+        const userIdx = req.decoded.userIdx;
+        const scrapIdx = req.params.scrapIdx;
+        let {title, summary, comment, folderIdx, isFeed} = req.body;
+        if(!title && !summary && !comment && !folderIdx && !isFeed) {
+            return res.json({success: false, code: 2125, message: "수정할 내용을 입력해주세요. (title, summary, coommetn, folderIdx, isFeed)"});
+        }
+        if(isFeed && (!regexTest.test(isFeed))) return res.json({success: false, code: 2106, message: "isFeed 형식이 올바르지 않습니다. Y 혹은 N의 형태로 입력해주세요."});
+        
+        try{
+            const checkScrap = await scrapModel.selectScrapDetail(userIdx, scrapIdx);
+            if (checkScrap[0] == undefined) {
+            return res.json({success: true, code: 3101, message: "스크랩이 존재하지 않습니다."});
+            }
+            if (title) {
+                const titleResult = await scrapModel.updateScrapTitle(userIdx, scrapIdx, title);
+            }
+            if (summary) {
+                const summaryResult = await scrapModel.updateScrapSummary(userIdx, scrapIdx, summary);
+            }
+            if (comment) {
+                const commentResult = await scrapModel.updateScrapComment(userIdx, scrapIdx, comment);
+            }
+            if (folderIdx) {
+                const folderResult = await scrapModel.updateScrapFolder(userIdx, scrapIdx, folderIdx);
+            }
+            if (isFeed) {
+                const feedResult = await scrapModel.updateScrapFeed(userIdx, scrapIdx, isFeed);
+            }
+            
+            const scrapRow = await scrapModel.selectScrapDetail(userIdx, scrapIdx);
+
+            return res.json({success: true, code: 1000, message: "스크랩 선택 수정 성공", result: scrapRow});
+        }catch(err){
+            console.log(error);
+            return res.status(4000).send(`Error: ${err.message}`);
+        }
+    },
     patchScrapTitle: async (req, res) => {
         const userIdx = req.decoded.userIdx;
         const scrapIdx = req.params.scrapIdx;
