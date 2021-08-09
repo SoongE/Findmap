@@ -28,7 +28,6 @@ class _SharePageState extends State<SharePage> {
 
   @override
   void initState() {
-
     super.initState();
   }
 
