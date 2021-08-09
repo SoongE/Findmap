@@ -134,7 +134,7 @@ const scrap = {
         const scrapIdx = req.params.scrapIdx;
         let {title, summary, comment, folderIdx, isFeed} = req.body;
         if(!title && !summary && !comment && !folderIdx && !isFeed) {
-            return res.json({success: false, code: 2125, message: "수정할 내용을 입력해주세요. (title, summary, coomment, folderIdx, isFeed)"});
+            return res.json({success: false, code: 2125, message: "수정할 내용을 입력해주세요. (title, summary, comment, folderIdx, isFeed)"});
         }
         if(isFeed && (!regexTest.test(isFeed))) return res.json({success: false, code: 2106, message: "isFeed 형식이 올바르지 않습니다. Y 혹은 N의 형태로 입력해주세요."});
         
