@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:findmap/models/post.dart';
+import 'package:findmap/models/post_folder.dart';
 import 'package:findmap/models/user.dart';
 import 'package:findmap/utils/utils.dart';
 import 'package:findmap/views/archive/post_tile.dart';
@@ -19,10 +21,13 @@ class ArchivePage extends StatefulWidget {
 }
 
 class _ArchivePageState extends State<ArchivePage> {
-  List<Post> archiveList = <Post>[];
+  List<Post> _archiveList = <Post>[];
+  List<PostFolder> _folderList = <PostFolder>[];
+  late String archiveTitle = '';
 
   @override
   void initState() {
+    archiveTitle = '아카이브';
     super.initState();
   }
 
@@ -33,20 +38,42 @@ class _ArchivePageState extends State<ArchivePage> {
         appBar: AppBar(
           backgroundColor: Colors.white,
           titleTextStyle: TextStyle(color: Colors.black),
-          title: Row(
-            children: [
-              Text(
-                "아카이브",
-                style:
-                    TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-              ),
-              IconButton(
-                splashRadius: 1,
-                icon: Icon(LineIcons.angleDown, color: Colors.black),
-                onPressed: () {},
-              ),
-            ],
-          ),
+          title: FutureBuilder<List<PostFolder>>(
+              future: fetchGetFolderList(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data != null) {
+                  List<PostFolder>? data = snapshot.data;
+                  return DropdownButton(
+                    items: data!
+                        .map<DropdownMenuItem<PostFolder>>((PostFolder value) {
+                      return DropdownMenuItem<PostFolder>(
+                        value: value,
+                        child: Text(value.name),
+                      );
+                    }).toList(),
+                    underline: Container(),
+                    icon: Icon(Icons.keyboard_arrow_down_outlined),
+                    elevation: 16,
+                    hint: Text(
+                      archiveTitle,
+                      style: TextStyle(
+                          color: Colors.black, fontWeight: FontWeight.bold),
+                    ),
+                    style: TextStyle(
+                        color: Colors.black, fontWeight: FontWeight.bold),
+                    onChanged: (PostFolder? newValue) {
+                      setState(
+                        () => archiveTitle = newValue!.name,
+                      );
+                    },
+                  );
+                }
+                return Text(
+                  archiveTitle,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, color: Colors.black),
+                );
+              }),
           elevation: 0,
           actions: [
             IconButton(
@@ -125,7 +152,6 @@ class _ArchivePageState extends State<ArchivePage> {
   Widget _slider(Post post) {
     return Slidable(
       key: UniqueKey(),
-
       startActionPane: ActionPane(
         extentRatio: 0.5,
         motion: const DrawerMotion(),
@@ -147,7 +173,6 @@ class _ArchivePageState extends State<ArchivePage> {
           ),
         ],
       ),
-
       endActionPane: ActionPane(
         extentRatio: 0.2,
         motion: const DrawerMotion(),
@@ -164,7 +189,6 @@ class _ArchivePageState extends State<ArchivePage> {
           ),
         ],
       ),
-
       child: PostTile(
           url: post.contentUrl,
           thumbnail: post.thumbnailUrl,
@@ -187,6 +211,33 @@ class _ArchivePageState extends State<ArchivePage> {
       var responseBody = jsonDecode(response.body);
       if (responseBody['success'] == false) {
         showSnackbar(context, responseBody['message']);
+      }
+    } else {
+      showSnackbar(context, '서버와 연결이 불안정합니다');
+      throw Exception('Failed to load post');
+    }
+  }
+
+  Future<List<PostFolder>> fetchGetFolderList() async {
+    final response = await http.get(
+      Uri.http(BASEURL, '/folders'),
+      headers: {
+        HttpHeaders.contentTypeHeader: "application/json",
+        "token": widget.user.accessToken,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = jsonDecode(response.body);
+
+      if (responseBody['success'])
+        return responseBody['result']
+            .map<PostFolder>((json) => PostFolder.fromJson(json))
+            .toList();
+      else {
+        showSnackbar(context, responseBody['message']);
+        throw Exception(
+            'fetchGetArchive Exception: ${responseBody['message']}');
       }
     } else {
       showSnackbar(context, '서버와 연결이 불안정합니다');
