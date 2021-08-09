@@ -47,7 +47,7 @@ const scrap = {
         }
     },
     selectScrapByDate: async(userIdx,date) => {
-        const query = `SELECT * FROM ScrapTB WHERE userIdx = ? and date_format(updatedAt, '%Y%m%d')= ? and status = 'Y' ORDER BY createdAt DESC`;
+        const query = `SELECT * FROM ScrapTB WHERE userIdx = ? and date_format(createdAt, '%Y%m%d')= ? and status = 'Y' ORDER BY createdAt DESC`;
         const params = [userIdx,date];
         try {
             const result = await pool.queryParam(query,params);
