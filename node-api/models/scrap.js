@@ -47,7 +47,7 @@ const scrap = {
         }
     },
     selectScrapByDate: async(userIdx,date) => {
-        const query = `SELECT * FROM ScrapTB WHERE userIdx = ? and date_format(updatedAt, '%Y%m%d')= ? and status = 'Y' ORDER BY createdAt DESC`;
+        const query = `SELECT * FROM ScrapTB WHERE userIdx = ? and date_format(createdAt, '%Y%m%d')= ? and status = 'Y' ORDER BY createdAt DESC`;
         const params = [userIdx,date];
         try {
             const result = await pool.queryParam(query,params);
@@ -109,6 +109,17 @@ const scrap = {
             return [result];
         } catch (err) {
             console.log('스크랩 folderIdx 수정 ERROR : ', err);
+            throw err;
+        }
+    },
+    updateScrapFeed: async(userIdx, scrapIdx, isFeed) => {
+        const query = `UPDATE ScrapTB SET isFeed = ? WHERE userIdx = ? and idx = ?;`
+        const params = [isFeed, userIdx, scrapIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('스크랩 isFeed 수정 ERROR : ', err);
             throw err;
         }
     },
