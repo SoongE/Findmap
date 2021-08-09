@@ -58,8 +58,6 @@ const scrap = {
         const userIdx = req.decoded.userIdx;
         const folderIdx = req.params.folderIdx;
 
-        if (!folderIdx) return res.json({success: false, code: 2104, message: "조회할 folderIdx를 입력해 주세요."});
-
         try {
             const checkFolder = await folderModel.selectFolderDetail(userIdx,folderIdx);
             if (checkFolder[0] == undefined){
@@ -81,7 +79,6 @@ const scrap = {
         const userIdx = req.decoded.userIdx;
         const categoryIdx = req.params.categoryIdx;
 
-        if (!categoryIdx) return res.json({success: false, code: 2102, message: "조회할 categoryIdx를 입력해 주세요."});
         if (1<=categoryIdx && categoryIdx<=4) return res.json({success: false, code: 2102, message: "1~4는 상위 관심 카테고리를 나타냅니다. 5~36의 하위 관심 카테고리를 선택해주세요."});
         if (categoryIdx<1 || categoryIdx>36) return res.json({success: false, code: 2103, message: "선택할 수 있는 범위를 넘어섰습니다. 5~36의 숫자를 입력해주세요."});
 
@@ -100,8 +97,7 @@ const scrap = {
     getScrapByDate: async (req, res) => {
         const userIdx = req.decoded.userIdx;
         const date = req.params.date;
-        
-        if (!date) return res.json({success: false, code: 2110, message: "조회할 date를 입력해 주세요. 이 때, 형식은 yyyymmdd 로 입력해주세요. (예시:20210723)"});
+
         if(!regexDate .test(date)){
             return res.json({success: false, code: 2111, message: "입력한 date 형식이 올바르지 않습니다. yyyymmdd 형태로 입력해주세요. (예시:20210723)"});
         }
