@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:findmap/models/post_folder.dart';
 import 'package:findmap/models/user.dart';
 import 'package:findmap/utils/utils.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +29,9 @@ class _SharePageState extends State<SharePage> {
 
   @override
   void initState() {
-
+    fetchGetFolderList().then((value) => {
+          _folderList = value,
+        });
     super.initState();
   }
 
@@ -411,25 +414,30 @@ class _SharePageState extends State<SharePage> {
     }
   }
 
-// Future<> fetchGetFolderList() async {
-//   final response = await http.get(
-//     Uri.http(BASEURL, '/folders'),
-//     headers: {
-//       HttpHeaders.contentTypeHeader: "application/json",
-//       "token": widget.user.accessToken,
-//     },
-//   );
-//
-//   if (response.statusCode == 200) {
-//     var responseBody = jsonDecode(response.body);
-//     print(responseBody);
-//
-//     if (responseBody['success'] == false) {
-//       showSnackbar(context, responseBody['message']);
-//     }
-//   } else {
-//     showSnackbar(context, '서버와 연결이 불안정합니다');
-//     throw Exception('Failed to load post!!! ${response.body}');
-//   }
-// }
+  Future<List<PostFolder>> fetchGetFolderList() async {
+    final response = await http.get(
+      Uri.http(BASEURL, '/folders'),
+      headers: {
+        HttpHeaders.contentTypeHeader: "application/json",
+        "token": widget.user.accessToken,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = jsonDecode(response.body);
+
+      if (responseBody['success'])
+        return responseBody['result']
+            .map<PostFolder>((json) => PostFolder.fromJson(json))
+            .toList();
+      else {
+        showSnackbar(context, responseBody['message']);
+        throw Exception(
+            'fetchGetArchive Exception: ${responseBody['message']}');
+      }
+    } else {
+      showSnackbar(context, '서버와 연결이 불안정합니다');
+      throw Exception('Failed to load post');
+    }
+  }
 }

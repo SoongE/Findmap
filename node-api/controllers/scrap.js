@@ -56,9 +56,7 @@ const scrap = {
     },
     getScrapByFolder: async (req, res) => {
         const userIdx = req.decoded.userIdx;
-        let {folderIdx} = req.body;
-
-        if (!folderIdx) return res.json({success: false, code: 2104, message: "조회할 folderIdx를 입력해 주세요."});
+        const folderIdx = req.params.folderIdx;
 
         try {
             const checkFolder = await folderModel.selectFolderDetail(userIdx,folderIdx);
@@ -79,8 +77,8 @@ const scrap = {
     },
     getScrapByCategory: async (req, res) => {
         const userIdx = req.decoded.userIdx;
-        let {categoryIdx} = req.body;
-        if (!categoryIdx) return res.json({success: false, code: 2102, message: "조회할 categoryIdx를 입력해 주세요."});
+        const categoryIdx = req.params.categoryIdx;
+
         if (1<=categoryIdx && categoryIdx<=4) return res.json({success: false, code: 2102, message: "1~4는 상위 관심 카테고리를 나타냅니다. 5~36의 하위 관심 카테고리를 선택해주세요."});
         if (categoryIdx<1 || categoryIdx>36) return res.json({success: false, code: 2103, message: "선택할 수 있는 범위를 넘어섰습니다. 5~36의 숫자를 입력해주세요."});
 
@@ -98,8 +96,8 @@ const scrap = {
     },
     getScrapByDate: async (req, res) => {
         const userIdx = req.decoded.userIdx;
-        let {date} = req.body;
-        if (!date) return res.json({success: false, code: 2110, message: "조회할 date를 입력해 주세요. 이 때, 형식은 yyyymmdd 로 입력해주세요. (예시:20210723)"});
+        const date = req.params.date;
+
         if(!regexDate .test(date)){
             return res.json({success: false, code: 2111, message: "입력한 date 형식이 올바르지 않습니다. yyyymmdd 형태로 입력해주세요. (예시:20210723)"});
         }
@@ -130,6 +128,44 @@ const scrap = {
           console.log(error);
           return res.status(4000).send(`Error: ${err.message}`);
       }
+    },
+    patchScrap: async (req, res) => {
+        const userIdx = req.decoded.userIdx;
+        const scrapIdx = req.params.scrapIdx;
+        let {title, summary, comment, folderIdx, isFeed} = req.body;
+        if(!title && !summary && !comment && !folderIdx && !isFeed) {
+            return res.json({success: false, code: 2125, message: "수정할 내용을 입력해주세요. (title, summary, comment, folderIdx, isFeed)"});
+        }
+        if(isFeed && (!regexTest.test(isFeed))) return res.json({success: false, code: 2106, message: "isFeed 형식이 올바르지 않습니다. Y 혹은 N의 형태로 입력해주세요."});
+        
+        try{
+            const checkScrap = await scrapModel.selectScrapDetail(userIdx, scrapIdx);
+            if (checkScrap[0] == undefined) {
+            return res.json({success: true, code: 3101, message: "스크랩이 존재하지 않습니다."});
+            }
+            if (title) {
+                const titleResult = await scrapModel.updateScrapTitle(userIdx, scrapIdx, title);
+            }
+            if (summary) {
+                const summaryResult = await scrapModel.updateScrapSummary(userIdx, scrapIdx, summary);
+            }
+            if (comment) {
+                const commentResult = await scrapModel.updateScrapComment(userIdx, scrapIdx, comment);
+            }
+            if (folderIdx) {
+                const folderResult = await scrapModel.updateScrapFolder(userIdx, scrapIdx, folderIdx);
+            }
+            if (isFeed) {
+                const feedResult = await scrapModel.updateScrapFeed(userIdx, scrapIdx, isFeed);
+            }
+            
+            const scrapRow = await scrapModel.selectScrapDetail(userIdx, scrapIdx);
+
+            return res.json({success: true, code: 1000, message: "스크랩 선택 수정 성공", result: scrapRow});
+        }catch(err){
+            console.log(error);
+            return res.status(4000).send(`Error: ${err.message}`);
+        }
     },
     patchScrapTitle: async (req, res) => {
         const userIdx = req.decoded.userIdx;
