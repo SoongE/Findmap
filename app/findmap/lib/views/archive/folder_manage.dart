@@ -21,6 +21,8 @@ class _FolderManageState extends State<FolderManage> {
   List<PostFolder> _folderList = <PostFolder>[];
   late TextEditingController _addFolderController;
 
+  final GlobalKey<AnimatedListState> _listKey = GlobalKey();
+
   @override
   void initState() {
     _addFolderController = TextEditingController();
@@ -44,11 +46,16 @@ class _FolderManageState extends State<FolderManage> {
         body: FutureBuilder<List<PostFolder>>(
           future: fetchGetFolderList(),
           builder: (context, snapshot) {
-            if (snapshot.hasData) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Text('');
+            } else if (snapshot.hasError) {
+              return new Text('Error: ${snapshot.error}');
+            } else {
               _folderList = snapshot.data!;
+              print("HELLO");
               return Column(
                 children: [
-                  Expanded(child: _folderListView(_folderList)),
+                  Expanded(child: _folderListView()),
                   Padding(
                     padding: const EdgeInsets.all(10),
                     child: TextFormField(
@@ -68,31 +75,44 @@ class _FolderManageState extends State<FolderManage> {
                   ),
                 ],
               );
-            } else if (snapshot.hasError) {
-              return Text("${snapshot.error}");
             }
-            return Container();
           },
         ),
       ),
     );
   }
 
-  ListView _folderListView(List<PostFolder> data) {
-    return ListView.separated(
-        physics: BouncingScrollPhysics(),
-        itemCount: data.length,
-        itemBuilder: (context, index) => Row(
-              children: [
-                Expanded(child: ListTile(title: Text(data[index].name))),
-                IconButton(
-                    splashRadius: 1,
-                    onPressed: () => {},
-                    icon: Icon(LineIcons.times)),
-              ],
-            ),
-        separatorBuilder: (BuildContext context, int index) =>
-            Divider(height: 1, thickness: 1));
+  AnimatedList _folderListView() {
+    return AnimatedList(
+      physics: BouncingScrollPhysics(),
+      key: _listKey,
+      initialItemCount: _folderList.length,
+      itemBuilder: (context, index, animation) => Row(
+        children: [
+          Expanded(child: animatedListTile(context, index, animation)),
+          IconButton(
+              splashRadius: 1,
+              onPressed: () => fetchDeleteFolder(_folderList[index].idx),
+              icon: Icon(LineIcons.times)),
+        ],
+      ),
+    );
+  }
+
+  Widget animatedListTile(BuildContext context, int index, animation) {
+    return SizeTransition(
+      axis: Axis.vertical,
+      sizeFactor: animation,
+      child: ListTile(title: Text(_folderList[index].name)),
+    );
+  }
+
+  Widget animatedListTileForDel(BuildContext context, String value, animation) {
+    return SizeTransition(
+      axis: Axis.vertical,
+      sizeFactor: animation,
+      child: ListTile(title: Text(value)),
+    );
   }
 
   void fetchAddFolder(String name) async {
@@ -110,9 +130,8 @@ class _FolderManageState extends State<FolderManage> {
 
       if (responseBody['success']) {
         int idx = responseBody['result']['insertId'];
-        setState(() {
-          _folderList.add(PostFolder(idx, -1, name, -1, '', '', ''));
-        });
+        _folderList.add(PostFolder(idx, -1, name, -1, '', '', ''));
+        _listKey.currentState!.insertItem(_folderList.length - 1);
       } else {
         showSnackbar(context, responseBody['message']);
         throw Exception('fetchAddFolder Exception: ${responseBody['message']}');
@@ -128,7 +147,7 @@ class _FolderManageState extends State<FolderManage> {
       Uri.http(BASEURL, '/folders/$idx/delete'),
       headers: {
         HttpHeaders.contentTypeHeader: "application/json",
-        "token": "widget.user.accessToken",
+        "token": widget.user.accessToken,
       },
     );
 
@@ -136,12 +155,16 @@ class _FolderManageState extends State<FolderManage> {
       var responseBody = jsonDecode(response.body);
 
       if (responseBody['success']) {
-        setState(() {
-          _folderList.remove
-        });
+        int removeIndex =
+            _folderList.indexWhere((element) => element.idx == idx);
+        PostFolder removeElement = _folderList.removeAt(removeIndex);
+        AnimatedListRemovedItemBuilder builder = (context, animation) {
+          return animatedListTileForDel(context, removeElement.name, animation);
+        };
+        _listKey.currentState!.removeItem(removeIndex, builder);
       } else {
         showSnackbar(context, responseBody['message']);
-        throw Exception('FUNCTIONNAME Exception: ${responseBody['message']}');
+        throw Exception('fetchDeleteFolder Exception: ${responseBody['message']}');
       }
     } else {
       showSnackbar(context, '서버와 연결이 불안정합니다');
