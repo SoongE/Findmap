@@ -48,39 +48,38 @@ class _ArchivePageState extends State<ArchivePage> {
                   if (snapshot.hasData && snapshot.data != null) {
                     List<PostFolder>? data = snapshot.data;
                     data!.insert(0, PostFolder(-1, 0, '아카이브', 0, '', '', ''));
-                    return DropdownButtonHideUnderline(
-                      child: ButtonTheme(
-                        alignedDropdown: true,
-                        child: DropdownButton(
-                          items: data.map<DropdownMenuItem<PostFolder>>(
-                              (PostFolder value) {
-                            return DropdownMenuItem<PostFolder>(
-                              value: value,
-                              child: archiveTitle == value.name
-                                  ? Row(children: [
-                                      Text(
-                                        value.name,
-                                        style: TextStyle(color: Colors.pink),
-                                      ),
-                                      Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 3)),
-                                      Icon(Icons.check, color: Colors.pink)
-                                    ])
-                                  : Text(value.name),
-                            );
-                          }).toList(),
-                          icon: Icon(Icons.keyboard_arrow_down_outlined),
-                          elevation: 16,
-                          onChanged: (PostFolder? newValue) {
-                            setState(() => {
-                                  archiveTitle = newValue!.name,
-                                  fetchGetFolderArchive(context, newValue)
-                                      .then((value) => _archiveList = value),
-                                });
-                          },
-                        ),
+                    return PopupMenuButton<PostFolder>(
+                      padding: const EdgeInsets.all(0),
+                      icon: Icon(
+                        Icons.keyboard_arrow_down_outlined,
+                        color: Colors.black,
+                        size: 30,
                       ),
+                      onSelected: (value) => setState(() => {
+                            archiveTitle = value.name,
+                            fetchGetFolderArchive(context, value)
+                                .then((value) => _archiveList = value),
+                          }),
+                      itemBuilder: (BuildContext context) {
+                        return data
+                            .map<PopupMenuItem<PostFolder>>((PostFolder value) {
+                          return PopupMenuItem<PostFolder>(
+                            value: value,
+                            child: archiveTitle == value.name
+                                ? Row(children: [
+                                    Text(
+                                      value.name,
+                                      style: TextStyle(color: Colors.pink),
+                                    ),
+                                    Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 3)),
+                                    Icon(Icons.check, color: Colors.pink)
+                                  ])
+                                : Text(value.name),
+                          );
+                        }).toList();
+                      },
                     );
                   }
                   return Container();
@@ -190,12 +189,12 @@ class _ArchivePageState extends State<ArchivePage> {
     var param = {
       "folderIdx": postFolder.idx.toString(),
     };
-    final response = await http.get(
+    final response = await http.post(
       Uri.http(BASEURL, '/scrap/by-folder'),
       headers: {
         "token": widget.user.accessToken,
       },
-      // body: json.encode(param),
+      body: json.encode(param),
     );
 
     if (response.statusCode == 200) {
