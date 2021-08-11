@@ -24,10 +24,22 @@ class _SharePageState extends State<SharePage> {
   var _commentScrapPage = TextEditingController(text: "");
   var _newFolderName = TextEditingController(text: null);
   bool _isPublic = false; // false 면 비공개 true 면 공개
-  var _folderList;
-  var _selectedValue;
+  List<String> _folderList = ['아카이브'];
+  List<PostFolder> _postFolderList = [];
+  String _selectedValue = '아카이브';
   final AsyncMemoizer _memoizer = AsyncMemoizer();
   final GlobalKey<FormState> folderFormKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    fetchGetFolderList().then((value) {
+      _postFolderList = value;
+      setState(() {
+        _folderList.addAll(value.map((e) => e.name));
+      });
+    });
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -39,11 +51,8 @@ class _SharePageState extends State<SharePage> {
 
   _getScrapData() {
     return this._memoizer.runOnce(() async {
-      await Future.delayed(Duration(seconds: 2));
       _titleScrapPage =
           TextEditingController(text: "오늘의 일기: 오늘은 너무너무 덥다 | 네이버 블로그");
-      _folderList = ['구독좋아요알림🥰', '안녕', 'HELLO', 'こんにちは', '你好'];
-      print("Call!");
       return 'Call Data';
     });
   }
@@ -85,18 +94,10 @@ class _SharePageState extends State<SharePage> {
             FutureBuilder(
                 future: this._getScrapData(),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.hasData == false) {
-                    // 아직 데이터를 받아오지 못한 경우!
-                    return Center(child: CircularProgressIndicator());
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Text('');
                   } else if (snapshot.hasError) {
-                    // error 발생 시 반환하게 되는 부분
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        '이런! 문제가 발생했어요\n다시 시도해주세요',
-                        style: TextStyle(fontSize: 15),
-                      ),
-                    );
+                    return Text('Error: ${snapshot.error}');
                   } else {
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -107,9 +108,9 @@ class _SharePageState extends State<SharePage> {
                             Container(
                               padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
                               child: Text(
-                                '스크랩할 글의 제목',
+                                '제목',
                                 style: TextStyle(
-                                  fontSize: 20,
+                                  fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -160,9 +161,9 @@ class _SharePageState extends State<SharePage> {
                             Container(
                               padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
                               child: Text(
-                                '스크랩할 글의 폴더',
+                                '폴더',
                                 style: TextStyle(
-                                  fontSize: 20,
+                                  fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -209,14 +210,32 @@ class _SharePageState extends State<SharePage> {
                                                       alignment:
                                                           Alignment.centerLeft,
                                                       child: Container(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              0.6,
-                                                          child: Text(
-                                                            value,
-                                                          ))),
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.6,
+                                                        child:
+                                                            _selectedValue ==
+                                                                    value
+                                                                ? Row(
+                                                                    children: [
+                                                                        Text(
+                                                                          value,
+                                                                          style:
+                                                                              TextStyle(color: Colors.green),
+                                                                        ),
+                                                                        Padding(
+                                                                            padding:
+                                                                                const EdgeInsets.symmetric(horizontal: 3)),
+                                                                        Icon(
+                                                                            Icons
+                                                                                .check,
+                                                                            color:
+                                                                                Colors.green)
+                                                                      ])
+                                                                : Text(value),
+                                                      )),
                                                 );
                                               },
                                             ).toList(),
@@ -225,7 +244,8 @@ class _SharePageState extends State<SharePage> {
                                                   .requestFocus(
                                                       new FocusNode());
                                               setState(() {
-                                                _selectedValue = value;
+                                                _selectedValue =
+                                                    value.toString();
                                               });
                                             },
                                           ),
@@ -320,7 +340,6 @@ class _SharePageState extends State<SharePage> {
                                           .requestFocus(new FocusNode());
                                       setState(() {
                                         _isPublic = value;
-                                        print(_isPublic);
                                       });
                                     },
                                     activeTrackColor: Colors.lightGreenAccent,
@@ -358,9 +377,14 @@ class _SharePageState extends State<SharePage> {
                     controller: _newFolderName,
                     autofocus: true,
                     onSaved: (value) {
-                      setState(() {
-                        _folderList.add(_newFolderName.text.trim());
-                        _newFolderName = TextEditingController(text: null);
+                      var folderName = _newFolderName.text.trim();
+                      fetchAddFolder(folderName).then((value) {
+                        setState(() => {
+                              _folderList.add(folderName),
+                              _selectedValue = folderName,
+                              _newFolderName =
+                                  TextEditingController(text: null),
+                            });
                       });
                     },
                     validator: (value) {
@@ -383,10 +407,7 @@ class _SharePageState extends State<SharePage> {
           ),
           actions: <Widget>[
             new TextButton(
-                child: const Text('취소하기'),
-                style: TextButton.styleFrom(
-                  primary: Colors.red,
-                ),
+                child: const Text('취소', style: TextStyle(color: Colors.grey)),
                 onPressed: () {
                   setState(() {
                     _newFolderName = TextEditingController(text: null);
@@ -394,17 +415,12 @@ class _SharePageState extends State<SharePage> {
                   Navigator.pop(context);
                 }),
             new TextButton(
-                child: const Text('추가하기'),
-                style: TextButton.styleFrom(
-                  primary: Colors.black,
-                ),
+                child: const Text('추가'),
                 onPressed: () async {
                   if (this.folderFormKey.currentState!.validate()) {
                     this.folderFormKey.currentState!.save();
-                    print(_folderList);
                     Navigator.pop(context);
                   }
-                  ;
                 })
           ],
         );
@@ -412,15 +428,43 @@ class _SharePageState extends State<SharePage> {
     );
   }
 
+  Future<void> fetchAddFolder(String name) async {
+    final response = await http.post(
+      Uri.http(BASEURL, '/folders'),
+      headers: {
+        HttpHeaders.contentTypeHeader: "application/json",
+        "token": widget.user.accessToken,
+      },
+      body: json.encode({"name": name}),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = jsonDecode(response.body);
+
+      if (responseBody['success']) {
+        int idx = responseBody['result']['insertId'];
+        _postFolderList.add(PostFolder(idx, -1, name, -1, '', '', ''));
+      } else {
+        showSnackbar(context, responseBody['message']);
+        throw Exception('fetchAddFolder Exception: ${responseBody['message']}');
+      }
+    } else {
+      showSnackbar(context, '서버와 연결이 불안정합니다');
+      throw Exception('Failed to load post');
+    }
+  }
+
   void fetchSaveScrap(String title, String newFolderName, String comment,
       bool _isPublic) async {
+    PostFolder _saveFolder =
+        _postFolderList.firstWhere((element) => element.name == _selectedValue);
     Map<String, dynamic> body = {
       "title": title,
       "comment": comment,
       "summary": "SUMMARY",
       "contentUrl": widget.url,
       "thumbnailUrl": "thumbnailUrl",
-      "folderIdx": '1',
+      "folderIdx": _saveFolder.idx.toString(),
       "categoryIdx": '23',
       "isFeed": _isPublic ? 'Y' : 'N',
     };
@@ -435,7 +479,6 @@ class _SharePageState extends State<SharePage> {
 
     if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
-      print(responseBody);
       if (responseBody['success'] == false) {
         showSnackbar(context, responseBody['message']);
       }
