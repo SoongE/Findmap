@@ -15,7 +15,7 @@ void fetchExample(BuildContext context) async {
       HttpHeaders.contentTypeHeader: "application/json",
       "token": "widget.user.accessToken",
     },
-    body: json.encode({"name": param}),
+    body: json.encode(param),
   );
 
   if (response.statusCode == 200) {

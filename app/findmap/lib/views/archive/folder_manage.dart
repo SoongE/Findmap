@@ -1,10 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:async/async.dart';
 import 'package:findmap/models/post_folder.dart';
 import 'package:findmap/models/user.dart';
 import 'package:findmap/utils/utils.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:http/http.dart' as http;
 import 'package:line_icons/line_icons.dart';
 
@@ -20,12 +23,16 @@ class FolderManage extends StatefulWidget {
 class _FolderManageState extends State<FolderManage> {
   List<PostFolder> _folderList = <PostFolder>[];
   late TextEditingController _addFolderController;
+  late TextEditingController _changeFolderName;
 
+  final AsyncMemoizer<List<PostFolder>> _memoizer =
+      AsyncMemoizer<List<PostFolder>>();
   final GlobalKey<AnimatedListState> _listKey = GlobalKey();
 
   @override
   void initState() {
     _addFolderController = TextEditingController();
+    _changeFolderName = TextEditingController();
     super.initState();
   }
 
@@ -44,7 +51,7 @@ class _FolderManageState extends State<FolderManage> {
           ),
         ),
         body: FutureBuilder<List<PostFolder>>(
-          future: fetchGetFolderList(),
+          future: _fetchMemoizer(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Text('');
@@ -52,7 +59,6 @@ class _FolderManageState extends State<FolderManage> {
               return new Text('Error: ${snapshot.error}');
             } else {
               _folderList = snapshot.data!;
-              print("HELLO");
               return Column(
                 children: [
                   Expanded(child: _folderListView()),
@@ -82,37 +88,55 @@ class _FolderManageState extends State<FolderManage> {
     );
   }
 
+  Future<List<PostFolder>> _fetchMemoizer() {
+    List<PostFolder> _list = [];
+    return _memoizer.runOnce(() async {
+      await fetchGetFolderList().then((value) => _list = value);
+      return _list;
+    });
+  }
+
   AnimatedList _folderListView() {
     return AnimatedList(
-      physics: BouncingScrollPhysics(),
-      key: _listKey,
-      initialItemCount: _folderList.length,
-      itemBuilder: (context, index, animation) => Row(
-        children: [
-          Expanded(child: animatedListTile(context, index, animation)),
-          IconButton(
-              splashRadius: 1,
-              onPressed: () => fetchDeleteFolder(_folderList[index].idx),
-              icon: Icon(LineIcons.times)),
-        ],
-      ),
-    );
+        physics: BouncingScrollPhysics(),
+        key: _listKey,
+        initialItemCount: _folderList.length,
+        itemBuilder: (context, index, animation) =>
+            animatedListTile(context, index, animation));
   }
 
   Widget animatedListTile(BuildContext context, int index, animation) {
     return SizeTransition(
       axis: Axis.vertical,
       sizeFactor: animation,
-      child: ListTile(title: Text(_folderList[index].name)),
+      child: _slider(context, _folderList[index]),
     );
   }
 
-  Widget animatedListTileForDel(BuildContext context, String value, animation) {
-    return SizeTransition(
-      axis: Axis.vertical,
-      sizeFactor: animation,
-      child: ListTile(title: Text(value)),
+  Future<void> fetchChangeFolderName(
+      BuildContext context, PostFolder postFolder) async {
+    final response = await http.patch(
+      Uri.http(BASEURL, '/folders/${postFolder.idx}/name'),
+      headers: {
+        HttpHeaders.contentTypeHeader: "application/json",
+        "token": widget.user.accessToken,
+      },
+      body: json.encode({"name": postFolder.name}),
     );
+
+    if (response.statusCode == 200) {
+      var responseBody = jsonDecode(response.body);
+
+      if (responseBody['success']) {
+      } else {
+        showSnackbar(context, responseBody['message']);
+        throw Exception(
+            'fetchChangeFolderName Exception: ${responseBody['message']}');
+      }
+    } else {
+      showSnackbar(context, '서버와 연결이 불안정합니다');
+      throw Exception('Failed to load post');
+    }
   }
 
   void fetchAddFolder(String name) async {
@@ -155,16 +179,17 @@ class _FolderManageState extends State<FolderManage> {
       var responseBody = jsonDecode(response.body);
 
       if (responseBody['success']) {
-        int removeIndex =
-            _folderList.indexWhere((element) => element.idx == idx);
-        PostFolder removeElement = _folderList.removeAt(removeIndex);
-        AnimatedListRemovedItemBuilder builder = (context, animation) {
-          return animatedListTileForDel(context, removeElement.name, animation);
-        };
-        _listKey.currentState!.removeItem(removeIndex, builder);
+        // int removeIndex =
+        //     _folderList.indexWhere((element) => element.idx == idx);
+        // PostFolder removeElement = _folderList.removeAt(removeIndex);
+        // AnimatedListRemovedItemBuilder builder = (context, animation) {
+        //   return animatedListTileForDel(context, removeElement.name, animation);
+        // };
+        // _listKey.currentState!.removeItem(removeIndex, builder);
       } else {
         showSnackbar(context, responseBody['message']);
-        throw Exception('fetchDeleteFolder Exception: ${responseBody['message']}');
+        throw Exception(
+            'fetchDeleteFolder Exception: ${responseBody['message']}');
       }
     } else {
       showSnackbar(context, '서버와 연결이 불안정합니다');
@@ -197,5 +222,70 @@ class _FolderManageState extends State<FolderManage> {
       showSnackbar(context, '서버와 연결이 불안정합니다');
       throw Exception('Failed to load post');
     }
+  }
+
+  Widget _slider(BuildContext context, PostFolder postFolder) {
+    return Slidable(
+        key: UniqueKey(),
+        startActionPane: ActionPane(
+          extentRatio: 0.2,
+          motion: const DrawerMotion(),
+          children: [
+            SlidableAction(
+              onPressed: (BuildContext context) {
+                _changeFolderName.text = postFolder.name;
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                    title: const Text("폴더 이름 변경"),
+                    content: TextFormField(
+                      controller: _changeFolderName,
+                      decoration: InputDecoration(hintText: postFolder.name),
+                    ),
+                    actions: [
+                      TextButton(
+                        child: Text("취소"),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                      TextButton(
+                          child: Text("저장"),
+                          onPressed: () {
+                            setState(() {
+                              postFolder.name = _changeFolderName.text;
+                            });
+                            fetchChangeFolderName(context, postFolder)
+                                .then((value) => Navigator.of(context).pop());
+                          }),
+                    ],
+                  ),
+                  barrierDismissible: true,
+                );
+              },
+              backgroundColor: Color(0xFF0392CF),
+              foregroundColor: Colors.white,
+              icon: LineIcons.pen,
+              label: '수정',
+            ),
+          ],
+        ),
+        endActionPane: ActionPane(
+          extentRatio: 0.2,
+          motion: const DrawerMotion(),
+          dismissible: DismissiblePane(
+            onDismissed: () => fetchDeleteFolder(postFolder.idx),
+          ),
+          children: [
+            SlidableAction(
+              backgroundColor: Color(0xFFFE4A49),
+              foregroundColor: Colors.white,
+              icon: Icons.delete,
+              label: '삭제',
+              onPressed: (BuildContext context) {},
+            ),
+          ],
+        ),
+        child: Padding(
+            padding: const EdgeInsets.only(left: 20),
+            child: ListTile(title: Text(postFolder.name))));
   }
 }
