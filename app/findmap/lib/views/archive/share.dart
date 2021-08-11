@@ -22,7 +22,7 @@ class _SharePageState extends State<SharePage> {
   late TextEditingController _titleScrapPage;
   var _commentScrapPage = TextEditingController(text: "");
   var _newFolderName = TextEditingController(text: "");
-  bool _isPublic = false; // false 면 비공개 true 면 공개
+  bool _isPublic = false;
   var _folderList;
   var _selectedValue;
   final isSelected = <bool>[false, false];
@@ -44,8 +44,6 @@ class _SharePageState extends State<SharePage> {
   }
 
   Future<String> _getScrapData() async {
-    // node.js로부터 제목과 카테고리 등을 받아온다
-    // 지금은 아직 node랑 연결이 안 되었으니 임시로 동작이 잘 되는지만 확인 용도
     await Future.delayed(Duration(seconds: 2));
     _titleScrapPage =
         TextEditingController(text: "오늘의 일기: 오늘은 너무너무 덥다 | 네이버 블로그");
@@ -83,20 +81,10 @@ class _SharePageState extends State<SharePage> {
           child: FutureBuilder(
               future: _getScrapData(),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.hasData == false) {
-                  // 아직 데이터를 받아오지 못한 경우!
-                  return CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation(Colors.yellow[700]),
-                  );
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Text('');
                 } else if (snapshot.hasError) {
-                  // error 발생 시 반환하게 되는 부분
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      '이런! 문제가 발생했어요\n다시 시도해주세요',
-                      style: TextStyle(fontSize: 15),
-                    ),
-                  );
+                  return Text('Error: ${snapshot.error}');
                 } else {
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -117,19 +105,12 @@ class _SharePageState extends State<SharePage> {
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(12),
-                            //border corner radius
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.grey.withOpacity(0.5),
-                                //color of shadow
                                 spreadRadius: 2,
-                                //spread radius
                                 blurRadius: 5,
-                                // blur radius
-                                offset:
-                                    Offset(0, 2), // changes position of shadow
-                                //first paramerter of offset is left-right
-                                //second parameter is top to down
+                                offset: Offset(0, 2),
                               ),
                             ],
                           ),
@@ -175,15 +156,9 @@ class _SharePageState extends State<SharePage> {
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.grey.withOpacity(0.5),
-                                //color of shadow
                                 spreadRadius: 2,
-                                //spread radius
                                 blurRadius: 5,
-                                // blur radius
-                                offset:
-                                    Offset(0, 2), // changes position of shadow
-                                //first paramerter of offset is left-right
-                                //second parameter is top to down
+                                offset: Offset(0, 2),
                               ),
                             ],
                           ),

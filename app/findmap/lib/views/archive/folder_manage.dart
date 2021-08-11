@@ -38,51 +38,57 @@ class _FolderManageState extends State<FolderManage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          titleSpacing: 0,
-          leading: BackButton(color: Colors.black),
-          backgroundColor: Colors.white,
-          elevation: 1,
-          title: Text(
-            '폴더 관리',
-            style: TextStyle(color: Colors.black),
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pop(context, _folderList);
+        return false;
+      },
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            titleSpacing: 0,
+            leading: BackButton(color: Colors.black),
+            backgroundColor: Colors.white,
+            elevation: 1,
+            title: Text(
+              '폴더 관리',
+              style: TextStyle(color: Colors.black),
+            ),
           ),
-        ),
-        body: FutureBuilder<List<PostFolder>>(
-          future: _fetchMemoizer(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Text('');
-            } else if (snapshot.hasError) {
-              return new Text('Error: ${snapshot.error}');
-            } else {
-              _folderList = snapshot.data!;
-              return Column(
-                children: [
-                  Expanded(child: _folderListView()),
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: TextFormField(
-                      onFieldSubmitted: (value) {
-                        fetchAddFolder(value);
-                        _addFolderController.clear();
-                      },
-                      controller: _addFolderController,
-                      decoration: InputDecoration(
-                        hintText: "폴더 추가",
-                        prefixIcon: Icon(LineIcons.plus),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15.0),
+          body: FutureBuilder<List<PostFolder>>(
+            future: _fetchMemoizer(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Text('');
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                _folderList = snapshot.data!;
+                return Column(
+                  children: [
+                    Expanded(child: _folderListView()),
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: TextFormField(
+                        onFieldSubmitted: (value) {
+                          fetchAddFolder(value);
+                          _addFolderController.clear();
+                        },
+                        controller: _addFolderController,
+                        decoration: InputDecoration(
+                          hintText: "폴더 추가",
+                          prefixIcon: Icon(LineIcons.plus),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              );
-            }
-          },
+                  ],
+                );
+              }
+            },
+          ),
         ),
       ),
     );

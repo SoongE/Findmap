@@ -24,18 +24,12 @@ class ArchivePage extends StatefulWidget {
 class _ArchivePageState extends State<ArchivePage> {
   List<Post> _archiveList = <Post>[];
   List<PostFolder> _folderList = <PostFolder>[];
-  late PostFolder _state = PostFolder(
-      -1,
-      -1,
-      '아카이브',
-      -1,
-      '',
-      '',
-      '');
+  late PostFolder _state = PostFolder(-1, -1, '아카이브', -1, '', '', '');
   List<String> _menuList = <String>['폴더 관리', '다른 메뉴'];
 
   @override
   void initState() {
+    print("INIT");
     super.initState();
   }
 
@@ -54,15 +48,9 @@ class _ArchivePageState extends State<ArchivePage> {
                 future: fetchGetFolderList(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData && snapshot.data != null) {
-                    List<PostFolder>? data = snapshot.data;
-                    data!.insert(0, PostFolder(
-                        -1,
-                        0,
-                        '아카이브',
-                        0,
-                        '',
-                        '',
-                        ''));
+                    List<PostFolder>? _folderList = snapshot.data;
+                    _folderList!
+                        .insert(0, PostFolder(-1, 0, '아카이브', 0, '', '', ''));
                     return PopupMenuButton<PostFolder>(
                       padding: const EdgeInsets.all(0),
                       icon: Icon(
@@ -70,32 +58,30 @@ class _ArchivePageState extends State<ArchivePage> {
                         color: Colors.black,
                         size: 30,
                       ),
-                      onSelected: (value) =>
-                          setState(() =>
-                          {
+                      onSelected: (value) => setState(() => {
                             _state = value,
                             value.idx == -1
                                 ? fetchGetArchive(context)
-                                .then((newValue) => _archiveList = newValue)
+                                    .then((newValue) => _archiveList = newValue)
                                 : fetchGetFolderArchive(context, value).then(
                                     (newValue) => _archiveList = newValue),
                           }),
                       itemBuilder: (BuildContext context) {
-                        return data
+                        return _folderList
                             .map<PopupMenuItem<PostFolder>>((PostFolder value) {
                           return PopupMenuItem<PostFolder>(
                             value: value,
                             child: _state.name == value.name
                                 ? Row(children: [
-                              Text(
-                                value.name,
-                                style: TextStyle(color: Colors.pink),
-                              ),
-                              Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 3)),
-                              Icon(Icons.check, color: Colors.pink)
-                            ])
+                                    Text(
+                                      value.name,
+                                      style: TextStyle(color: Colors.pink),
+                                    ),
+                                    Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 3)),
+                                    Icon(Icons.check, color: Colors.pink)
+                                  ])
                                 : Text(value.name),
                           );
                         }).toList();
@@ -150,7 +136,12 @@ class _ArchivePageState extends State<ArchivePage> {
   void menuPopUponSelected(String value) {
     if (value == '폴더 관리') {
       Navigator.of(context)
-          .push(createRouteRight(FolderManage(user: widget.user)));
+          .push(createRouteRight(FolderManage(user: widget.user)))
+          .then((value) {
+        setState(() {
+          _folderList = value;
+        });
+      });
     }
   }
 
@@ -163,8 +154,8 @@ class _ArchivePageState extends State<ArchivePage> {
     );
   }
 
-  Future<List<Post>> fetchGetFolderArchive(BuildContext context,
-      PostFolder postFolder) async {
+  Future<List<Post>> fetchGetFolderArchive(
+      BuildContext context, PostFolder postFolder) async {
     final response = await http.get(
       Uri.http(BASEURL, '/scrap/by-folder/${postFolder.idx}'),
       headers: {
