@@ -29,7 +29,6 @@ class _ArchivePageState extends State<ArchivePage> {
 
   @override
   void initState() {
-    print("INIT");
     super.initState();
   }
 
