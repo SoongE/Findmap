@@ -7,6 +7,7 @@ import 'package:findmap/models/user.dart';
 import 'package:findmap/utils/utils.dart';
 import 'package:findmap/views/archive/folder_manage.dart';
 import 'package:findmap/views/archive/post_tile.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:http/http.dart' as http;
@@ -24,11 +25,17 @@ class ArchivePage extends StatefulWidget {
 class _ArchivePageState extends State<ArchivePage> {
   List<Post> _archiveList = <Post>[];
   List<PostFolder> _folderList = <PostFolder>[];
-  late PostFolder _state = PostFolder(-1, -1, '아카이브', -1, '', '', '');
   List<String> _menuList = <String>['폴더 관리', '다른 메뉴'];
+
+  late PostFolder _state = PostFolder(-1, -1, '아카이브', -1, '', '', '');
+
+  late TextEditingController _title;
+  late TextEditingController _comment;
 
   @override
   void initState() {
+    _title = TextEditingController();
+    _comment = TextEditingController();
     super.initState();
   }
 
@@ -47,9 +54,9 @@ class _ArchivePageState extends State<ArchivePage> {
                 future: fetchGetFolderList(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData && snapshot.data != null) {
-                    List<PostFolder>? _folderList = snapshot.data;
-                    _folderList!
-                        .insert(0, PostFolder(-1, 0, '아카이브', 0, '', '', ''));
+                    _folderList = snapshot.data!;
+                    _folderList.insert(
+                        0, PostFolder(-1, 0, '아카이브', 0, '', '', ''));
                     return PopupMenuButton<PostFolder>(
                       padding: const EdgeInsets.all(0),
                       icon: Icon(
@@ -264,14 +271,22 @@ class _ArchivePageState extends State<ArchivePage> {
         children: [
           SlidableAction(
             flex: 2,
-            onPressed: (BuildContext context) {},
+            onPressed: (BuildContext context) {
+              fetchFeedUpDown(
+                      context, post.idx, post.isFeed == 'Y' ? true : false)
+                  .then(
+                      (value) => post.isFeed = post.isFeed == 'Y' ? 'N' : 'Y');
+            },
             backgroundColor: Color(0xFF7BC043),
             foregroundColor: Colors.white,
             icon: Icons.screen_share,
             label: '피드로 공유',
           ),
           SlidableAction(
-            onPressed: (BuildContext context) {},
+            onPressed: (BuildContext context) {
+              showModifyDialog(
+                  post.idx, post.title, post.comment, post.folderIdx);
+            },
             backgroundColor: Color(0xFF0392CF),
             foregroundColor: Colors.white,
             icon: LineIcons.pen,
@@ -302,6 +317,133 @@ class _ArchivePageState extends State<ArchivePage> {
           subtitle: post.summary,
           author: post.comment,
           source: post.contentUrl.substring(0, 5)),
+    );
+  }
+
+  Future<void> fetchFeedUpDown(
+      BuildContext context, int idx, bool status) async {
+    var url = status ? '/scrap/$idx/feed-down' : '/scrap/$idx/feed-upload';
+    final response = await http.patch(
+      Uri.http(BASEURL, url),
+      headers: {
+        HttpHeaders.contentTypeHeader: "application/json",
+        "token": widget.user.accessToken,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = jsonDecode(response.body);
+
+      if (responseBody['success']) {
+      } else {
+        showSnackbar(context, responseBody['message']);
+        throw Exception(
+            'fetchFeedUpDown Exception: ${responseBody['message']}');
+      }
+    } else {
+      showSnackbar(context, '서버와 연결이 불안정합니다');
+      throw Exception('Failed to load post');
+    }
+  }
+
+  Future<void> fetchModifyScrap(BuildContext context, int idx, String title,
+      String comment, String folderIdx) async {
+    Map<String, dynamic> param = {
+      "title": title,
+      "comment": comment,
+      "folderIdx": folderIdx,
+    };
+
+    final response = await http.patch(
+      Uri.http(BASEURL, '/scrap/$idx'),
+      headers: {
+        HttpHeaders.contentTypeHeader: "application/json",
+        "token": widget.user.accessToken,
+      },
+      body: json.encode(param),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = jsonDecode(response.body);
+
+      if (responseBody['success']) {
+      } else {
+        showSnackbar(context, responseBody['message']);
+        throw Exception(
+            'fetchModifyScrap Exception: ${responseBody['message']}');
+      }
+    } else {
+      showSnackbar(context, '서버와 연결이 불안정합니다');
+      throw Exception('Failed to load post');
+    }
+  }
+
+  void showModifyDialog(
+      int idx, String title, String comment, int folderIndex) {
+    _title.text = title;
+    _comment.text = comment;
+    String nowFolder =
+        _folderList.firstWhere((element) => element.idx == folderIndex).name;
+
+    List<String> _stringFolderList = [];
+    _stringFolderList.addAll(_folderList.map((e) => e.name));
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text("수정"),
+        content: Container(
+          width: 400,
+          height: 200,
+          child: Column(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: _title,
+                  decoration:
+                      InputDecoration(labelText: '제목', hintText: _title.text),
+                ),
+              ),
+              Expanded(
+                child: TextFormField(
+                  controller: _comment,
+                  decoration: InputDecoration(
+                      labelText: '코멘트', hintText: _comment.text),
+                ),
+              ),
+              Expanded(
+                child: DropdownButtonFormField(
+                    value: nowFolder,
+                    items: _stringFolderList.map((String value) {
+                      return DropdownMenuItem(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    icon: const Icon(Icons.arrow_drop_down),
+                    elevation: 16,
+                    onChanged: (String? val) => nowFolder = val!),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            child: Text("취소"),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          TextButton(
+              child: Text("저장"),
+              onPressed: () {
+                var folderIdx = _folderList
+                    .firstWhere((element) => element.name == nowFolder)
+                    .idx;
+                fetchModifyScrap(context, idx, _title.text, _comment.text,
+                        folderIdx.toString())
+                    .then((value) => Navigator.of(context).pop());
+              }),
+        ],
+      ),
+      barrierDismissible: true,
     );
   }
 }

@@ -10,6 +10,7 @@ Post _$PostFromJson(Map<String, dynamic> json) {
     json['comment'] as String,
     json['categoryIdx'] as int,
     json['folderIdx'] as int,
+    json['isFeed'] as String,
   );
 }
 
@@ -22,4 +23,5 @@ Map<String, dynamic> _$PostToJson(Post instance) => <String, dynamic>{
       'comment': instance.comment,
       'categoryIdx': instance.categoryIdx,
       'folderIdx': instance.folderIdx,
+  'isFeed': instance.isFeed,
     };

@@ -12,9 +12,10 @@ class Post {
   String comment;
   int categoryIdx;
   int folderIdx;
+  String isFeed;
 
   Post(this.idx, this.title, this.contentUrl, this.thumbnailUrl, this.summary,
-      this.comment, this.categoryIdx, this.folderIdx);
+      this.comment, this.categoryIdx, this.folderIdx, this.isFeed);
 
   factory Post.fromJson(Map<String, dynamic> json) => _$PostFromJson(json);
 
