@@ -5,7 +5,8 @@ import torch.nn as nn
 import torch.optim as optim
 
 from mod_plusttextmodel import Trainer
-from mod_plustexttrain import RNNClassifier
+from mod_plustextloader import DataLoader
+from mod_plustexttest import RNNClassifier
 
 
 

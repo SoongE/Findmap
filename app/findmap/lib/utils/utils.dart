@@ -1,6 +1,37 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 const String BASEURL = '3.36.176.1:3000';
+
+void fetchExample(BuildContext context) async {
+  Map<String, dynamic> param = {"param": 'param'};
+
+  final response = await http.post(
+    Uri.http(BASEURL, '/url'),
+    headers: {
+      HttpHeaders.contentTypeHeader: "application/json",
+      "token": "widget.user.accessToken",
+    },
+    body: json.encode(param),
+  );
+
+  if (response.statusCode == 200) {
+    var responseBody = jsonDecode(response.body);
+
+    if (responseBody['success']) {
+      //Todo
+    } else {
+      showSnackbar(context, responseBody['message']);
+      throw Exception('FUNCTIONNAME Exception: ${responseBody['message']}');
+    }
+  } else {
+    showSnackbar(context, '서버와 연결이 불안정합니다');
+    throw Exception('Failed to load post');
+  }
+}
 
 void showSnackbar(BuildContext context, String text,
     {String? label, dynamic onPressed}) {

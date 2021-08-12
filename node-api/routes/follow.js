@@ -3,17 +3,14 @@ var router = express.Router();
 
 const follow = require('../controllers/follow');
 const auth = require('../middlewares/auth');
-//const upload = require('../../modules/multer');
 
-/*
 // 팔로우 등록/취소
-router.post('/follow', auth.checkToken, follow.postFollow);
+router.patch('/', auth.checkToken, follow.patchFollow);
 
-// 팔로우 목록 조회
-router.get('/follow', auth.checkToken, follow.getfollow);
+// 팔로워 목록 조회
+router.get('/follower-list', auth.checkToken, follow.getFollowerList);
 
-// 팔로우 게시글 조회
-router.get('/following/article', auth.checkToken, follow.followingArticle);
-*/
+// 팔로잉 목록 조회
+router.get('/following-list', auth.checkToken, follow.getFollowingList);
 
 module.exports = router;

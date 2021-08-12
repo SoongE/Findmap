@@ -207,6 +207,17 @@ const users = {
             throw err;
         }
     },
+    updateUserDescription: async(userIdx, description) => {
+        const query = `UPDATE UserTB SET description = ? WHERE idx = ? and status = 'Y';`
+        const params = [description, userIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('유저 description 수정 ERROR : ', err);
+            throw err;
+        }
+    },
     checkUserInterest: async(userIdx, categoryIdx) => {
         const query = `SELECT * FROM UserInterestTB WHERE userIdx = ? and categoryIdx = ?;`
         const params = [userIdx, categoryIdx];
@@ -265,6 +276,28 @@ const users = {
             return [result];
         } catch (err) {
             console.log('유저 관심 카테고리 조회 ERROR: ', err);
+            throw err;
+        }
+    },
+    selectProfile: async(userIdx) => {
+        const query = `
+        SELECT 
+            U.idx,
+            U.profileUrl,
+            U.nickName,
+            U.description,
+            (SELECT COUNT(*) FROM ScrapTB S WHERE U.idx = S.userIdx) AS ScrapCount,
+            (SELECT COUNT(*) FROM FollowTB F WHERE U.idx = F.followerIdx) AS FollowCount,
+            (SELECT COUNT(*) FROM FeedHeartTB FH WHERE FH.userIdx = U.idx) AS HaertCount
+        FROM UserTB U
+            WHERE U.idx = ? and U.status = 'Y'
+        `;
+        const params = [userIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('유저 프로필 조회 ERROR: ', err);
             throw err;
         }
     }
