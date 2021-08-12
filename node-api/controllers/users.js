@@ -428,6 +428,25 @@ const users = {
             return res.status(4000).send(`Error: ${err.message}`);
         }
     },
+    patchUserDescription: async (req, res) => {
+        const userIdx = req.decoded.userIdx;
+        let {description} = req.body;
+        if (!description) return res.json({success: false, code: 2016, message: "description을 입력해 주세요."});
+
+        try {
+            // 로그인 확인
+            const checkJWT = await userModel.checkJWT(userIdx);
+            if (checkJWT[0].length < 1) return res.json({success: false, code: 3007, message: "로그인되어 있지 않습니다."});
+
+            const result = await userModel.updateUserDescription(userIdx, description);
+            const userInfoRow = await userModel.userIdxCheck(userIdx);
+
+            return res.json({success: true, code: 1000, message: "유저 description 추가 성공", result: userInfoRow[0]});
+        } catch (err) {
+            console.log(error);
+            return res.status(4000).send(`Error: ${err.message}`);
+        }
+    },
     getUserInterest: async (req, res) => {
         const userIdx = req.decoded.userIdx;
 
@@ -486,7 +505,22 @@ const users = {
             console.log(error);
             return res.status(4000).send(`Error: ${err.message}`);
         }
-    }
+    },
+    getProfile: async (req, res) => {
+        const userIdx = req.decoded.userIdx;
+        
+        try {
+            // 로그인 확인
+            const checkJWT = await userModel.checkJWT(userIdx);
+            if (checkJWT[0].length < 1) return res.json({success: false, code: 3007, message: "로그인되어 있지 않습니다."});
+
+            const profileRow = await userModel.selectProfile(userIdx);
+            return res.json({success: true, code: 1000, message: "유저 정보 조회 성공", result: profileRow[0]});
+        } catch (err) {
+            console.log(error);
+            return res.status(4000).send(`Error: ${err.message}`);
+        }
+    },
 }
 
 module.exports = users;
