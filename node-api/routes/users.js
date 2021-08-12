@@ -48,6 +48,18 @@ router.get('/interest', auth.checkToken, user.getUserInterest);
 // 관심분야 선택
 router.patch('/interest', auth.checkToken, user.patchUserInterest);
 
+// 팔로우 등록/취소
+router.patch('/follow', auth.checkToken, user.patchFollow);
+
+// 팔로워 목록 조회
+router.get('/:userIdx/follower-list', auth.checkToken, user.getFollowerList);
+
+// 팔로잉 목록 조회
+router.get('/:userIdx/following-list', auth.checkToken, user.getFollowingList);
+
+// 프로필 조회
+router.get('/:userIdx/profile', auth.checkToken, user.getProfile);
+
 /*
 // 유저 이메일 찾기 API
 router.get('/find-email', user.findEmail);
