@@ -207,6 +207,17 @@ const users = {
             throw err;
         }
     },
+    updateUserDescription: async(userIdx, description) => {
+        const query = `UPDATE UserTB SET description = ? WHERE idx = ? and status = 'Y';`
+        const params = [description, userIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('유저 description 수정 ERROR : ', err);
+            throw err;
+        }
+    },
     checkUserInterest: async(userIdx, categoryIdx) => {
         const query = `SELECT * FROM UserInterestTB WHERE userIdx = ? and categoryIdx = ?;`
         const params = [userIdx, categoryIdx];

@@ -42,6 +42,9 @@ router.patch('/info-birthday', auth.checkToken, user.patchUserBirthDay);
 // 유저 정보 수정 (성별)
 router.patch('/info-gender', auth.checkToken, user.patchUserGender);
 
+// 유저 프로필 추가 (소개)
+router.patch('/info-description', auth.checkToken, user.patchUserDescription);
+
 // 관심분야 조회
 router.get('/interest', auth.checkToken, user.getUserInterest);
 
