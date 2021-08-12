@@ -288,7 +288,7 @@ const users = {
             U.description,
             (SELECT COUNT(*) FROM ScrapTB S WHERE U.idx = S.userIdx) AS ScrapCount,
             (SELECT COUNT(*) FROM FollowTB F WHERE U.idx = F.followerIdx) AS FollowCount,
-            (SELECT COUNT(*) FROM FeedLikeTB FL WHERE FL.userIdx = U.idx) AS HaertCount
+            (SELECT COUNT(*) FROM FeedHeartTB FH WHERE FH.userIdx = U.idx) AS HaertCount
         FROM UserTB U
             WHERE U.idx = ? and U.status = 'Y'
         `;

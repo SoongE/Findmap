@@ -1,25 +1,25 @@
 var express = require('express');
 var router = express.Router();
 
-const feed = require('../controllers/feed');
+const feed = require('../controllers/feeds');
 const auth = require('../middlewares/auth');
-//const upload = require('../../modules/multer');
 
-/*
-// 피드 업로드 등록/취소
-router.post('/:feedIdx/storage',auth.checkToken, feed.postStorage);
+// 피드 저장 등록/취소
+router.patch('/:scrapIdx/storage',auth.checkToken, feed.patchFeedStorage);
 
-// 피드 좋아요 등록/취소
-router.post('/:feedIdx/like',auth.checkToken, feed.postLike);
+// 피드 하트 등록/취소
+router.patch('/:scrapIdx/heart',auth.checkToken, feed.patchFeedHeart);
 
-// 피드 삭제
-router.patch('/:feedIdx',auth.checkToken, feed.deleteFeed);
+// 피드 방문 등록
+router.patch('/:scrapIdx/history',auth.checkToken, feed.patchFeedHistory);
 
-// 피드 수정
-router.patch('/:feedIdx',auth.checkToken, feed.patchFeed);
+// 자기 피드 가져오기
+router.get('/mine',auth.checkToken, feed.getMyFeed);
 
-// 피드 공유
-router.get('/:feedIdx/share',auth.checkToken, scrap.shareFeed);
-*/
+// 추천 피드 가져오기
+//router.get('/frecommendation',auth.checkToken, user.getRecommendationFeed);
+
+// 팔로잉 피드 가져오기
+//router.get('/following',auth.checkToken, feed.getFollowingFeed);
 
 module.exports = router;
