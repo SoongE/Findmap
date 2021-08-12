@@ -39,10 +39,7 @@ def read_text(max_length=256):
 
 
 def define_field():
-    '''
-    To avoid use DataLoader class, just declare dummy fields. 
-    With those fields, we can retore mapping table between words and indice.
-    '''
+
     return (
         data.Field(
             use_vocab=True,
