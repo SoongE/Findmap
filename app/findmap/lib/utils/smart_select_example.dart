@@ -2,12 +2,12 @@ import 'package:findmap/models/post_folder.dart';
 import 'package:flutter/material.dart';
 import 'package:smart_select/smart_select.dart';
 
-class AlarmPage extends StatefulWidget {
+class SmartSelectExample extends StatefulWidget {
   @override
-  _AlarmPageState createState() => _AlarmPageState();
+  _SmartSelectExampleState createState() => _SmartSelectExampleState();
 }
 
-class _AlarmPageState extends State<AlarmPage> {
+class _SmartSelectExampleState extends State<SmartSelectExample> {
   String value = 'flutter';
   List<S2Choice<String>> options = [
     S2Choice<String>(value: 'ion', title: 'Ionic'),
