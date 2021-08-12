@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:http/http.dart' as http;
 import 'package:line_icons/line_icons.dart';
+import 'package:smart_select/smart_select.dart';
 
 class FolderManage extends StatefulWidget {
   final User user;
@@ -28,6 +29,15 @@ class _FolderManageState extends State<FolderManage> {
   final AsyncMemoizer<List<PostFolder>> _memoizer =
       AsyncMemoizer<List<PostFolder>>();
   final GlobalKey<AnimatedListState> _listKey = GlobalKey();
+
+  int _removeMenuIdx = 0;
+  List<S2Choice<int>> _removeMenu = [
+    S2Choice<int>(value: 0, title: '삭제'),
+    S2Choice<int>(value: 1, title: '삭제하고 콘텐츠 옮기기'),
+    S2Choice<int>(value: 2, title: '콘텐츠도 함께 삭제'),
+  ];
+
+  int _movedFolderIdx = 0;
 
   @override
   void initState() {
@@ -50,9 +60,14 @@ class _FolderManageState extends State<FolderManage> {
             leading: BackButton(color: Colors.black),
             backgroundColor: Colors.white,
             elevation: 1,
-            title: Text(
-              '폴더 관리',
-              style: TextStyle(color: Colors.black),
+            title: Row(
+              children: [
+                Expanded(
+                    flex: 1,
+                    child:
+                        Text('폴더 관리', style: TextStyle(color: Colors.black))),
+                Expanded(flex: 3, child: _drawFolderDeleteSelectMenu()),
+              ],
             ),
           ),
           body: FutureBuilder<List<PostFolder>>(
@@ -119,6 +134,31 @@ class _FolderManageState extends State<FolderManage> {
     );
   }
 
+  Widget _drawFolderDeleteSelectMenu() {
+    return SmartSelect<int>.single(
+      title: '',
+      tileBuilder: (context, state) {
+        return S2Tile.fromState(state,
+            trailing: const Icon(Icons.keyboard_arrow_down_outlined));
+      },
+      modalTitle: '삭제 옵션',
+      modalHeader: true,
+      value: _removeMenuIdx,
+      onChange: (state) => setState(() => {_removeMenuIdx = state.value}),
+      modalType: S2ModalType.bottomSheet,
+      choiceLayout: S2ChoiceLayout.list,
+      modalHeaderStyle: S2ModalHeaderStyle(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      ),
+      modalStyle: S2ModalStyle(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      ),
+      choiceItems: _removeMenu,
+    );
+  }
+
   Future<void> fetchChangeFolderName(
       BuildContext context, PostFolder postFolder) async {
     final response = await http.patch(
@@ -173,12 +213,21 @@ class _FolderManageState extends State<FolderManage> {
   }
 
   void fetchDeleteFolder(int idx) async {
+    var url = '';
+    if (_removeMenuIdx == 0)
+      url = '/folders/$idx/delete';
+    else if (_removeMenuIdx == 1)
+      url = '/folders/$idx/delete-only';
+    else
+      url = '/folders/$idx/delete-all';
+
     final response = await http.patch(
-      Uri.http(BASEURL, '/folders/$idx/delete'),
+      Uri.http(BASEURL, url),
       headers: {
         HttpHeaders.contentTypeHeader: "application/json",
         "token": widget.user.accessToken,
       },
+      body: json.encode({"moveFolderIdx": _movedFolderIdx}),
     );
 
     if (response.statusCode == 200) {
@@ -187,11 +236,11 @@ class _FolderManageState extends State<FolderManage> {
       if (responseBody['success']) {
         // int removeIndex =
         //     _folderList.indexWhere((element) => element.idx == idx);
-        // PostFolder removeElement = _folderList.removeAt(removeIndex);
         // AnimatedListRemovedItemBuilder builder = (context, animation) {
-        //   return animatedListTileForDel(context, removeElement.name, animation);
+        //   return Container();
         // };
         // _listKey.currentState!.removeItem(removeIndex, builder);
+        _folderList.removeWhere((e) => e.idx == idx);
       } else {
         showSnackbar(context, responseBody['message']);
         throw Exception(
@@ -278,7 +327,13 @@ class _FolderManageState extends State<FolderManage> {
           extentRatio: 0.2,
           motion: const DrawerMotion(),
           dismissible: DismissiblePane(
-            onDismissed: () => fetchDeleteFolder(postFolder.idx),
+            onDismissed: () {
+              if (_removeMenuIdx == 1)
+                showModifyDialog()
+                    .then((value) => fetchDeleteFolder(postFolder.idx));
+              else
+                fetchDeleteFolder(postFolder.idx);
+            },
           ),
           children: [
             SlidableAction(
@@ -290,8 +345,47 @@ class _FolderManageState extends State<FolderManage> {
             ),
           ],
         ),
-        child: Padding(
-            padding: const EdgeInsets.only(left: 20),
-            child: ListTile(title: Text(postFolder.name))));
+        child: ListTile(title: Text(postFolder.name)));
+  }
+
+  Future<void> showModifyDialog() async {
+    List<S2Choice<int>> _s2FolderList = _folderList
+        .map((e) => S2Choice<int>(value: e.idx, title: e.name))
+        .toList();
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        content: Container(
+          width: 400,
+          height: 100,
+          child: Center(
+            child: SmartSelect<int>.single(
+              title: '이동할 폴더',
+              value: _movedFolderIdx,
+              onChange: (state) => {
+                _movedFolderIdx = state.value,
+                Navigator.of(context).pop(),
+              },
+              modalType: S2ModalType.bottomSheet,
+              modalHeader: false,
+              choiceLayout: S2ChoiceLayout.list,
+              modalHeaderStyle: S2ModalHeaderStyle(
+                shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(20))),
+              ),
+              modalStyle: S2ModalStyle(
+                shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(20))),
+              ),
+              choiceItems: _s2FolderList,
+            ),
+          ),
+        ),
+      ),
+      barrierDismissible: false,
+    );
   }
 }
