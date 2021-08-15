@@ -86,8 +86,10 @@ class _FolderManageState extends State<FolderManage> {
                       padding: const EdgeInsets.all(10),
                       child: TextFormField(
                         onFieldSubmitted: (value) {
-                          fetchAddFolder(value);
-                          _addFolderController.clear();
+                          if (_folderAddValidator(value)) {
+                            fetchAddFolder(_addFolderController.text);
+                            _addFolderController.clear();
+                          }
                         },
                         controller: _addFolderController,
                         decoration: InputDecoration(
@@ -279,6 +281,47 @@ class _FolderManageState extends State<FolderManage> {
     }
   }
 
+  Future<void> showModifyDialog() async {
+    List<S2Choice<int>> _s2FolderList = _folderList
+        .map((e) => S2Choice<int>(value: e.idx, title: e.name))
+        .toList();
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        content: Container(
+          width: 400,
+          height: 100,
+          child: Center(
+            child: SmartSelect<int>.single(
+              title: '이동할 폴더',
+              value: _movedFolderIdx,
+              onChange: (state) => {
+                _movedFolderIdx = state.value,
+                Navigator.of(context).pop(),
+              },
+              modalType: S2ModalType.bottomSheet,
+              modalHeader: false,
+              choiceLayout: S2ChoiceLayout.list,
+              modalHeaderStyle: S2ModalHeaderStyle(
+                shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(20))),
+              ),
+              modalStyle: S2ModalStyle(
+                shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(20))),
+              ),
+              choiceItems: _s2FolderList,
+            ),
+          ),
+        ),
+      ),
+      barrierDismissible: false,
+    );
+  }
+
   Widget _slider(BuildContext context, PostFolder postFolder) {
     return Slidable(
         key: UniqueKey(),
@@ -348,44 +391,23 @@ class _FolderManageState extends State<FolderManage> {
         child: ListTile(title: Text(postFolder.name)));
   }
 
-  Future<void> showModifyDialog() async {
-    List<S2Choice<int>> _s2FolderList = _folderList
-        .map((e) => S2Choice<int>(value: e.idx, title: e.name))
-        .toList();
+  bool _folderAddValidator(value) {
+    if (value.trim().isEmpty || value.trim() == null) {
+      showSnackbar(context, '폴더명을 한 글자 이상 적어주세요');
+      return false;
+    } else if (_isFolderExist(_folderList, value)) {
+      showSnackbar(context, '기존에 존재하는 폴더명과 겹칩니다');
+      return false;
+    }
+    return true;
+  }
 
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        content: Container(
-          width: 400,
-          height: 100,
-          child: Center(
-            child: SmartSelect<int>.single(
-              title: '이동할 폴더',
-              value: _movedFolderIdx,
-              onChange: (state) => {
-                _movedFolderIdx = state.value,
-                Navigator.of(context).pop(),
-              },
-              modalType: S2ModalType.bottomSheet,
-              modalHeader: false,
-              choiceLayout: S2ChoiceLayout.list,
-              modalHeaderStyle: S2ModalHeaderStyle(
-                shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(20))),
-              ),
-              modalStyle: S2ModalStyle(
-                shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(20))),
-              ),
-              choiceItems: _s2FolderList,
-            ),
-          ),
-        ),
-      ),
-      barrierDismissible: false,
-    );
+  bool _isFolderExist(List<PostFolder> _folderList, String _newFolderName) {
+    // Find the index of folder. If not found, index = -1
+    final index = _folderList.indexWhere((e) => e.name == _newFolderName);
+    if (index >= 0)
+      return true;
+    else
+      return false;
   }
 }

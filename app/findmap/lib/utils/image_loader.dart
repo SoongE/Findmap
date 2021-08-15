@@ -1,7 +1,12 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 
+List<String> _noneThumbnailUrl = [];
+
 Widget imageLoader(AnimationController controller, String url) {
+  if (_noneThumbnailUrl.contains(url)) {
+    return Image.asset('assets/archive_basic.png');
+  }
   return ExtendedImage.network(
     url,
     fit: BoxFit.fill,
@@ -26,6 +31,7 @@ Widget imageLoader(AnimationController controller, String url) {
 
         case LoadState.failed:
           controller.reset();
+          _noneThumbnailUrl.add(url);
           return GestureDetector(
             child: Stack(
               fit: StackFit.expand,

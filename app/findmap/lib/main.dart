@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'NanumBarunGothic',
         primarySwatch: Colors.blue,
         scaffoldBackgroundColor: Colors.white,
+        splashColor: Colors.transparent,
       ),
       home: SplashPage(),
     );

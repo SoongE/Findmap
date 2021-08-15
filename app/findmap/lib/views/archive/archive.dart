@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:async/async.dart';
 import 'package:findmap/models/post.dart';
 import 'package:findmap/models/post_folder.dart';
 import 'package:findmap/models/user.dart';
@@ -26,6 +27,8 @@ class _ArchivePageState extends State<ArchivePage> {
   List<Post> _archiveList = <Post>[];
   List<PostFolder> _folderList = <PostFolder>[];
   List<String> _menuList = <String>['폴더 관리', '다른 메뉴'];
+
+  final _getArchiveMemoizer = AsyncMemoizer<List<Post>>();
 
   late PostFolder _state = PostFolder(-1, -1, '아카이브', -1, '', '', '');
 
@@ -123,7 +126,8 @@ class _ArchivePageState extends State<ArchivePage> {
         ),
         body: FutureBuilder<List<Post>>(
           future: _state.idx == -1
-              ? fetchGetArchive(context)
+              ? _getArchiveMemoizer
+                  .runOnce(() async => await fetchGetArchive(context))
               : fetchGetFolderArchive(context, _state),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
@@ -263,6 +267,7 @@ class _ArchivePageState extends State<ArchivePage> {
   }
 
   Widget _slider(Post post) {
+    var isFeedShareLabel = post.isFeed == 'Y' ? '피드로 공유' : '피드 공유 해제';
     return Slidable(
       key: UniqueKey(),
       startActionPane: ActionPane(
@@ -274,18 +279,21 @@ class _ArchivePageState extends State<ArchivePage> {
             onPressed: (BuildContext context) {
               fetchFeedUpDown(
                       context, post.idx, post.isFeed == 'Y' ? true : false)
-                  .then(
-                      (value) => post.isFeed = post.isFeed == 'Y' ? 'N' : 'Y');
+                  .then((value) {
+                post.isFeed = post.isFeed == 'Y' ? 'N' : 'Y';
+                setState(() {
+                  isFeedShareLabel = post.isFeed == 'Y' ? '피드로 공유' : '피드 공유 해제';
+                });
+              });
             },
             backgroundColor: Color(0xFF7BC043),
             foregroundColor: Colors.white,
             icon: Icons.screen_share,
-            label: '피드로 공유',
+            label: isFeedShareLabel,
           ),
           SlidableAction(
             onPressed: (BuildContext context) {
-              showModifyDialog(
-                  post.idx, post.title, post.comment, post.folderIdx);
+              showModifyDialog(post);
             },
             backgroundColor: Color(0xFF0392CF),
             foregroundColor: Colors.white,
@@ -310,13 +318,7 @@ class _ArchivePageState extends State<ArchivePage> {
           ),
         ],
       ),
-      child: PostTile(
-          url: post.contentUrl,
-          thumbnail: post.thumbnailUrl,
-          title: post.title,
-          subtitle: post.summary,
-          author: post.comment,
-          source: post.contentUrl.substring(0, 5)),
+      child: PostTile(post: post),
     );
   }
 
@@ -378,12 +380,11 @@ class _ArchivePageState extends State<ArchivePage> {
     }
   }
 
-  void showModifyDialog(
-      int idx, String title, String comment, int folderIndex) {
-    _title.text = title;
-    _comment.text = comment;
+  void showModifyDialog(Post post) {
+    _title.text = post.title;
+    _comment.text = post.comment;
     String nowFolder =
-        _folderList.firstWhere((element) => element.idx == folderIndex).name;
+        _folderList.firstWhere((element) => element.idx == post.folderIdx).name;
 
     List<String> _stringFolderList = [];
     _stringFolderList.addAll(_folderList.map((e) => e.name));
@@ -437,9 +438,14 @@ class _ArchivePageState extends State<ArchivePage> {
                 var folderIdx = _folderList
                     .firstWhere((element) => element.name == nowFolder)
                     .idx;
-                fetchModifyScrap(context, idx, _title.text, _comment.text,
+                fetchModifyScrap(context, post.idx, _title.text, _comment.text,
                         folderIdx.toString())
                     .then((value) => Navigator.of(context).pop());
+                setState(() {
+                  post.title = _title.text;
+                  post.comment = _comment.text;
+                  post.folderIdx = folderIdx;
+                });
               }),
         ],
       ),

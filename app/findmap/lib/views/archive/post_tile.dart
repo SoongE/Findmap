@@ -1,21 +1,24 @@
+import 'package:findmap/models/post.dart';
 import 'package:findmap/utils/image_loader.dart';
 import 'package:findmap/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class _ArticleDescription extends StatelessWidget {
-  const _ArticleDescription(
-      {Key? key,
-      required this.title,
-      required this.subtitle,
-      required this.author,
-      required this.source})
-      : super(key: key);
+  const _ArticleDescription({
+    Key? key,
+    required this.title,
+    required this.subtitle,
+    required this.author,
+    required this.source,
+    required this.isFeed,
+  }) : super(key: key);
 
   final String title;
   final String subtitle;
   final String author;
   final String source;
+  final bool isFeed;
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +57,10 @@ class _ArticleDescription extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
+              isFeed
+                  ? Icon(Icons.screen_share, size: 15, color: Colors.green)
+                  : Container(),
+              Padding(padding: const EdgeInsets.symmetric(horizontal: 3)),
               Text(
                 author,
                 style: const TextStyle(
@@ -61,6 +68,7 @@ class _ArticleDescription extends StatelessWidget {
                   color: Colors.black87,
                 ),
               ),
+              Padding(padding: const EdgeInsets.symmetric(horizontal: 3)),
               Text(
                 source,
                 style: const TextStyle(
@@ -77,22 +85,9 @@ class _ArticleDescription extends StatelessWidget {
 }
 
 class PostTile extends StatefulWidget {
-  const PostTile({
-    Key? key,
-    required this.url,
-    required this.thumbnail,
-    required this.title,
-    required this.subtitle,
-    required this.author,
-    required this.source,
-  }) : super(key: key);
+  const PostTile({Key? key, required this.post}) : super(key: key);
 
-  final String url;
-  final String thumbnail;
-  final String title;
-  final String subtitle;
-  final String author;
-  final String source;
+  final Post post;
 
   @override
   _PostTileState createState() => _PostTileState();
@@ -112,7 +107,6 @@ class _PostTileState extends State<PostTile>
     super.initState();
   }
 
-  
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -126,20 +120,22 @@ class _PostTileState extends State<PostTile>
               aspectRatio: 1.0,
               child: Container(
                 margin: const EdgeInsets.all(10),
-                child: imageLoader(controller, widget.thumbnail),
+                child: imageLoader(controller, widget.post.thumbnailUrl),
               ),
             ),
             Expanded(
               child: GestureDetector(
-                onTap: () =>
-                    Navigator.push(context, createRoute(_webView(widget.url))),
+                onTap: () => Navigator.push(
+                    context, createRoute(_webView(widget.post.contentUrl))),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(20.0, 0.0, 2.0, 0.0),
                   child: _ArticleDescription(
-                      title: widget.title,
-                      subtitle: widget.subtitle,
-                      author: widget.author,
-                      source: widget.source),
+                    title: widget.post.title,
+                    subtitle: widget.post.summary,
+                    author: "글쓴이",
+                    source: "출처",
+                    isFeed: widget.post.isFeed == 'Y' ? true : false,
+                  ),
                 ),
               ),
             )
