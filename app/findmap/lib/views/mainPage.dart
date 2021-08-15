@@ -63,11 +63,10 @@ class _MainPageState extends State<MainPage> {
   }
 
   void _handleSharedData(String sharedData) {
-    sharedData.startsWith("http")
-        ? Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) =>
-                SharePage(url: sharedData, user: widget.user)))
-        : null;
+    if (sharedData.startsWith("http")) {
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => SharePage(url: sharedData, user: widget.user)));
+    }
   }
 
   @override
@@ -96,6 +95,7 @@ class _MainPageState extends State<MainPage> {
               if (_selectedIndex == 3) _badge = -1;
             });
           },
+          physics: NeverScrollableScrollPhysics(),
           controller: _controller,
           itemBuilder: (context, position) {
             return _widgetOptions.elementAt(position);
