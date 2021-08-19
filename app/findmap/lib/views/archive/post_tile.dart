@@ -45,6 +45,7 @@ class _ArticleDescription extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   fontSize: 12.0,
+                  letterSpacing: 1.0,
                   color: Colors.black54,
                 ),
               ),

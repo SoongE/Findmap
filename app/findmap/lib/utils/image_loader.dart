@@ -5,11 +5,11 @@ List<String> _noneThumbnailUrl = [];
 
 Widget imageLoader(AnimationController controller, String url) {
   if (_noneThumbnailUrl.contains(url)) {
-    return Image.asset('assets/archive_basic.png');
+    return Image.asset('assets/archive_basic.png', fit: BoxFit.cover);
   }
   return ExtendedImage.network(
     url,
-    fit: BoxFit.fill,
+    fit: BoxFit.cover,
     cache: true,
     loadStateChanged: (ExtendedImageState state) {
       switch (state.extendedImageLoadState) {
@@ -34,11 +34,11 @@ Widget imageLoader(AnimationController controller, String url) {
           _noneThumbnailUrl.add(url);
           return GestureDetector(
             child: Stack(
-              fit: StackFit.expand,
+              fit: StackFit.loose,
               children: <Widget>[
                 Image.asset(
                   "assets/archive_basic.png",
-                  fit: BoxFit.fill,
+                  fit: BoxFit.cover,
                 ),
                 // Positioned(
                 //   bottom: 0.0,
