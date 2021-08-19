@@ -140,6 +140,23 @@ const feed = {
             console.log('내 피드 조회 ERROR: ', err);
             throw err;
         }
+    },
+    selectFollowingFeed: async(userIdx) => {
+        const query = `
+            SELECT *
+            FROM ScrapTB S
+                INNER JOIN FollowTB F ON F.followingIdx = S.userIdx
+            WHERE F.followerIdx = ? and S.isFeed = 'Y' and S.status = 'Y'
+            ORDER BY S.createdAt DESC;
+        `;
+        const params = [userIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('내 피드 조회 ERROR: ', err);
+            throw err;
+        }
     }
 }
 

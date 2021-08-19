@@ -8,6 +8,10 @@ const folder = {
         if (!name) return res.json({success: false, code: 2201, message: "name을 입력해 주세요."});
 
         try{
+            const checkFolder = await folderModel.selectFolder(userIdx);
+            if (checkFolder[0].name == name) {
+                return res.json({success: true, code: 3202, message: "같은 이름의 폴더는 존재할 수 없습니다."});
+            }
             const folderRow = await folderModel.postFolder(userIdx, name);
 
             return res.json({success: true, code: 1000, message: "폴더 등록 성공", result: {"insertId": folderRow[0].insertId}});
