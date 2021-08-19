@@ -4,7 +4,7 @@ import 'package:findmap/src/my_colors.dart';
 import 'package:findmap/views/alarm.dart';
 import 'package:findmap/views/archive/archive.dart';
 import 'package:findmap/views/archive/share.dart';
-import 'package:findmap/views/feed.dart';
+import 'package:findmap/views/feed/feed.dart';
 import 'package:findmap/views/search/search.dart';
 import 'package:findmap/views/userPage.dart';
 import 'package:flutter/material.dart';

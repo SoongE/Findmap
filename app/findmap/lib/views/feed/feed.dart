@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 
-class FeedPage extends StatelessWidget {
+class FeedPage extends StatefulWidget {
+  @override
+  _FeedPageState createState() => _FeedPageState();
+}
+
+class _FeedPageState extends State<FeedPage> {
   @override
   Widget build(BuildContext context) {
     final double statusBarHeight = MediaQuery.of(context).padding.top;
