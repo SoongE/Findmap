@@ -11,19 +11,19 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-import 'recommend_feed_tile.dart';
+import 'following_feed_tile.dart';
 
-class RecommendFeedTab extends StatefulWidget {
-  RecommendFeedTab({Key? key, required this.user}) : super(key: key);
+class FollowingFeedTab extends StatefulWidget {
+  FollowingFeedTab({Key? key, required this.user}) : super(key: key);
 
   final User user;
 
   @override
-  _RecommendFeedTabState createState() => _RecommendFeedTabState();
+  _FollowingFeedTabState createState() => _FollowingFeedTabState();
 }
 
-class _RecommendFeedTabState extends State<RecommendFeedTab>
-    with AutomaticKeepAliveClientMixin<RecommendFeedTab> {
+class _FollowingFeedTabState extends State<FollowingFeedTab>
+    with AutomaticKeepAliveClientMixin<FollowingFeedTab> {
   List<Post> data = [];
   List<PostFolder> folderList = [PostFolder(0, 0, '아카이브', 0, '', '', '')];
 
@@ -46,7 +46,7 @@ class _RecommendFeedTabState extends State<RecommendFeedTab>
       RefreshController(initialRefresh: false);
 
   void _onRefresh() async {
-    fetchGetRecommendFeeds(context).then((value) {
+    fetchGetFollowingFeeds(context).then((value) {
       setState(() {
         data.addAll(value);
       });
@@ -106,7 +106,8 @@ class _RecommendFeedTabState extends State<RecommendFeedTab>
           physics: BouncingScrollPhysics(),
           itemCount: data.length,
           separatorBuilder: (BuildContext context, int i) => Divider(height: 1),
-          itemBuilder: (context, index) => RecommendFeedTile(
+          itemBuilder: (context, index) => FollowingFeedTile(
+            user: widget.user,
             post: data[index],
             onArchivePressed: () => _drawSaveToArchive(data[index]),
           ),
@@ -213,7 +214,7 @@ class _RecommendFeedTabState extends State<RecommendFeedTab>
     }
   }
 
-  Future<List<Post>> fetchGetRecommendFeeds(BuildContext context) async {
+  Future<List<Post>> fetchGetFollowingFeeds(BuildContext context) async {
     final response = await http.get(
       Uri.http(BASEURL, '/feeds/mine'),
       headers: {
