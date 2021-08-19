@@ -4,7 +4,6 @@ import 'package:findmap/src/my_colors.dart';
 import 'package:findmap/views/alarm.dart';
 import 'package:findmap/views/archive/archive.dart';
 import 'package:findmap/views/archive/share.dart';
-import 'package:findmap/views/feed.dart';
 import 'package:findmap/views/search/search.dart';
 import 'package:findmap/views/userPage.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +12,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 
 import 'archive/share_service.dart';
+import 'feed/feed.dart';
 
 class MainPage extends StatefulWidget {
   final User user;
@@ -55,7 +55,7 @@ class _MainPageState extends State<MainPage> {
     _widgetOptions = <Widget>[
       ArchivePage(user: widget.user),
       SearchPage(),
-      FeedPage(),
+      FeedPage(user: widget.user),
       AlarmPage(),
       UserPage(user: widget.user),
     ];

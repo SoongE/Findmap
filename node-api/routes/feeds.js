@@ -17,9 +17,9 @@ router.patch('/:scrapIdx/history',auth.checkToken, feed.patchFeedHistory);
 router.get('/mine',auth.checkToken, feed.getMyFeed);
 
 // 추천 피드 가져오기
-//router.get('/frecommendation',auth.checkToken, user.getRecommendationFeed);
+router.get('/recommendation',auth.checkToken, feed.getRecommendationFeed);
 
 // 팔로잉 피드 가져오기
-//router.get('/following',auth.checkToken, feed.getFollowingFeed);
+router.get('/following',auth.checkToken, feed.getFollowingFeed);
 
 module.exports = router;

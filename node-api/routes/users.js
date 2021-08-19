@@ -52,7 +52,7 @@ router.get('/interest', auth.checkToken, user.getUserInterest);
 router.patch('/interest', auth.checkToken, user.patchUserInterest);
 
 // 프로필 조회
-router.get('/profile', auth.checkToken, user.getProfile);
+router.get('/:userIdx/profile', auth.checkToken, user.getProfile);
 
 /*
 // 유저 이메일 찾기 API
