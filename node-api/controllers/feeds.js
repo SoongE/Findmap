@@ -115,7 +115,52 @@ const feed = {
             return res.status(4000).send(`Error: ${err.message}`);
         }
     },
+    getMyFeed: async (req, res) => {
+        const userIdx = req.decoded.userIdx;
+        
+        try {
+            // 로그인 확인
+            const checkJWT = await userModel.checkJWT(userIdx);
+            if (checkJWT[0].length < 1) return res.json({success: false, code: 3007, message: "로그인되어 있지 않습니다."});
+            
+            const feedRow = await feedModel.selectMyFeed(userIdx);
+            return res.json({success: true, code: 1000, message: "내 피드 조회 성공", result: feedRow[0]});
+        } catch (err) {
+            console.log(error);
+            return res.status(4000).send(`Error: ${err.message}`);
+        }
+    },
+    getRecommendationFeed: async (req, res) => {
+        const userIdx = req.decoded.userIdx;
+        
+        try {
+            // 로그인 확인
+            const checkJWT = await userModel.checkJWT(userIdx);
+            if (checkJWT[0].length < 1) return res.json({success: false, code: 3007, message: "로그인되어 있지 않습니다."});
+            
+            // const feedRow // flask 추천
+
+            return res.json({success: true, code: 1000, message: "추천 피드 조회 진행중"});
+        } catch (err) {
+            console.log(error);
+            return res.status(4000).send(`Error: ${err.message}`);
+        }
+    },
+    getFollowingFeed: async (req, res) => {
+        const userIdx = req.decoded.userIdx;
+        
+        try {
+            // 로그인 확인
+            const checkJWT = await userModel.checkJWT(userIdx);
+            if (checkJWT[0].length < 1) return res.json({success: false, code: 3007, message: "로그인되어 있지 않습니다."});
+            
+            const feedRow = await feedModel.selectFollowingFeed(userIdx);
+            return res.json({success: true, code: 1000, message: "팔로잉 피드 조회 성공", result: feedRow[0]});
+        } catch (err) {
+            console.log(error);
+            return res.status(4000).send(`Error: ${err.message}`);
+        }
+    }
 }
 
 module.exports = feed;
-
