@@ -7,12 +7,12 @@ import re
 class Searcher:
     def __init__(self):
         # naver에서 rest api 통신할 때 필요한 정보들
-        self.client_id = "zNA2MKsxD6v8EPSyzzRZ"
-        self.client_secret = "s_AtHZylUw"
+        self.client_id = "***"
+        self.client_secret = "***"
         self.display = "50"
 
         # kakao에서 rest api 통신할 때 필요한 정보들
-        self.rest_api_key = "9eae6db2c08b5fe4082bdd95f8134d01"
+        self.rest_api_key = "***"
         self.size = "50"
 
     def naver_get_result(self, search_text):
