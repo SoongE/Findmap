@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:async/async.dart';
-import 'package:findmap/models/post.dart';
+import 'package:findmap/models/feed.dart';
 import 'package:findmap/models/post_folder.dart';
 import 'package:findmap/models/user.dart';
 import 'package:findmap/utils/utils.dart';
@@ -24,7 +24,7 @@ class FollowingFeedTab extends StatefulWidget {
 
 class _FollowingFeedTabState extends State<FollowingFeedTab>
     with AutomaticKeepAliveClientMixin<FollowingFeedTab> {
-  List<Post> data = [];
+  List<Feed> data = [];
   List<PostFolder> folderList = [PostFolder(0, 0, '아카이브', 0, '', '', '')];
 
   PostFolder _selectedFolder = PostFolder(-1, -1, '', -1, '', '', '');
@@ -48,7 +48,7 @@ class _FollowingFeedTabState extends State<FollowingFeedTab>
   void _onRefresh() async {
     fetchGetFollowingFeeds(context).then((value) {
       setState(() {
-        data.addAll(value);
+        data = value;
       });
     });
     _refreshController.refreshCompleted();
@@ -108,7 +108,7 @@ class _FollowingFeedTabState extends State<FollowingFeedTab>
           separatorBuilder: (BuildContext context, int i) => Divider(height: 1),
           itemBuilder: (context, index) => FollowingFeedTile(
             user: widget.user,
-            post: data[index],
+            feed: data[index],
             onArchivePressed: () => _drawSaveToArchive(data[index]),
           ),
         ),
@@ -116,10 +116,10 @@ class _FollowingFeedTabState extends State<FollowingFeedTab>
     );
   }
 
-  void _drawSaveToArchive(Post post) {
+  void _drawSaveToArchive(Feed feed) {
     showSaveToArchiveDialog().then((val) {
       if (_selectedFolder.idx != -1) {
-        fetchSaveScrap(post, _selectedFolder).then((v) {});
+        fetchSaveScrap(feed, _selectedFolder).then((v) {});
       }
     });
     _selectedFolder.idx = -1;
@@ -156,13 +156,13 @@ class _FollowingFeedTabState extends State<FollowingFeedTab>
     );
   }
 
-  Future<void> fetchSaveScrap(Post post, PostFolder folder) async {
+  Future<void> fetchSaveScrap(Feed feed, PostFolder folder) async {
     Map<String, dynamic> body = {
-      "title": post.title,
-      "comment": post.comment,
-      "summary": post.summary,
-      "contentUrl": post.contentUrl,
-      "thumbnailUrl": post.thumbnailUrl,
+      "title": feed.title,
+      "comment": feed.comment,
+      "summary": feed.summary,
+      "contentUrl": feed.contentUrl,
+      "thumbnailUrl": feed.thumbnailUrl,
       "folderIdx": folder.idx,
       "categoryIdx": '23',
       "isFeed": 'N',
@@ -214,9 +214,9 @@ class _FollowingFeedTabState extends State<FollowingFeedTab>
     }
   }
 
-  Future<List<Post>> fetchGetFollowingFeeds(BuildContext context) async {
+  Future<List<Feed>> fetchGetFollowingFeeds(BuildContext context) async {
     final response = await http.get(
-      Uri.http(BASEURL, '/feeds/mine'),
+      Uri.http(BASEURL, '/feeds/following'),
       headers: {
         HttpHeaders.contentTypeHeader: "application/json",
         "token": widget.user.accessToken,
@@ -228,16 +228,16 @@ class _FollowingFeedTabState extends State<FollowingFeedTab>
 
       if (responseBody['success'])
         return responseBody['result']
-            .map<Post>((json) => Post.fromJson(json))
+            .map<Feed>((json) => Feed.fromJson(json))
             .toList();
       else {
         showSnackbar(context, responseBody['message']);
         throw Exception(
-            'fetchGetArchive Exception: ${responseBody['message']}');
+            'fetchGetFollowingFeeds Exception: ${responseBody['message']}');
       }
     } else {
       showSnackbar(context, '서버와 연결이 불안정합니다');
-      throw Exception('Failed to load post');
+      throw Exception('Failed to load Feed');
     }
   }
 

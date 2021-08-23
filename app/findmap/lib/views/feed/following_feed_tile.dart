@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:findmap/models/post.dart';
+import 'package:findmap/models/feed.dart';
 import 'package:findmap/models/user.dart';
 import 'package:findmap/utils/image_loader.dart';
 import 'package:findmap/utils/utils.dart';
@@ -54,13 +54,13 @@ class _FeedDescription extends StatelessWidget {
 class FollowingFeedTile extends StatefulWidget {
   const FollowingFeedTile(
       {Key? key,
-      required this.post,
+      required this.feed,
       required this.onArchivePressed,
       required this.user})
       : super(key: key);
 
   final User user;
-  final Post post;
+  final Feed feed;
   final VoidCallback onArchivePressed;
 
   @override
@@ -70,8 +70,6 @@ class FollowingFeedTile extends StatefulWidget {
 class _FollowingFeedTileState extends State<FollowingFeedTile>
     with SingleTickerProviderStateMixin {
   late AnimationController controller;
-
-  bool _isHeart = false;
 
   @override
   void initState() {
@@ -90,18 +88,27 @@ class _FollowingFeedTileState extends State<FollowingFeedTile>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          _userDescription(widget.user),
+          _userDescription(widget.user, widget.feed.createdDate),
           Padding(padding: const EdgeInsets.symmetric(vertical: 5)),
-          widget.post.comment == ''
+          widget.feed.comment == ''
               ? Container()
-              : Text(widget.post.comment, style: TextStyle(letterSpacing: 1.0)),
-          widget.post.comment == ''
+              : Text(widget.feed.comment, style: TextStyle(letterSpacing: 1.0)),
+          widget.feed.comment == ''
               ? Container()
               : Padding(padding: const EdgeInsets.symmetric(vertical: 5)),
           GestureDetector(
-            onTap: () => Navigator.push(
-                context, createRoute(_webView(widget.post.contentUrl))),
+            onTap: () => {
+              widget.feed.scrapHistoryCount =
+                  (int.parse(widget.feed.scrapHistoryCount) + 1).toString(),
+              fetchClick(context, widget.feed),
+              Navigator.push(
+                  context, createRoute(_webView(widget.feed.contentUrl)))
+            },
             child: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.grey[100]),
+              padding: const EdgeInsets.all(10),
               height: 120,
               width: MediaQuery.of(context).size.width,
               child: Row(
@@ -113,73 +120,75 @@ class _FollowingFeedTileState extends State<FollowingFeedTile>
                     child: Align(
                         alignment: Alignment.center,
                         child:
-                            imageLoader(controller, widget.post.thumbnailUrl)),
+                            imageLoader(controller, widget.feed.thumbnailUrl)),
                   ),
                   Padding(padding: const EdgeInsets.symmetric(horizontal: 10)),
                   Expanded(
                     child: _FeedDescription(
-                      title: widget.post.title,
-                      subtitle: widget.post.summary,
-                      source: widget.post.contentUrl,
+                      title: widget.feed.title,
+                      subtitle: widget.feed.summary,
+                      source: widget.feed.contentUrl,
                     ),
                   ),
                 ],
               ),
             ),
           ),
-          _bottomOptions('1.5k', '1.2k', '0.7k', widget.post),
+          Padding(padding: const EdgeInsets.symmetric(vertical: 5)),
+          _bottomOptions(widget.feed),
           Padding(padding: const EdgeInsets.symmetric(vertical: 5)),
         ],
       ),
     );
   }
 
-  Widget _bottomOptions(
-      String hearNum, String shareNum, String arcNum, Post post) {
+  Widget _bottomOptions(Feed feed) {
     return Row(
       children: [
         IconButton(
           alignment: Alignment.centerLeft,
           onPressed: () {
-            fetchHeart(context, post);
+            fetchHeart(context, feed);
             setState(() {
-              _isHeart = _isHeart ? false : true;
+              feed.scrapLikeCount = feed.userLikeStatus == "Y"
+                  ? feed.scrapLikeCount - 1
+                  : feed.scrapLikeCount + 1;
+              feed.userLikeStatus = feed.userLikeStatus == "Y" ? "N" : "Y";
             });
           },
-          icon: _isHeart
+          icon: feed.userLikeStatus == "Y"
               ? Icon(LineIcons.heartAlt, color: Colors.red)
               : Icon(LineIcons.heart),
-          padding: EdgeInsets.zero,
+          padding: const EdgeInsets.only(right: 3),
           constraints: BoxConstraints(),
         ),
-        Text(hearNum),
+        Text(feed.scrapLikeCount.toString()),
         Spacer(flex: 1),
         IconButton(
           alignment: Alignment.centerLeft,
           onPressed: () {},
-          icon: Icon(LineIcons.alternateShare),
-          padding: EdgeInsets.zero,
+          icon: Icon(Icons.remove_red_eye_rounded),
+          padding: const EdgeInsets.only(right: 3),
           constraints: BoxConstraints(),
         ),
-        Text(shareNum),
+        Text(feed.scrapHistoryCount),
         Spacer(flex: 10),
         IconButton(
-          padding: EdgeInsets.zero,
+          padding: const EdgeInsets.only(right: 3),
           constraints: BoxConstraints(),
           icon: Icon(LineIcons.archive, color: Colors.pink),
           onPressed: () => {
             widget.onArchivePressed.call(),
-            fetchClick(context, post),
           },
         ),
-        Text(arcNum),
+        Text(feed.scrapStorageCount.toString()),
       ],
     );
   }
 
-  Future<void> fetchClick(BuildContext context, Post post) async {
+  Future<void> fetchClick(BuildContext context, Feed feed) async {
     final response = await http.patch(
-      Uri.http(BASEURL, '/feeds/${post.idx}/history'),
+      Uri.http(BASEURL, '/feeds/${feed.scrapIdx}/history'),
       headers: {
         HttpHeaders.contentTypeHeader: "application/json",
         "token": widget.user.accessToken,
@@ -199,9 +208,9 @@ class _FollowingFeedTileState extends State<FollowingFeedTile>
     }
   }
 
-  Future<void> fetchHeart(BuildContext context, Post post) async {
+  Future<void> fetchHeart(BuildContext context, Feed feed) async {
     final response = await http.patch(
-      Uri.http(BASEURL, '/feeds/${post.idx}/heart'),
+      Uri.http(BASEURL, '/feeds/${feed.scrapIdx}/heart'),
       headers: {
         HttpHeaders.contentTypeHeader: "application/json",
         "token": widget.user.accessToken,
@@ -221,16 +230,20 @@ class _FollowingFeedTileState extends State<FollowingFeedTile>
     }
   }
 
-  Widget _userDescription(User user) {
+  Widget _userDescription(User user, String? createDate) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        CircleAvatar(child: imageLoader(controller, user.profileUrl)),
+        CircleAvatar(child: circleImageLoader(controller, user.profileUrl)),
         Padding(padding: const EdgeInsets.symmetric(horizontal: 5)),
         Text(
           user.nickName,
           style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-        )
+        ),
+        Align(
+          alignment: Alignment.centerRight,
+          child: Text(createDate ?? " "),
+        ),
       ],
     );
   }
