@@ -124,10 +124,6 @@ const feed = {
         if (!userIdx) return res.json({success: false, code: 2601, message: "userIdx를 입력해주세요."});
         
         try {
-            // 로그인 확인
-            const checkJWT = await userModel.checkJWT(userIdx);
-            if (checkJWT[0].length < 1) return res.json({success: false, code: 3007, message: "로그인되어 있지 않습니다."});
-            
             const feedRow = await feedModel.selectFeed(userIdx);
             return res.json({success: true, code: 1000, message: "유저 피드 조회 성공", result: feedRow[0]});
         } catch (err) {
@@ -155,10 +151,6 @@ const feed = {
         const userIdx = req.decoded.userIdx;
         
         try {
-            // 로그인 확인
-            const checkJWT = await userModel.checkJWT(userIdx);
-            if (checkJWT[0].length < 1) return res.json({success: false, code: 3007, message: "로그인되어 있지 않습니다."});
-            
             const feedRow = await feedModel.selectFollowingFeed(userIdx);
             return res.json({success: true, code: 1000, message: "팔로잉 피드 조회 성공", result: feedRow[0]});
         } catch (err) {

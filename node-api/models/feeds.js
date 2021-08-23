@@ -156,7 +156,7 @@ const feed = {
              , IFNULL(UT.profileUrl, 'N') as userProfile
              , title, contentUrl, thumbnailUrl, summary
              , IFNULL(S.comment, '') as comment
-             , date_format(S.createdAt, '%Y년 %m월 %d일')  AS createdDate
+             , date_format(S.createdAt, '%Y년 %m월 %d일 %H:%i')  AS createdAt
              , case
                     when timestampdiff(second, S.createdAt, current_timestamp) <= 60
                         then concat(timestampdiff(second, S.createdAt, current_timestamp), '초 전')
@@ -201,7 +201,7 @@ const feed = {
             , IFNULL(UT.profileUrl, 'N') as userProfile
             , title, contentUrl, thumbnailUrl, summary
             , IFNULL(S.comment, '') as comment
-            , date_format(S.createdAt, '%Y년 %m월 %d일')  AS createdDate
+            , date_format(S.createdAt, '%Y년 %m월 %d일 %H:%i')  AS createdAt
             , case
                 when timestampdiff(second, S.createdAt, current_timestamp) <= 60
                     then concat(timestampdiff(second, S.createdAt, current_timestamp), '초 전')
