@@ -100,31 +100,37 @@ const feed = {
             return res.status(4000).send(`Error: ${err.message}`);
         }
     },
-    getMyFeed: async (req, res) => {
-        const userIdx = req.decoded.userIdx;
+    getFeedProfile: async (req, res) => {
+        const userIdx = req.query.userIdx;
+
+        if (!userIdx) return res.json({success: false, code: 2601, message: "userIdx를 입력해주세요."});
         
         try {
-            // 로그인 확인
-            const checkJWT = await userModel.checkJWT(userIdx);
-            if (checkJWT[0].length < 1) return res.json({success: false, code: 3007, message: "로그인되어 있지 않습니다."});
-            
-            const feedRow = await feedModel.selectMyFeed(userIdx);
-            return res.json({success: true, code: 1000, message: "내 피드 조회 성공", result: feedRow[0]});
+            const [profileRow] = await feedModel.selectProfile(userIdx);
+
+            if (profileRow[0] == undefined){
+                return res.json({success: false, code: 3701, message: "유저 프로필 정보가 존재하지 않습니다."});
+            }
+
+            return res.json({success: true, code: 1000, message: "유저 정보 조회 성공", result: profileRow});
         } catch (err) {
             console.log(error);
             return res.status(4000).send(`Error: ${err.message}`);
         }
     },
-    getMyFeed: async (req, res) => {
-        const userIdx = req.decoded.userIdx;
+    getFeed: async (req, res) => {
+        const userIdx = req.query.userIdx;
+
+        if (!userIdx) return res.json({success: false, code: 2601, message: "userIdx를 입력해주세요."});
         
         try {
-            // 로그인 확인
-            const checkJWT = await userModel.checkJWT(userIdx);
-            if (checkJWT[0].length < 1) return res.json({success: false, code: 3007, message: "로그인되어 있지 않습니다."});
-            
-            const feedRow = await feedModel.selectMyFeed(userIdx);
-            return res.json({success: true, code: 1000, message: "내 피드 조회 성공", result: feedRow[0]});
+            const [feedRow] = await feedModel.selectFeed(userIdx);
+
+            if (feedRow[0] == undefined){
+                return res.json({success: false, code: 3702, message: "피드 정보가 존재하지 않습니다."});
+            }
+
+            return res.json({success: true, code: 1000, message: "유저 피드 조회 성공", result: feedRow});
         } catch (err) {
             console.log(error);
             return res.status(4000).send(`Error: ${err.message}`);

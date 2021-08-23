@@ -51,9 +51,6 @@ router.get('/interest', auth.checkToken, user.getUserInterest);
 // 관심분야 선택
 router.patch('/interest', auth.checkToken, user.patchUserInterest);
 
-// 프로필 조회
-router.get('/:userIdx/profile', auth.checkToken, user.getProfile);
-
 /*
 // 유저 이메일 찾기 API
 router.get('/find-email', user.findEmail);

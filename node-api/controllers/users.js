@@ -505,23 +505,7 @@ const users = {
             console.log(error);
             return res.status(4000).send(`Error: ${err.message}`);
         }
-    },
-    getProfile: async (req, res) => {
-        const userIdx = req.params.userIdx;
-        
-        try {
-            const [profileRow] = await userModel.selectProfile(userIdx);
-
-            if (profileRow[0] == undefined){
-                return res.json({success: false, code: 3012, message: "유저가 존재하지 않습니다."});
-            }
-
-            return res.json({success: true, code: 1000, message: "유저 정보 조회 성공", result: profileRow});
-        } catch (err) {
-            console.log(error);
-            return res.status(4000).send(`Error: ${err.message}`);
-        }
-    },
+    }
 }
 
 module.exports = users;
