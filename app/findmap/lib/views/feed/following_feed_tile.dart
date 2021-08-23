@@ -230,7 +230,7 @@ class _FollowingFeedTileState extends State<FollowingFeedTile>
     }
   }
 
-  Widget _userDescription(User user, String createDate) {
+  Widget _userDescription(User user, String? createDate) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
