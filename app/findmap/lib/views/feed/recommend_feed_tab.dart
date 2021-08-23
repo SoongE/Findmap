@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:async/async.dart';
-import 'package:findmap/models/post.dart';
+import 'package:findmap/models/feed.dart';
 import 'package:findmap/models/post_folder.dart';
 import 'package:findmap/models/user.dart';
 import 'package:findmap/utils/utils.dart';
@@ -24,7 +24,7 @@ class RecommendFeedTab extends StatefulWidget {
 
 class _RecommendFeedTabState extends State<RecommendFeedTab>
     with AutomaticKeepAliveClientMixin<RecommendFeedTab> {
-  List<Post> data = [];
+  List<Feed> data = [];
   List<PostFolder> folderList = [PostFolder(0, 0, '아카이브', 0, '', '', '')];
 
   PostFolder _selectedFolder = PostFolder(-1, -1, '', -1, '', '', '');
@@ -107,7 +107,7 @@ class _RecommendFeedTabState extends State<RecommendFeedTab>
           itemCount: data.length,
           separatorBuilder: (BuildContext context, int i) => Divider(height: 1),
           itemBuilder: (context, index) => RecommendFeedTile(
-            post: data[index],
+            feed: data[index],
             onArchivePressed: () => _drawSaveToArchive(data[index]),
           ),
         ),
@@ -115,10 +115,10 @@ class _RecommendFeedTabState extends State<RecommendFeedTab>
     );
   }
 
-  void _drawSaveToArchive(Post post) {
+  void _drawSaveToArchive(Feed feed) {
     showSaveToArchiveDialog().then((val) {
       if (_selectedFolder.idx != -1) {
-        fetchSaveScrap(post, _selectedFolder).then((v) {});
+        fetchSaveScrap(feed, _selectedFolder).then((v) {});
       }
     });
     _selectedFolder.idx = -1;
@@ -155,13 +155,13 @@ class _RecommendFeedTabState extends State<RecommendFeedTab>
     );
   }
 
-  Future<void> fetchSaveScrap(Post post, PostFolder folder) async {
+  Future<void> fetchSaveScrap(Feed feed, PostFolder folder) async {
     Map<String, dynamic> body = {
-      "title": post.title,
-      "comment": post.comment,
-      "summary": post.summary,
-      "contentUrl": post.contentUrl,
-      "thumbnailUrl": post.thumbnailUrl,
+      "title": feed.title,
+      "comment": feed.comment,
+      "summary": feed.summary,
+      "contentUrl": feed.contentUrl,
+      "thumbnailUrl": feed.thumbnailUrl,
       "folderIdx": folder.idx,
       "categoryIdx": '23',
       "isFeed": 'N',
@@ -213,9 +213,10 @@ class _RecommendFeedTabState extends State<RecommendFeedTab>
     }
   }
 
-  Future<List<Post>> fetchGetRecommendFeeds(BuildContext context) async {
+  Future<List<Feed>> fetchGetRecommendFeeds(BuildContext context) async {
     final response = await http.get(
-      Uri.http(BASEURL, '/feeds/mine'),
+      // TODO change to feeds/recommend
+      Uri.http(BASEURL, '/feeds/following'),
       headers: {
         HttpHeaders.contentTypeHeader: "application/json",
         "token": widget.user.accessToken,
@@ -227,16 +228,16 @@ class _RecommendFeedTabState extends State<RecommendFeedTab>
 
       if (responseBody['success'])
         return responseBody['result']
-            .map<Post>((json) => Post.fromJson(json))
+            .map<Feed>((json) => Feed.fromJson(json))
             .toList();
       else {
         showSnackbar(context, responseBody['message']);
         throw Exception(
-            'fetchGetArchive Exception: ${responseBody['message']}');
+            'fetchGetRecommendFeeds Exception: ${responseBody['message']}');
       }
     } else {
       showSnackbar(context, '서버와 연결이 불안정합니다');
-      throw Exception('Failed to load post');
+      throw Exception('Failed to load Feed');
     }
   }
 
