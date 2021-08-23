@@ -220,9 +220,9 @@ const feed = {
             , (select COUNT(*) FROM FeedHeartTB FHT where FHT.scrapIdx = S.idx) as scrapLikeCount
             , (select COUNT(*) FROM FeedStorageTB FHT where FHT.scrapIdx = S.idx) as scrapStorageCount
             , IFNULL((select SUM(count) FROM FeedHistoryTB FHT where FHT.scrapIdx = S.idx),0) as scrapHistoryCount
-            , IFNULL((select FHT.status from FeedHeartTB FHT where FHT.userIdx = S.userIdx and FHT.scrapIdx = S.idx),'N') AS userLikeStatus
-            , IFNULL((select FHT.status from FeedHistoryTB FHT where FHT.userIdx = S.userIdx and FHT.scrapIdx = S.idx),'N') AS userHistoryStatus
-            , IFNULL((select FST.status from FeedStorageTB FST where FST.userIdx = S.userIdx and FST.scrapIdx = S.idx),'N') AS userStorageStatus
+            , IFNULL((select FHT.status from FeedHeartTB FHT where FHT.userIdx = F.followerIdx and FHT.scrapIdx = S.idx),'N') AS userLikeStatus
+            , IFNULL((select FHT.status from FeedHistoryTB FHT where FHT.userIdx = F.followerIdx and FHT.scrapIdx = S.idx),'N') AS userHistoryStatus
+            , IFNULL((select FST.status from FeedStorageTB FST where FST.userIdx = F.followerIdx and FST.scrapIdx = S.idx),'N') AS userStorageStatus
             FROM ScrapTB S
             INNER JOIN UserTB UT ON UT.idx = S.userIdx
                 INNER JOIN FollowTB F ON F.followingIdx = S.userIdx
