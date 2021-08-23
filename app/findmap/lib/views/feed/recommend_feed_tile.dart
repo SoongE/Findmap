@@ -1,4 +1,4 @@
-import 'package:findmap/models/post.dart';
+import 'package:findmap/models/feed.dart';
 import 'package:findmap/utils/image_loader.dart';
 import 'package:findmap/utils/utils.dart';
 import 'package:flutter/material.dart';
@@ -11,12 +11,14 @@ class _FeedDescription extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.source,
+    required this.createdTerm,
     required this.callback,
   }) : super(key: key);
 
   final String title;
   final String subtitle;
   final String source;
+  final String createdTerm;
   final VoidCallback callback;
 
   @override
@@ -32,10 +34,16 @@ class _FeedDescription extends StatelessWidget {
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         Padding(padding: const EdgeInsets.symmetric(vertical: 1)),
-        Text(source,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(color: Colors.grey, fontSize: 12)),
+        Row(
+          children: [
+            Text(source,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(color: Colors.grey, fontSize: 12)),
+            Text(" ㆍ " + createdTerm,
+                style: TextStyle(color: Colors.grey, fontSize: 12)),
+          ],
+        ),
         Padding(padding: const EdgeInsets.symmetric(vertical: 1)),
         Text(
           subtitle,
@@ -58,10 +66,10 @@ class _FeedDescription extends StatelessWidget {
 
 class RecommendFeedTile extends StatefulWidget {
   const RecommendFeedTile(
-      {Key? key, required this.post, required this.onArchivePressed})
+      {Key? key, required this.feed, required this.onArchivePressed})
       : super(key: key);
 
-  final Post post;
+  final Feed feed;
   final VoidCallback onArchivePressed;
 
   @override
@@ -86,7 +94,7 @@ class _RecommendFeedTileState extends State<RecommendFeedTile>
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => Navigator.push(
-          context, createRoute(_webView(widget.post.contentUrl))),
+          context, createRoute(_webView(widget.feed.contentUrl))),
       child: Padding(
         padding: const EdgeInsets.only(top: 10.0),
         child: Column(
@@ -96,13 +104,14 @@ class _RecommendFeedTileState extends State<RecommendFeedTile>
               height: 150,
               child: Align(
                   alignment: Alignment.center,
-                  child: imageLoader(controller, widget.post.thumbnailUrl)),
+                  child: imageLoader(controller, widget.feed.thumbnailUrl)),
             ),
             Padding(padding: const EdgeInsets.symmetric(vertical: 5)),
             _FeedDescription(
-              title: widget.post.title,
-              subtitle: widget.post.summary,
-              source: widget.post.contentUrl,
+              title: widget.feed.title,
+              subtitle: widget.feed.summary,
+              source: widget.feed.contentUrl,
+              createdTerm: widget.feed.createdTerm,
               callback: widget.onArchivePressed,
             )
           ],
