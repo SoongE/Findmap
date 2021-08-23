@@ -23,5 +23,5 @@ Map<String, dynamic> _$PostToJson(Post instance) => <String, dynamic>{
       'comment': instance.comment,
       'categoryIdx': instance.categoryIdx,
       'folderIdx': instance.folderIdx,
-  'isFeed': instance.isFeed,
+      'isFeed': instance.isFeed,
     };
