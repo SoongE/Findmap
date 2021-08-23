@@ -58,12 +58,13 @@ class _UserPageState extends State<UserPage>
                 ),
                 actions: [
                   IconButton(
-                      onPressed: () {},
-                      splashRadius: 1,
-                      icon: Icon(
-                        LineIcons.cog,
-                        color: Colors.black,
-                      ))
+                    onPressed: () {},
+                    splashRadius: 1,
+                    icon: Icon(
+                      LineIcons.cog,
+                      color: Colors.black,
+                    ),
+                  )
                 ],
               ),
               body: _feedTile());
@@ -87,7 +88,7 @@ class _UserPageState extends State<UserPage>
 
   Widget _header() {
     return Padding(
-      padding: const EdgeInsets.only(left: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
