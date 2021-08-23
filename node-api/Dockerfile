@@ -8,7 +8,7 @@ RUN	apt-get update && apt-get -y upgrade && \
 
 #RUN mkdir -p /server
 WORKDIR /root
-COPY . .
+COPY package.json .
 
 ENV DEVIAN_FRONTEND=noninteractive
 ENV NODE_ENV production
@@ -17,4 +17,3 @@ RUN npm install
 
 EXPOSE 3000
 ENTRYPOINT [ "npm", "run", "start" ]
-

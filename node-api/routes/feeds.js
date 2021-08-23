@@ -13,8 +13,11 @@ router.patch('/:scrapIdx/heart',auth.checkToken, feed.patchFeedHeart);
 // 피드 방문 등록
 router.patch('/:scrapIdx/history',auth.checkToken, feed.patchFeedHistory);
 
-// 자기 피드 가져오기
-router.get('/mine',auth.checkToken, feed.getMyFeed);
+// 피드 프로필 조회
+router.get('/profile',auth.checkToken, feed.getFeedProfile);
+
+// 피드 조회
+router.get('/',auth.checkToken, feed.getFeed);
 
 // 추천 피드 가져오기
 router.get('/recommendation',auth.checkToken, feed.getRecommendationFeed);
