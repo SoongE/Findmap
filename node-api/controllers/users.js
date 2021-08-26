@@ -268,7 +268,7 @@ const users = {
             const checkJWT = await userModel.checkJWT(userIdx);
             if (checkJWT[0].length < 1) return res.json({success: false, code: 3007, message: "로그인되어 있지 않습니다."});
             
-            const userInfoRow = await userModel.selectUserInfo(userIdx);
+            const [userInfoRow] = await userModel.selectUserInfo(userIdx);
             return res.json({success: true, code: 1000, message: "유저 정보 조회 성공", result: userInfoRow[0]});
         } catch (err) {
             console.log(error);
@@ -505,22 +505,7 @@ const users = {
             console.log(error);
             return res.status(4000).send(`Error: ${err.message}`);
         }
-    },
-    getProfile: async (req, res) => {
-        const userIdx = req.decoded.userIdx;
-        
-        try {
-            // 로그인 확인
-            const checkJWT = await userModel.checkJWT(userIdx);
-            if (checkJWT[0].length < 1) return res.json({success: false, code: 3007, message: "로그인되어 있지 않습니다."});
-
-            const profileRow = await userModel.selectProfile(userIdx);
-            return res.json({success: true, code: 1000, message: "유저 정보 조회 성공", result: profileRow[0]});
-        } catch (err) {
-            console.log(error);
-            return res.status(4000).send(`Error: ${err.message}`);
-        }
-    },
+    }
 }
 
 module.exports = users;

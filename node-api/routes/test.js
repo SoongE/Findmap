@@ -11,8 +11,16 @@ router.get('/', (req, res, next) => {
 });
 
 router.get('/name', (req, res, next) => {
-  axios.get('http://flask-api:5000/test/name',{ params: { 'name': "nodeJS" } })
+  axios.get('http://flask-api:5000/test/name',{ params: { name: 'nodeJS' } })
   .then(response=>res.send(response.data))
+  .catch(error=>res.send(error.message))
+  .finally();
+});
+
+const body = { 'title': 'Axios POST Request Example' };
+router.get('/post', (req,res,next) =>{
+  axios.post('http://flask-api:5000/test/post',body)
+  .then(response=>res.send(response.data.body['log']))
   .catch(error=>res.send(error.message))
   .finally();
 });

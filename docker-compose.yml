@@ -5,6 +5,9 @@ services:
     build:
       context: ./flask-api
       dockerfile: ./Dockerfile
+    volumes:
+      - ./flask-api/:/root/
+      - ./NLP/':/root/NLP
     restart: on-failure:10
     expose:
       - "5000"
@@ -21,6 +24,8 @@ services:
     build:
       context: ./node-api
       dockerfile: ./Dockerfile
+    volumes:
+      - ./node-api/:/root/
     restart: on-failure:10
     expose:
         - "3000"
@@ -42,7 +47,7 @@ services:
       context: ./nginx
       dockerfile: ./Dockerfile
     ports:
-        - "5678:5678"
+        - "80:80"
     links:
         # nginx has to link to flask-api (not vice-versa) so that nginx/sites-enabled/default has access to flask-api by service name (acts as host dns).
         #  each docker container has a seperate ip address below the docker-machine host, so you have to link containers to correctly pass to upstream flask port

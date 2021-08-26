@@ -6,7 +6,8 @@ FROM ubuntu:18.04
 RUN apt-get update && apt-get -y upgrade && apt-get install -y python3-pip
 RUN python3 -m pip install flask wget xmltodict flask-cors flask_restx
 
-COPY . .
+WORKDIR /root
+# COPY . .
 
 EXPOSE 5000
 ENTRYPOINT [ "python3", "app.py"]
