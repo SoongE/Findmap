@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
+import 'follower_following.dart';
+
 class Setting extends StatefulWidget {
   @override
   _SettingState createState() => _SettingState();
@@ -38,7 +40,7 @@ class _SettingState extends State<Setting> {
               _textButton('알림'),
               _textButton('공지사항'),
               _textButton('맞춤 서비스 변경'),
-              _textButton('팔로우 및 초대'),
+              _textButton('팔로잉/팔로우', callback: toFollowingFollow),
               _textButton('약관 확인'),
               _textButton('오픈소스 라이선스 확인'),
               _textButton('비밀번호 변경'),
@@ -80,6 +82,10 @@ class _SettingState extends State<Setting> {
           alignment: Alignment.centerLeft,
           splashFactory: NoSplash.splashFactory),
     );
+  }
+
+  void toFollowingFollow() {
+    Navigator.of(context).push(createRoute(FollowerFollowing(widget.user)));
   }
 
   void _logout() async {

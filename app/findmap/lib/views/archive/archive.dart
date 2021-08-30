@@ -30,7 +30,7 @@ class _ArchivePageState extends State<ArchivePage> {
 
   final _getArchiveMemoizer = AsyncMemoizer<List<Post>>();
 
-  late PostFolder _state = PostFolder(0, -1, '아카이브', -1, '', '', '');
+  late PostFolder _state = PostFolder(-1, -1, '아카이브', -1, '', '', '');
 
   late TextEditingController _title;
   late TextEditingController _comment;
