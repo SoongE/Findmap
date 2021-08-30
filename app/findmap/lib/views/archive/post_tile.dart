@@ -102,7 +102,7 @@ class _PostTileState extends State<PostTile>
   void initState() {
     controller = AnimationController(
         vsync: this,
-        duration: Duration(milliseconds: 500),
+        duration: Duration(milliseconds: 0),
         lowerBound: 0.0,
         upperBound: 1.0);
     super.initState();

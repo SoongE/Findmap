@@ -30,7 +30,7 @@ class _ArchivePageState extends State<ArchivePage> {
 
   final _getArchiveMemoizer = AsyncMemoizer<List<Post>>();
 
-  late PostFolder _state = PostFolder(-1, -1, '아카이브', -1, '', '', '');
+  late PostFolder _state = PostFolder(0, -1, '아카이브', -1, '', '', '');
 
   late TextEditingController _title;
   late TextEditingController _comment;
@@ -160,7 +160,7 @@ class _ArchivePageState extends State<ArchivePage> {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       physics: BouncingScrollPhysics(),
       itemCount: data.length,
-      itemBuilder: (context, index) => _slider(data[index]),
+      itemBuilder: (context, index) => _slider(index, data[index]),
     );
   }
 
@@ -266,7 +266,7 @@ class _ArchivePageState extends State<ArchivePage> {
     }
   }
 
-  Widget _slider(Post post) {
+  Widget _slider(int index, Post post) {
     var isFeedShareLabel = post.isFeed == 'Y' ? '피드로 공유' : '피드 공유 해제';
     return Slidable(
       key: UniqueKey(),
@@ -305,9 +305,12 @@ class _ArchivePageState extends State<ArchivePage> {
       endActionPane: ActionPane(
         extentRatio: 0.2,
         motion: const DrawerMotion(),
-        dismissible: DismissiblePane(
-          onDismissed: () => fetchDelete(context, post),
-        ),
+        dismissible: DismissiblePane(onDismissed: () {
+          setState(() {
+            fetchDelete(context, post);
+            _archiveList.removeAt(index);
+          });
+        }),
         children: [
           SlidableAction(
             backgroundColor: Color(0xFFFE4A49),
