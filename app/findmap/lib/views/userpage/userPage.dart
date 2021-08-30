@@ -25,16 +25,10 @@ class UserPage extends StatefulWidget {
 class _UserPageState extends State<UserPage>
     with SingleTickerProviderStateMixin {
   late UserInfo userInfo;
-  late AnimationController animateController;
   List<Feed> feedData = [];
 
   @override
   void initState() {
-    animateController = AnimationController(
-        vsync: this,
-        duration: Duration(seconds: 3),
-        lowerBound: 0.0,
-        upperBound: 1.0);
     super.initState();
   }
 
@@ -92,7 +86,7 @@ class _UserPageState extends State<UserPage>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          circleImageLoader(animateController, userInfo.profileUrl),
+          circleImageLoader(userInfo.profileUrl, 65),
           displayCounter("스크랩", userInfo.ScrapCount.toString()),
           displayCounter("팔로워", userInfo.FollowCount.toString()),
           displayCounter("하트", userInfo.HaertCount.toString()),

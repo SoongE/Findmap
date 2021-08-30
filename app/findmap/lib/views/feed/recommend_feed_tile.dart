@@ -84,7 +84,7 @@ class _RecommendFeedTileState extends State<RecommendFeedTile>
   void initState() {
     controller = AnimationController(
         vsync: this,
-        duration: Duration(seconds: 3),
+        duration: Duration(milliseconds: 500),
         lowerBound: 0.0,
         upperBound: 1.0);
     super.initState();
