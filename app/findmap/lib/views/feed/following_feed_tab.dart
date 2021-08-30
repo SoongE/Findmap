@@ -64,6 +64,7 @@ class _FollowingFeedTabState extends State<FollowingFeedTab>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       body: SmartRefresher(
         enablePullDown: true,

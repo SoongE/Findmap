@@ -7,9 +7,8 @@ import 'package:findmap/models/userInfo.dart';
 import 'package:findmap/utils/image_loader.dart';
 import 'package:findmap/utils/utils.dart';
 import 'package:findmap/views/feed/following_feed_tile.dart';
-import 'package:findmap/views/login/first.dart';
+import 'package:findmap/views/userpage/setting.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:line_icons/line_icons.dart';
 
@@ -52,7 +51,8 @@ class _UserPageState extends State<UserPage>
                 ),
                 actions: [
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () => Navigator.of(context)
+                        .push(createRouteRight(Setting(widget.user))),
                     splashRadius: 1,
                     icon: Icon(
                       LineIcons.cog,
@@ -149,23 +149,6 @@ class _UserPageState extends State<UserPage>
     );
   }
 
-  void _logout(BuildContext context) async {
-    final storage = new FlutterSecureStorage();
-    await storage.deleteAll();
-
-    var _isSignOutSafe = fetchSignOut(context);
-
-    _isSignOutSafe.then((value) => value
-        ? {
-            showSnackbar(context, "정상적으로 로그아웃 되었습니다"),
-            Navigator.pushAndRemoveUntil(
-                context, createRoute(FirstPage()), (route) => false),
-          }
-        // : showSnackbar(context, "정상적으로 로그아웃되지 않았습니다"));
-        : Navigator.pushAndRemoveUntil(
-            context, createRoute(FirstPage()), (route) => false));
-  }
-
   Future<UserInfo> fetchGetUserInfo(BuildContext context) async {
     final response = await http.get(
       Uri.http(BASEURL, '/feeds/profile',
@@ -185,22 +168,6 @@ class _UserPageState extends State<UserPage>
     } else {
       showSnackbar(context, '서버와 연결이 불안정합니다');
       throw Exception('fetchGetUserInfo: ${response.body}');
-    }
-  }
-
-  Future<bool> fetchSignOut(BuildContext context) async {
-    final response = await http.patch(
-      Uri.http(BASEURL, '/users/logout'),
-      headers: {
-        "token": widget.user.accessToken,
-      },
-    );
-
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body)['success'];
-    } else {
-      showSnackbar(context, '서버와 연결이 불안정합니다');
-      throw Exception('Failed to load post');
     }
   }
 

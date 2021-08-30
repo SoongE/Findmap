@@ -34,7 +34,7 @@ dependencies:
   flutter_multi_formatter: ^2.3.1
   animations: ^1.1.2
   webview_flutter: ^2.0.10
-  async: ^2.5.0
+  async: ^2.6.1
   cupertino_icons: ^1.0.2
   flutter_slidable: ^1.0.0-dev.8
   extended_image: ^4.1.0

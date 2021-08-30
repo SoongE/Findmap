@@ -8,6 +8,9 @@ class AlarmPage extends StatefulWidget {
 }
 
 class _AlarmPageState extends State<AlarmPage> {
+  GlobalKey<S2SingleState<int>> _smartSelectKey =
+      GlobalKey<S2SingleState<int>>();
+
   String value = 'flutter';
   List<S2Choice<String>> options = [
     S2Choice<String>(value: 'ion', title: 'Ionic'),
@@ -26,10 +29,18 @@ class _AlarmPageState extends State<AlarmPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.teal,
-      child: Center(
-        child: SmartSelect<int>.single(
+    return Row(
+      children: [
+        ElevatedButton(
+          onPressed: () => _smartSelectKey.currentState!.showModal(),
+          child: Container(
+            width: 100,
+            height: 100,
+            color: Colors.red,
+          ),
+        ),
+        SmartSelect<int>.single(
+          key: _smartSelectKey,
           title: 'Frameworks',
           value: folderValue,
           onChange: (state) => setState(() => {folderValue = state.value}),
@@ -49,8 +60,11 @@ class _AlarmPageState extends State<AlarmPage> {
             value: (index, item) => item['idx'],
             title: (index, item) => item['name'],
           ),
+          tileBuilder: (context, state) {
+            return Container();
+          },
         ),
-      ),
+      ],
     );
   }
 }
