@@ -4,10 +4,12 @@ import 'dart:io';
 import 'package:async/async.dart';
 import 'package:findmap/models/user.dart';
 import 'package:findmap/models/userInfo.dart';
+import 'package:findmap/utils/image_loader.dart';
 import 'package:findmap/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:smart_select/smart_select.dart';
 
 class Follower extends StatefulWidget {
   @override
@@ -21,6 +23,12 @@ class Follower extends StatefulWidget {
 class _FollowerState extends State<Follower> {
   final _getUserInfoMemoizer = AsyncMemoizer<List<UserInfo>>();
   final GlobalKey<AnimatedListState> _listKey = GlobalKey();
+  GlobalKey<S2SingleState<bool>> _smartSelectKey =
+      GlobalKey<S2SingleState<bool>>();
+  bool _smartSelectValue = false;
+
+  late UserInfo _currentItem;
+
   late List<UserInfo> _followers = [];
 
   @override
@@ -35,13 +43,77 @@ class _FollowerState extends State<Follower> {
           return Text('Error: ${snapshot.error}');
         } else {
           _followers = snapshot.data;
-          return AnimatedList(
-              key: _listKey,
-              initialItemCount: _followers.length,
-              itemBuilder: (context, index, animation) {
-                return _buildItem(_followers[index], animation);
-              });
+
+          return Column(
+            children: [
+              _deletePopUp(),
+              Expanded(
+                child: AnimatedList(
+                    key: _listKey,
+                    initialItemCount: _followers.length,
+                    itemBuilder: (context, index, animation) {
+                      return _buildItem(_followers[index], animation);
+                    }),
+              ),
+            ],
+          );
         }
+      },
+    );
+  }
+
+  Widget _deletePopUp() {
+    return SmartSelect<bool>.single(
+      key: _smartSelectKey,
+      title: 'Frameworks',
+      value: _smartSelectValue,
+      onChange: (state) {
+        if (state.value) {
+          int removeIndex = _followers.indexOf(_currentItem);
+          UserInfo removedItem = _followers.removeAt(removeIndex);
+
+          AnimatedListRemovedItemBuilder builder = (context, animation) {
+            return _buildItem(removedItem, animation);
+          };
+          _listKey.currentState!.removeItem(removeIndex, builder);
+          _smartSelectValue = false;
+        }
+      },
+      modalType: S2ModalType.bottomSheet,
+      modalHeaderBuilder: (context, state) {
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            child: Row(children: [
+              circleImageLoader(_currentItem.profileUrl, 45),
+              Padding(padding: const EdgeInsets.symmetric(horizontal: 5)),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("정말 팔로워를 삭제하시나요?"),
+                  Text(
+                    "${_currentItem.nickName}님은 회원님의 팔로워 리스트에 삭제된 사실을\n알 수 없습니다",
+                    style: TextStyle(color: Colors.grey, height: 1.2),
+                  )
+                ],
+              )
+            ]),
+          ),
+        );
+      },
+      modalHeaderStyle: S2ModalHeaderStyle(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      ),
+      choiceLayout: S2ChoiceLayout.wrap,
+      modalStyle: S2ModalStyle(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      ),
+      choiceItems: [S2Choice<bool>(value: true, title: '삭제')],
+      tileBuilder: (context, state) {
+        return Container();
       },
     );
   }
@@ -73,31 +145,20 @@ class _FollowerState extends State<Follower> {
   Widget _buildItem(UserInfo item, Animation<double> animation) {
     return SizeTransition(
       sizeFactor: animation,
-      child: Card(
-        color: Color(0xFFE6E6FA),
-        child: ListTile(
-          contentPadding: EdgeInsets.all(10),
-          title: Text(
-            item.nickName,
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          trailing: IconButton(
-            icon: Icon(Icons.delete),
-            onPressed: () {
-              int removeIndex = _followers.indexOf(item);
-              UserInfo removedItem = _followers.removeAt(removeIndex);
-
-              AnimatedListRemovedItemBuilder builder = (context, animation) {
-                return _buildItem(removedItem, animation);
-              };
-
-              _listKey.currentState!.removeItem(removeIndex, builder);
-
-              SnackBar snackBar = SnackBar(
-                  content: Text("$removedItem removed at index $removeIndex"));
-              ScaffoldMessenger.of(context).showSnackBar(snackBar);
-            },
-          ),
+      child: ListTile(
+        contentPadding: EdgeInsets.all(10),
+        title: Row(
+          children: [
+            Text(item.nickName),
+          ],
+        ),
+        leading: circleImageLoader(item.profileUrl, 50),
+        trailing: OutlinedButton(
+          child: Text("삭제"),
+          onPressed: () {
+            _currentItem = item;
+            _smartSelectKey.currentState!.showModal();
+          },
         ),
       ),
     );
