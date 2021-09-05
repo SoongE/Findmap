@@ -1,10 +1,13 @@
 import 'package:findmap/src/my_colors.dart';
 import 'package:findmap/views/search/realtime_search_tab.dart';
 import 'package:findmap/views/search/search_tab.dart';
+import 'package:findmap/models/user.dart';
 import 'package:flutter/material.dart';
 
 class SearchPage extends StatelessWidget {
-  SearchPage({Key? key}) : super(key: key);
+  final User user;
+
+  SearchPage({Key? key, required this.user}) : super(key: key);
   final List<String> _tabs = ['실시간 검색어', '검색'];
 
   @override
@@ -42,7 +45,7 @@ class SearchPage extends StatelessWidget {
           },
           child: TabBarView(
             children: [
-              RealtimeSearchTab(),
+              RealtimeSearchTab(user: user),
               SearchTab(),
             ],
           ),
