@@ -1,0 +1,293 @@
+[33mcommit 1c7d5e3d6acbbef5139b5e46cb1fe18d68c954f9[m[33m ([m[1;36mHEAD -> [m[1;32mFM_39_HS[m[33m)[m
+Author: 승현수 <tmdgustn06@naver.com>
+Date:   Mon Sep 6 20:32:20 2021 +0900
+
+    ++model
+
+[33mcommit 29c84d5c6e8418df0f8cbbb73e055162c9b0f5c3[m
+Author: 승현수 <tmdgustn06@naver.com>
+Date:   Mon Sep 6 20:27:52 2021 +0900
+
+     model+recomm
+
+[33mcommit 71f4322ed8a20826a9ae702aa635e62c6f7d5111[m
+Author: 승현수 <tmdgustn06@naver.com>
+Date:   Mon Sep 6 20:11:12 2021 +0900
+
+    +model
+
+[33mcommit b3aac6f5d46ccbfe7036a91e99c45ef2bdbcf523[m[33m ([m[1;31morigin/FM_39_HS[m[33m)[m
+Author: 승현수 <tmdgustn06@naver.com>
+Date:   Sat Aug 28 15:55:05 2021 +0900
+
+    s
+
+[33mcommit 094660aee9c6ca453fd663a885b6df440c7418a3[m
+Author: 승현수 <tmdgustn06@naver.com>
+Date:   Thu Aug 26 16:36:54 2021 +0900
+
+    testing
+
+[33mcommit e83f47ec9a612a6144eec5d8147d95279f9dfd77[m
+Merge: 151db96 cd405cc
+Author: 오승민 <dev.rhcsky@gmail.com>
+Date:   Fri Aug 20 10:58:27 2021 +0000
+
+    Merge branch 'dev' of lab.hanium.or.kr:21_HF144/21_hf144 into dev
+
+[33mcommit 151db96493f66a2e0cdc4c942a8ec921f379147d[m
+Author: 오승민 <dev.rhcsky@gmail.com>
+Date:   Fri Aug 20 10:58:23 2021 +0000
+
+    Update for new aws instance, t3
+
+[33mcommit cd405ccb6c04472506a07ee4ee241471c5100464[m
+Author: Ubuntu <ubuntu@ip-172-31-57-232.ap-northeast-2.compute.internal>
+Date:   Fri Aug 20 10:54:18 2021 +0000
+
+    Update for new aws instance
+
+[33mcommit df5f4cf726e0c2fcd82e78ffc4c32787d23dcb21[m
+Merge: e4f2c54 4ff4005
+Author: 오승민 <mangusn1@gmail.com>
+Date:   Thu Aug 19 22:24:13 2021 +0900
+
+    Merge branch 'FM-56' into 'dev'
+    
+    API 수정 (Feed API 팔로잉 피드 조회, User API 조회 방식 변경, Folder API 이름 중복 처리)
+    
+    See merge request 21_HF144/21_hf144!87
+
+[33mcommit e4f2c5486c19f47b19a6bbf524ffcd4fce5badf5[m
+Merge: 27d1c7b bef2694
+Author: 오승민 <mangusn1@gmail.com>
+Date:   Thu Aug 19 22:24:07 2021 +0900
+
+    Merge branch 'FM_39_HS' into 'dev'
+    
+    Fm 39 hs
+    
+    See merge request 21_HF144/21_hf144!89
+
+[33mcommit 27d1c7b853a4dcaa5f1f1acdf0d836b3dce806dd[m
+Merge: 03bef10 78b277a
+Author: 오승민 <mangusn1@gmail.com>
+Date:   Thu Aug 19 22:24:03 2021 +0900
+
+    Merge branch 'FM-75' into 'dev'
+    
+    [Flutter] FM-75 피드 페이지 제작
+    
+    See merge request 21_HF144/21_hf144!88
+
+[33mcommit bef26940d3cf470f22c0ad9fe55a583eb0b7d8a0[m
+Author: 승현수 <tmdgustn06@naver.com>
+Date:   Thu Aug 19 22:18:16 2021 +0900
+
+    api ***
+
+[33mcommit f7e83647fa43521fef6de14c616750a9dd5e3aba[m
+Author: 승현수 <tmdgustn06@naver.com>
+Date:   Thu Aug 19 22:16:18 2021 +0900
+
+    flask test
+
+[33mcommit 4ff400562c1abbb1bc49323b6c4eb417a7f52111[m
+Author: defwdahyun0 <wdh112139@gmail.com>
+Date:   Thu Aug 19 21:23:14 2021 +0900
+
+    folder overlap error
+
+[33mcommit e586c73ca0a9b2226fcc9dba59091bf820fa4f72[m
+Author: defwdahyun0 <wdh112139@gmail.com>
+Date:   Thu Aug 19 21:19:40 2021 +0900
+
+    user API select method
+
+[33mcommit 3b134b21a399f152bf8e0453c80cf919e43da661[m
+Author: defwdahyun0 <wdh112139@gmail.com>
+Date:   Thu Aug 19 21:07:37 2021 +0900
+
+    feed API (following, recommendation)
+
+[33mcommit 78b277ae59d6cf15469a0c448860168d83e3df94[m
+Author: 오승민 <dev.rhcsky@gmail.com>
+Date:   Thu Aug 19 20:18:13 2021 +0900
+
+    Add pull to refresh
+
+[33mcommit bff2911a0b3d9c09104cd9d62edf189db8c31c51[m
+Author: 오승민 <dev.rhcsky@gmail.com>
+Date:   Thu Aug 19 20:17:49 2021 +0900
+
+    Implement feed page
+
+[33mcommit ec5c3bd1d5a28f0296bb21f483eaa0c874443e10[m
+Author: 오승민 <dev.rhcsky@gmail.com>
+Date:   Thu Aug 19 20:17:17 2021 +0900
+
+    Change boxfit
+
+[33mcommit 7ea716255cfa8f45a21796c9aa0027effb6beea3[m
+Author: 오승민 <dev.rhcsky@gmail.com>
+Date:   Thu Aug 19 20:16:47 2021 +0900
+
+    Add feed views
+
+[33mcommit 1672019053b4300297a50d6a3f06b24895d01bbf[m
+Author: 오승민 <dev.rhcsky@gmail.com>
+Date:   Thu Aug 19 17:20:58 2021 +0900
+
+    Add letter spacing in summary
+
+[33mcommit f25fc5bbf0637cc547719c0d900b6a2600d3ff0f[m
+Author: 오승민 <dev.rhcsky@gmail.com>
+Date:   Thu Aug 19 17:20:23 2021 +0900
+
+    Add recommend feed tab
+
+[33mcommit 79c9fabdd8e508207e23dd981a5bb40649e8c479[m
+Author: 오승민 <dev.rhcsky@gmail.com>
+Date:   Thu Aug 19 13:08:36 2021 +0900
+
+    Chnage feed from stateless to stateful
+
+[33mcommit 724fc8e9343cb010407186ba8ca424d291a99e4a[m
+Author: 오승민 <dev.rhcsky@gmail.com>
+Date:   Thu Aug 19 13:08:09 2021 +0900
+
+    Update pubspec
+
+[33mcommit 03bef10b816cc2f2ac3b602b7990ec9fd33ab404[m
+Merge: 4e334ec dd2e925
+Author: 오승민 <mangusn1@gmail.com>
+Date:   Sun Aug 15 22:35:00 2021 +0900
+
+    Merge branch 'FM-92' into 'dev'
+    
+    FEAT: sort searching results
+    
+    See merge request 21_HF144/21_hf144!85
+
+[33mcommit 4e334ec963c3b773f55430c95fa58b562b60e5ff[m
+Merge: c5f3572 4917271
+Author: 오승민 <mangusn1@gmail.com>
+Date:   Sun Aug 15 22:34:56 2021 +0900
+
+    Merge branch 'hotfix' into 'dev'
+    
+    [Flutter] Hotfix Archive Page
+    
+    See merge request 21_HF144/21_hf144!84
+
+[33mcommit dd2e92562be8b82cb98d5f3986bf96786e7840b0[m[33m ([m[1;31morigin/FM-92[m[33m)[m
+Author: Jiyun Park <jiyoon0043@ajou.ac.kr>
+Date:   Sun Aug 15 13:22:38 2021 +0000
+
+    FEAT: sort searching results
+
+[33mcommit 4917271d5aae52eb2f6f2dcfc50d665e4e8bc85b[m
+Author: Rhcsky <dev.rhcsky@gmail.com>
+Date:   Sun Aug 15 21:08:25 2021 +0900
+
+    Hot fix FM-34
+
+[33mcommit c5f35722a5d115b5cba84130e26493d009f16550[m
+Merge: 3da5ca4 56f4254
+Author: 오승민 <mangusn1@gmail.com>
+Date:   Thu Aug 12 22:57:55 2021 +0900
+
+    Merge branch 'FM_39_HS' into 'dev'
+    
+    dataloader ++ model eval
+    
+    See merge request 21_HF144/21_hf144!82
+
+[33mcommit 3da5ca4dfd6b0dd79b552cece88eba455984fbf6[m
+Merge: 29b175a 32a64f7
+Author: 오승민 <mangusn1@gmail.com>
+Date:   Thu Aug 12 22:57:48 2021 +0900
+
+    Merge branch 'FM-56' into 'dev'
+    
+    Feed API 제작 (Storage, Heart, History 저장/삭제 및 Feed 조회)
+    
+    See merge request 21_HF144/21_hf144!81
+
+[33mcommit 29b175a754d5afd8ba67361ef6a16dcf65b16ce1[m
+Merge: 1dc5c35 b18ad1c
+Author: 오승민 <mangusn1@gmail.com>
+Date:   Thu Aug 12 22:57:40 2021 +0900
+
+    Merge branch 'FM-58' into 'dev'
+    
+    Follow API 제작
+    
+    See merge request 21_HF144/21_hf144!80
+
+[33mcommit 1dc5c350c28a2ef0c5a46df53f2f4421f59d4649[m
+Merge: 00e698d 4a70820
+Author: 오승민 <mangusn1@gmail.com>
+Date:   Thu Aug 12 22:57:30 2021 +0900
+
+    Merge branch 'FM-34' into 'dev'
+    
+    [Flutter] FM-34 아카이브 페이지 제작 완료
+    
+    See merge request 21_HF144/21_hf144!79
+
+[33mcommit 56f425467700b3c085a2c4d38383e9ea8e4bca6c[m
+Author: 승현수 <tmdgustn06@naver.com>
+Date:   Thu Aug 12 22:48:54 2021 +0900
+
+    dataloader ++ model eval
+
+[33mcommit 32a64f7be3da00535122401c6db4d48dcbb34f32[m
+Author: defwdahyun0 <wdh112139@gmail.com>
+Date:   Thu Aug 12 22:36:08 2021 +0900
+
+    feed API
+
+[33mcommit b18ad1cb0e8426398cd1c4fdedc138eb1c1e38fd[m[33m ([m[1;31morigin/FM-58[m[33m)[m
+Author: defwdahyun0 <wdh112139@gmail.com>
+Date:   Thu Aug 12 20:52:50 2021 +0900
+
+    follow API restrcture
+
+[33mcommit 52c9d716caf45d6eb2d5a83fc1fe8f77b1505e48[m
+Author: defwdahyun0 <wdh112139@gmail.com>
+Date:   Thu Aug 12 18:33:53 2021 +0900
+
+    user description
+
+[33mcommit 1882565df2b3071590c9a753c359b9c1884967ea[m
+Author: defwdahyun0 <wdh112139@gmail.com>
+Date:   Thu Aug 12 18:27:21 2021 +0900
+
+    follow API
+
+[33mcommit 4a708204f2d5f56e8a2760e69d23b61f211c3c14[m[33m ([m[1;31morigin/FM-34[m[33m)[m
+Author: 오승민 <dev.rhcsky@gmail.com>
+Date:   Thu Aug 12 16:55:21 2021 +0900
+
+    Add folder delete option
+
+[33mcommit d21dac9a5dba1676b465f4e83391e20c72a7b3eb[m
+Author: 오승민 <dev.rhcsky@gmail.com>
+Date:   Thu Aug 12 16:55:04 2021 +0900
+
+    Add smart select example
+
+[33mcommit 29be9b942a49c9a97e96539d72a82b4184e072d5[m
+Author: 오승민 <dev.rhcsky@gmail.com>
+Date:   Thu Aug 12 16:54:37 2021 +0900
+
+    Update pubspec
+
+[33mcommit 4ea9b87dbd63df876bf564074582b1796273b3d3[m
+Author: 오승민 <dev.rhcsky@gmail.com>
+Date:   Wed Aug 11 23:00:17 2021 +0900
+
+    Implement change feed status
+
+[33mcommit b18c332d8caf25a01b889b5d53e1b0448

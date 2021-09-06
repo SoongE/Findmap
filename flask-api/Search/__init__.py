@@ -2,25 +2,25 @@ from flask import Blueprint, request
 
 from utils import make_response
 
-from main import main as mp
+import main
 
-recommend_api = Blueprint("check", __name__, url_prefix="/recommend")
+search_api = Blueprint("check", __name__, url_prefix="/search")
 SUCCESS = "success"
 FAILURE = "failure"
 
-
-@recommend_api.route('/')
+@search_api.route('/')
 def main():
+    mp = main
     resources =  mp()
     return make_response(SUCCESS,resources)
 
-@recommend_api.route('/name', methods=['GET'])
+@search_api.route('/name', methods=['GET'])
 def name():
     name = request.args["name"]
     body = {"message" : f'FLASK SEND: Hello, {name}!'}
     return make_response(SUCCESS, body)
 
-@recommend_api.route('/post', methods=['POST'])
+@search_api.route('/post', methods=['POST'])
 def post():
     data =  request.get_json()
     print(f"title: {data['title']}")
