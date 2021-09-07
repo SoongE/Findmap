@@ -1,5 +1,4 @@
 from flask import Flask
-from pororo import Pororo
 import pandas as pd
 import os
 from sklearn.model_selection import train_test_split
@@ -49,18 +48,18 @@ sparse_matrix = train_df.groupby('keywordidx').apply(lambda x: pd.Series(x['rati
 sparse_matrix.index.name = 'keywordidx'
 
 
-print("여기까진 됨")
+
 checker = sparse_matrix.isnull().values.any()
 if(True == checker) :
 
     sparse_matrix_withsearch = sparse_matrix.apply(lambda x: x.fillna(0), axis=1)
-
+    
 else :
 
     sparse_matrix_withsearch = sparse_matrix
 
 search_cos_df = cos_matrix(sparse_matrix_withsearch, sparse_matrix_withsearch)
-
+print("matirx화 성공")
 userId_grouped = train_df.groupby('userIdx')
 search_prediction_ = pd.DataFrame(index=list(userId_grouped.indices.keys()), columns=sparse_matrix_withsearch.index)
 
@@ -74,13 +73,14 @@ for userId, group in userId_grouped:
     # userId의 전체 rating predictions 
     pred_ratings = np.matmul(user_sim.T.to_numpy(), user_rating) / (sim_sum+1)
     search_prediction_.loc[userId] = pred_ratings
-max_rating_num = search_prediction_.loc[43].max()
+max_rating_num = search_prediction_.loc[1].max()
 search_ctg_idx = search_prediction_.columns.tolist()
 recommend_list = [] 
 
 for i in search_ctg_idx :
-    if search_prediction_[i].loc[43] == max_rating_num :
+    if search_prediction_[i].loc[1] == max_rating_num :
         recommend_list.append(i)
+print("1번의 maximum 추천값")
 print(recommend_list)
 @app.route('/')
 def recommendation():
