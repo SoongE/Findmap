@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:smart_select/smart_select.dart';
 
+import 'other_user_page.dart';
+
 class Follower extends StatefulWidget {
   @override
   _FollowerState createState() => _FollowerState();
@@ -65,8 +67,8 @@ class _FollowerState extends State<Follower> {
   Widget _deletePopUp() {
     return SmartSelect<bool>.single(
       key: _smartSelectKey,
-      title: 'Frameworks',
       value: _smartSelectValue,
+      title: "",
       onChange: (state) {
         if (state.value) {
           int removeIndex = _followers.indexOf(_currentItem);
@@ -79,6 +81,7 @@ class _FollowerState extends State<Follower> {
           _smartSelectValue = false;
         }
       },
+      choiceLayout: S2ChoiceLayout.wrap,
       modalType: S2ModalType.bottomSheet,
       modalHeaderBuilder: (context, state) {
         return Padding(
@@ -92,9 +95,10 @@ class _FollowerState extends State<Follower> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("정말 팔로워를 삭제하시나요?"),
+                  Padding(padding: const EdgeInsets.symmetric(vertical: 1)),
                   Text(
                     "${_currentItem.nickName}님은 회원님의 팔로워 리스트에 삭제된 사실을\n알 수 없습니다",
-                    style: TextStyle(color: Colors.grey, height: 1.2),
+                    style: TextStyle(color: Colors.grey, height: 1.5),
                   )
                 ],
               )
@@ -106,12 +110,24 @@ class _FollowerState extends State<Follower> {
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       ),
-      choiceLayout: S2ChoiceLayout.wrap,
       modalStyle: S2ModalStyle(
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       ),
       choiceItems: [S2Choice<bool>(value: true, title: '삭제')],
+      choiceDivider: true,
+      choiceBuilder: (context, choice, searchText) {
+        return InkWell(
+          onTap: () => choice.select(!choice.selected),
+          child: Container(
+            padding: const EdgeInsets.all(7),
+            child: Text(
+              choice.title,
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        );
+      },
       tileBuilder: (context, state) {
         return Container();
       },
@@ -145,20 +161,24 @@ class _FollowerState extends State<Follower> {
   Widget _buildItem(UserInfo item, Animation<double> animation) {
     return SizeTransition(
       sizeFactor: animation,
-      child: ListTile(
-        contentPadding: EdgeInsets.all(10),
-        title: Row(
-          children: [
-            Text(item.nickName),
-          ],
-        ),
-        leading: circleImageLoader(item.profileUrl, 50),
-        trailing: OutlinedButton(
-          child: Text("삭제"),
-          onPressed: () {
-            _currentItem = item;
-            _smartSelectKey.currentState!.showModal();
-          },
+      child: GestureDetector(
+        onTap: () => Navigator.of(context).push(
+            createRoute(OtherUserPage(user: widget.user, userIdx: item.idx))),
+        child: ListTile(
+          contentPadding: EdgeInsets.all(10),
+          title: Row(
+            children: [
+              Text(item.nickName),
+            ],
+          ),
+          leading: circleImageLoader(item.profileUrl, 50),
+          trailing: OutlinedButton(
+            child: Text("삭제", style: TextStyle(color: Colors.black)),
+            onPressed: () {
+              _currentItem = item;
+              _smartSelectKey.currentState!.showModal();
+            },
+          ),
         ),
       ),
     );

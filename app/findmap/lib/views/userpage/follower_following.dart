@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'follower.dart';
+import 'following.dart';
 
 class FollowerFollowing extends StatefulWidget {
   @override
@@ -46,7 +47,7 @@ class _FollowerFollowingState extends State<FollowerFollowing> {
             child: TabBarView(
               children: [
                 Follower(widget.user),
-                Container(),
+                Following(widget.user),
               ],
             ),
           ),
