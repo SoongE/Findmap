@@ -54,7 +54,7 @@ class _MainPageState extends State<MainPage> {
       ..getSharedData().then(_handleSharedData);
     _widgetOptions = <Widget>[
       ArchivePage(user: widget.user),
-      SearchPage(),
+      SearchPage(user: widget.user),
       FeedPage(user: widget.user),
       AlarmPage(),
       UserPage(user: widget.user),
