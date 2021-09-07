@@ -75,7 +75,7 @@ class _FollowingFeedTileState extends State<FollowingFeedTile>
   void initState() {
     controller = AnimationController(
         vsync: this,
-        duration: Duration(seconds: 3),
+        duration: Duration(milliseconds: 500),
         lowerBound: 0.0,
         upperBound: 1.0);
     super.initState();
@@ -88,7 +88,7 @@ class _FollowingFeedTileState extends State<FollowingFeedTile>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          _userDescription(widget.user, widget.feed.createdDate),
+          _userDescription(widget.feed),
           Padding(padding: const EdgeInsets.symmetric(vertical: 5)),
           widget.feed.comment == ''
               ? Container()
@@ -116,6 +116,7 @@ class _FollowingFeedTileState extends State<FollowingFeedTile>
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(
+                    width: 100,
                     height: 100,
                     child: Align(
                         alignment: Alignment.center,
@@ -230,19 +231,22 @@ class _FollowingFeedTileState extends State<FollowingFeedTile>
     }
   }
 
-  Widget _userDescription(User user, String createDate) {
+  Widget _userDescription(Feed feed) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        CircleAvatar(child: circleImageLoader(controller, user.profileUrl)),
+        circleImageLoader(feed.userProfile, 50),
         Padding(padding: const EdgeInsets.symmetric(horizontal: 5)),
-        Text(
-          user.nickName,
-          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+        Expanded(
+          flex: 1,
+          child: Text(
+            feed.userNickName,
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
         ),
         Align(
           alignment: Alignment.centerRight,
-          child: Text(createDate ?? " "),
+          child: Text(feed.createdTerm, style: TextStyle(color: Colors.black)),
         ),
       ],
     );

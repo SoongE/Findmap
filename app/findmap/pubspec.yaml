@@ -40,6 +40,10 @@ dependencies:
   extended_image: ^4.1.0
   smart_select: ^4.3.2
   pull_to_refresh: ^2.0.0
+  flutter_email_sender: ^5.0.2
+  device_info: ^2.0.2
+  package_info: ^2.0.2
+  ios_utsname_ext: ^2.0.0
 
 dev_dependencies:
   flutter_test:

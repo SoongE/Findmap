@@ -1,11 +1,12 @@
 import 'package:badges/badges.dart';
 import 'package:findmap/models/user.dart';
 import 'package:findmap/src/my_colors.dart';
+import 'package:findmap/utils/image_loader.dart';
 import 'package:findmap/views/alarm.dart';
 import 'package:findmap/views/archive/archive.dart';
 import 'package:findmap/views/archive/share.dart';
 import 'package:findmap/views/search/search.dart';
-import 'package:findmap/views/userPage.dart';
+import 'package:findmap/views/userpage/userPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -23,7 +24,8 @@ class MainPage extends StatefulWidget {
   _MainPageState createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _MainPageState extends State<MainPage>
+    with SingleTickerProviderStateMixin {
   int _selectedIndex = 0;
   int _badge = 0;
   double _gap = 10;
@@ -210,11 +212,10 @@ class _MainPageState extends State<MainPage> {
         iconSize: 24,
         padding: _padding,
         icon: widgetIcons.elementAt(4),
-        leading: CircleAvatar(
-          radius: 12,
-          backgroundImage: NetworkImage(
-            'https://avatars.githubusercontent.com/u/53206234?v=4',
-          ),
+        leading: Container(
+          width: 25,
+          height: 25,
+          child: circleImageLoader(widget.user.profileUrl, 45),
         ),
         text: widgetTitle[4],
       )

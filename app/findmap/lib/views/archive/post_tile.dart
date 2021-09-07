@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:findmap/models/post.dart';
 import 'package:findmap/utils/image_loader.dart';
 import 'package:findmap/utils/utils.dart';
@@ -97,12 +99,14 @@ class PostTile extends StatefulWidget {
 class _PostTileState extends State<PostTile>
     with SingleTickerProviderStateMixin {
   late AnimationController controller;
+  final Completer<WebViewController> _webViewController =
+      Completer<WebViewController>();
 
   @override
   void initState() {
     controller = AnimationController(
         vsync: this,
-        duration: Duration(seconds: 3),
+        duration: Duration(milliseconds: 0),
         lowerBound: 0.0,
         upperBound: 1.0);
     super.initState();
@@ -125,10 +129,7 @@ class _PostTileState extends State<PostTile>
           children: <Widget>[
             AspectRatio(
               aspectRatio: 1.0,
-              child: Container(
-                margin: const EdgeInsets.all(10),
-                child: imageLoader(controller, widget.post.thumbnailUrl),
-              ),
+              child: imageLoader(controller, widget.post.thumbnailUrl),
             ),
             Expanded(
               child: GestureDetector(
@@ -153,11 +154,34 @@ class _PostTileState extends State<PostTile>
   }
 
   Widget _webView(String url) {
-    return SafeArea(
-      child: WebView(
-        initialUrl: url,
-        javascriptMode: JavascriptMode.unrestricted,
-      ),
+    return WebView(
+      initialUrl: url,
+      javascriptMode: JavascriptMode.unrestricted,
     );
   }
+
+// static Future<bool> get _delay async {
+//   await Future.delayed(Duration(milliseconds: 250));
+//   return true;
+// }
+//
+// Widget _webView(String url) {
+//   return SafeArea(
+//     child: Container(
+//       color: Colors.black,
+//       child: FutureBuilder(
+//         future: _delay,
+//         builder: (BuildContext context, AsyncSnapshot snapshot) {
+//           if (snapshot.hasData) {
+//             return WebView(
+//               initialUrl: url,
+//               javascriptMode: JavascriptMode.unrestricted,
+//             );
+//           }
+//           return Container(color: Colors.black);
+//         },
+//       ),
+//     ),
+//   );
+// }
 }

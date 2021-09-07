@@ -64,6 +64,7 @@ class _RecommendFeedTabState extends State<RecommendFeedTab>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       body: SmartRefresher(
         enablePullDown: true,
