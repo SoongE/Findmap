@@ -42,12 +42,11 @@ class _OtherUserPageState extends State<OtherUserPage>
               appBar: AppBar(
                 backgroundColor: Colors.white,
                 elevation: 0,
-                title: Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Text(
-                    userInfo.nickName,
-                    style: TextStyle(color: Colors.black),
-                  ),
+                leading: BackButton(color: Colors.black),
+                titleSpacing: 0,
+                title: Text(
+                  userInfo.nickName,
+                  style: TextStyle(color: Colors.black),
                 ),
               ),
               body: _feedTile());
@@ -63,7 +62,7 @@ class _OtherUserPageState extends State<OtherUserPage>
     return Container(
       width: MediaQuery.of(context).size.width,
       child: Text(
-        userInfo.description,
+        userInfo.description ?? " ",
         style: const TextStyle(color: Colors.black, letterSpacing: 1.0),
       ),
     );
@@ -144,6 +143,7 @@ class _OtherUserPageState extends State<OtherUserPage>
           BASEURL, '/feeds/profile', {'userIdx': widget.userIdx.toString()}),
       headers: {
         HttpHeaders.contentTypeHeader: "application/json",
+        "token": widget.user.accessToken,
       },
     );
 
@@ -165,6 +165,7 @@ class _OtherUserPageState extends State<OtherUserPage>
       Uri.http(BASEURL, '/feeds', {'userIdx': widget.userIdx.toString()}),
       headers: {
         HttpHeaders.contentTypeHeader: "application/json",
+        "token": widget.user.accessToken,
       },
     );
 
