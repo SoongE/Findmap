@@ -30,7 +30,6 @@ class _MainPageState extends State<MainPage>
   int _badge = 0;
   double _gap = 10;
   final _padding = EdgeInsets.symmetric(horizontal: 18, vertical: 12);
-  late AnimationController animateController;
 
   PageController _controller = PageController();
 
@@ -57,16 +56,11 @@ class _MainPageState extends State<MainPage>
       ..getSharedData().then(_handleSharedData);
     _widgetOptions = <Widget>[
       ArchivePage(user: widget.user),
-      SearchPage(),
+      SearchPage(user: widget.user),
       FeedPage(user: widget.user),
       AlarmPage(),
       UserPage(user: widget.user),
     ];
-    animateController = AnimationController(
-        vsync: this,
-        duration: Duration(seconds: 3),
-        lowerBound: 0.0,
-        upperBound: 1.0);
     super.initState();
   }
 
@@ -221,7 +215,7 @@ class _MainPageState extends State<MainPage>
         leading: Container(
           width: 25,
           height: 25,
-          child: circleImageLoader(animateController, widget.user.profileUrl),
+          child: circleImageLoader(widget.user.profileUrl, 45),
         ),
         text: widgetTitle[4],
       )

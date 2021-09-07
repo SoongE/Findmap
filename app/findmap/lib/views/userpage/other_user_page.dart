@@ -7,21 +7,21 @@ import 'package:findmap/models/userInfo.dart';
 import 'package:findmap/utils/image_loader.dart';
 import 'package:findmap/utils/utils.dart';
 import 'package:findmap/views/feed/following_feed_tile.dart';
-import 'package:findmap/views/userpage/setting.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:line_icons/line_icons.dart';
 
-class UserPage extends StatefulWidget {
+class OtherUserPage extends StatefulWidget {
+  OtherUserPage({Key? key, required this.user, required this.userIdx})
+      : super(key: key);
+
+  final int userIdx;
   final User user;
 
-  UserPage({Key? key, required this.user}) : super(key: key);
-
   @override
-  _UserPageState createState() => _UserPageState();
+  _OtherUserPageState createState() => _OtherUserPageState();
 }
 
-class _UserPageState extends State<UserPage>
+class _OtherUserPageState extends State<OtherUserPage>
     with SingleTickerProviderStateMixin {
   late UserInfo userInfo;
   List<Feed> feedData = [];
@@ -42,24 +42,12 @@ class _UserPageState extends State<UserPage>
               appBar: AppBar(
                 backgroundColor: Colors.white,
                 elevation: 0,
-                title: Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Text(
-                    userInfo.nickName,
-                    style: TextStyle(color: Colors.black),
-                  ),
+                leading: BackButton(color: Colors.black),
+                titleSpacing: 0,
+                title: Text(
+                  userInfo.nickName,
+                  style: TextStyle(color: Colors.black),
                 ),
-                actions: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context)
-                        .push(createRouteRight(Setting(widget.user))),
-                    splashRadius: 1,
-                    icon: Icon(
-                      LineIcons.cog,
-                      color: Colors.black,
-                    ),
-                  )
-                ],
               ),
               body: _feedTile());
         } else if (snapshot.hasError) {
@@ -74,7 +62,7 @@ class _UserPageState extends State<UserPage>
     return Container(
       width: MediaQuery.of(context).size.width,
       child: Text(
-        userInfo.description,
+        userInfo.description ?? " ",
         style: const TextStyle(color: Colors.black, letterSpacing: 1.0),
       ),
     );
@@ -136,9 +124,9 @@ class _UserPageState extends State<UserPage>
                 index -= 1;
 
                 return FollowingFeedTile(
-                  user: widget.user,
                   feed: feedData[index],
                   onArchivePressed: () {},
+                  user: widget.user,
                 );
               });
         } else if (snapshot.hasError) {
@@ -151,8 +139,8 @@ class _UserPageState extends State<UserPage>
 
   Future<UserInfo> fetchGetUserInfo(BuildContext context) async {
     final response = await http.get(
-      Uri.http(BASEURL, '/feeds/profile',
-          {'userIdx': widget.user.userIdx.toString()}),
+      Uri.http(
+          BASEURL, '/feeds/profile', {'userIdx': widget.userIdx.toString()}),
       headers: {
         HttpHeaders.contentTypeHeader: "application/json",
         "token": widget.user.accessToken,
@@ -174,7 +162,7 @@ class _UserPageState extends State<UserPage>
   Future<List<Feed>> _fetchGetUserFeed() async {
     final response = await http.get(
       // TODO change to feeds/recommend
-      Uri.http(BASEURL, '/feeds', {'userIdx': widget.user.userIdx.toString()}),
+      Uri.http(BASEURL, '/feeds', {'userIdx': widget.userIdx.toString()}),
       headers: {
         HttpHeaders.contentTypeHeader: "application/json",
         "token": widget.user.accessToken,

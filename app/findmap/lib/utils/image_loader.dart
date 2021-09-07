@@ -10,7 +10,6 @@ Widget imageLoader(AnimationController controller, String url) {
   }
   return ExtendedImage.network(
     url,
-    fit: BoxFit.cover,
     cache: true,
     loadStateChanged: (ExtendedImageState state) {
       switch (state.extendedImageLoadState) {
@@ -26,6 +25,9 @@ Widget imageLoader(AnimationController controller, String url) {
           return FadeTransition(
             opacity: controller,
             child: ExtendedRawImage(
+              width: 100,
+              height: 100,
+              fit: BoxFit.cover,
               image: state.extendedImageInfo?.image,
             ),
           );
@@ -61,40 +63,48 @@ Widget imageLoader(AnimationController controller, String url) {
   );
 }
 
-Widget circleImageLoader(AnimationController controller, String url) {
+Widget circleImageLoader(String url, double size) {
   if (_noneThumbnailUrl.contains(url)) {
-    return CircleAvatar(
-      radius: 30.0,
-      backgroundImage: AssetImage('assets/logo.png'),
-      backgroundColor: Colors.transparent,
+    return Container(
+      width: size,
+      height: size,
+      child: CircleAvatar(
+        radius: 30.0,
+        backgroundImage: AssetImage('assets/logo.png'),
+        backgroundColor: Colors.transparent,
+      ),
     );
   }
   return ExtendedImage.network(
     url,
-    fit: BoxFit.cover,
+    fit: BoxFit.fill,
+    shape: BoxShape.circle,
+    width: size,
+    height: size,
     cache: true,
     loadStateChanged: (ExtendedImageState state) {
       switch (state.extendedImageLoadState) {
         case LoadState.loading:
-          controller.reset();
           return Container();
 
         case LoadState.completed:
-          controller.forward();
-          return FadeTransition(
-            opacity: controller,
-            child: ExtendedRawImage(
-              image: state.extendedImageInfo?.image,
-            ),
+          return ExtendedRawImage(
+            width: size,
+            height: size,
+            fit: BoxFit.fill,
+            image: state.extendedImageInfo?.image,
           );
 
         case LoadState.failed:
-          controller.reset();
           _noneThumbnailUrl.add(url);
-          return CircleAvatar(
-            radius: 30.0,
-            backgroundImage: AssetImage('assets/logo.png'),
-            backgroundColor: Colors.transparent,
+          return Container(
+            width: size,
+            height: size,
+            child: CircleAvatar(
+              radius: 30.0,
+              backgroundImage: AssetImage('assets/logo.png'),
+              backgroundColor: Colors.transparent,
+            ),
           );
       }
     },
