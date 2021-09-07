@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -29,7 +30,7 @@ void fetchExample(BuildContext context) async {
     }
   } else {
     showSnackbar(context, '서버와 연결이 불안정합니다');
-    throw Exception('Failed to load post');
+    throw Exception('Failed to connect to server');
   }
 }
 
@@ -43,6 +44,27 @@ void showSnackbar(BuildContext context, String text,
     ),
   );
   ScaffoldMessenger.of(context).showSnackBar(snackBar);
+}
+
+void shotConfirmAlert(
+    BuildContext context, String title, String content, String actionName) {
+  showDialog<void>(
+    context: context,
+    barrierDismissible: true,
+    builder: (BuildContext dialogContext) {
+      return CupertinoAlertDialog(
+        title: Text(title),
+        content: Text(content),
+        actions: [
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            child: Text(actionName),
+            onPressed: () => Navigator.of(context).pop(),
+          )
+        ],
+      );
+    },
+  );
 }
 
 Route createRoute(Widget secondPage) {
