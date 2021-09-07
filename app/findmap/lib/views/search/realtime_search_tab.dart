@@ -1,9 +1,20 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:async/async.dart';
+import 'package:findmap/models/hot_ranking.dart';
+import 'package:http/http.dart' as http;
 import 'package:findmap/src/my_colors.dart';
 import 'package:findmap/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:findmap/models/user.dart';
 
 class RealtimeSearchTab extends StatefulWidget {
+  final User user;
+
+  RealtimeSearchTab({Key? key, required this.user}) : super(key: key);
+
   @override
   _RealtimeSearchTabState createState() => _RealtimeSearchTabState();
 }
@@ -48,22 +59,22 @@ class _RealtimeSearchTabState extends State<RealtimeSearchTab>
           child: TabBarView(
             children: [
               GetRealtimeSearch(
-                categoryID: 0,
+                categoryID: 0, user: widget.user,
               ),
               GetRealtimeSearch(
-                categoryID: 1,
+                categoryID: 1, user: widget.user,
               ),
               GetRealtimeSearch(
-                categoryID: 2,
+                categoryID: 2, user: widget.user,
               ),
               GetRealtimeSearch(
-                categoryID: 3,
+                categoryID: 3, user: widget.user,
               ),
               GetRealtimeSearch(
-                categoryID: 4,
+                categoryID: 4, user: widget.user,
               ),
               GetRealtimeSearch(
-                categoryID: 5,
+                categoryID: 5, user: widget.user,
               ),
             ],
           ),
@@ -74,91 +85,38 @@ class _RealtimeSearchTabState extends State<RealtimeSearchTab>
 }
 
 class GetRealtimeSearch extends StatefulWidget {
-  final int categoryID;
 
-  GetRealtimeSearch({Key? key, required this.categoryID}) : super(key: key);
+  final int categoryID;
+  final User user;
+
+  GetRealtimeSearch({Key? key, required this.categoryID, required this.user}) : super(key: key);
 
   @override
   _GetRealtimeSearchState createState() => _GetRealtimeSearchState();
 }
 
 class _GetRealtimeSearchState extends State<GetRealtimeSearch> {
-  final List<String> keyword1 = <String>[
-    'C',
-    'C++',
-    'JAVA',
-    'Javascript',
-    'python',
-    'ruby',
-    'typescript',
-    'scala',
-    'Kotlin',
-    'Dart',
-  ];
-  final List<String> keyword2 = <String>[
-    'Pytorch',
-    'Tensorflow',
-    'Keras',
-    'OpenCV',
-    'Flask',
-    'Django',
-    'Scikit-learn',
-    'Django',
-    'NumPy',
-    'Pandas',
-  ];
-  final List<String> keyword3 = <String>[
-    'Butter',
-    'Damselfly',
-    'Clair de Lune',
-    'Dang!',
-    'Believer',
-    'Drive',
-    'Butterflies',
-    'Rain On Me',
-    'Your Power',
-    'bad guy',
-  ];
-  final List<String> keyword4 = <String>[
-    'IronMan',
-    'Parasite',
-    'The Dig',
-    'To All The Boys',
-    'The Father',
-    'Tom & Jerry',
-    'Frozen',
-    'Justice League',
-    'Avengers',
-    'furious 9',
-  ];
-  final List<String> keyword5 = <String>[
-    'baseball',
-    'basketball',
-    'soccer',
-    'running',
-    'boxing',
-    'valley ball',
-    'golf',
-    'judo',
-    'taekwondo',
-    'swimming',
-  ];
-  final List<String> keyword6 = <String>[
-    'Harry Potter',
-    '1987',
-    'The little prince',
-    'Yearbook',
-    'Atomic Habits',
-    'Behold a Pale Horse',
-    'Rich Dad Poor Dad',
-    'Zero Fail',
-    'People We Meet on Vacation',
-    'The Alchemist',
-  ];
+  List<HotRanking> keyword1 = [HotRanking('', 0, '')];
+  List<HotRanking> keyword2 = [HotRanking('', 0, '')];
+  List<HotRanking> keyword3 = [HotRanking('', 0, '')];
+  List<HotRanking> keyword4 = [HotRanking('', 0, '')];
+  List<HotRanking> keyword5 = [HotRanking('', 0, '')];
+  List<HotRanking> keyword6 = [HotRanking('', 0, '')];
+
+  @override
+  void initState() {
+    fetchGetHotRanking().then((value) {
+      keyword1 = value;
+      setState(() {
+        // _folderList.addAll(value.map((e) => e.name));
+      });
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    List<List<String>> keywords = [
+    List<List<HotRanking>> keywords = [
       keyword1,
       keyword2,
       keyword3,
@@ -176,33 +134,41 @@ class _GetRealtimeSearchState extends State<GetRealtimeSearch> {
           padding: const EdgeInsets.fromLTRB(
             15.0,
             0.0,
-            0.0,
+            15.0,
             0.0,
           ),
-          color: index % 2 == 0 ? Colors.yellow[100] : Colors.grey[200],
           height: 40,
-          child: Row(
-            children: [
-              InkWell(
-                onTap: () => Navigator.push(context,
-                    createRoute(_webView(keywords.elementAt(id)[index]))),
-                child: Text(
-                  (index + 1).toString() +
-                      '      ' +
-                      '${keywords.elementAt(id)[index]}',
+          child: InkWell(
+            onTap: () => Navigator.push(context,
+                createRoute(_webView(keywords.elementAt(id)[index].word))),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                    (index + 1).toString() +
+                        '      ' +
+                        '${keywords.elementAt(id)[index].word}',
+                    style: new TextStyle(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 15.3,
+                    ),
+                  ),
+                Text(
+                  // 실시간 검색어 변동 순위
+                  '${keywords.elementAt(id)[index].changes}',
                   style: new TextStyle(
                     fontWeight: FontWeight.w400,
                     fontSize: 15.3,
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
       separatorBuilder: (BuildContext context, int index) => const Divider(
         thickness: 1,
-        color: Colors.black54,
+        color: Colors.black26,
       ),
     );
   }
@@ -215,5 +181,33 @@ class _GetRealtimeSearchState extends State<GetRealtimeSearch> {
         javascriptMode: JavascriptMode.unrestricted,
       ),
     );
+  }
+
+  Future<List<HotRanking>> fetchGetHotRanking() async {
+    final response = await http.get(
+      Uri.http(BASEURL, '/search/hot'),
+      headers: {
+        HttpHeaders.contentTypeHeader: "application/json",
+        "token": widget.user.accessToken,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = jsonDecode(response.body);
+      print('200');
+      if (responseBody['success']) {
+        return responseBody['result']
+            .map<HotRanking>((json) => HotRanking.fromJson(json))
+            .toList();
+      } else {
+        showSnackbar(context, responseBody['message']);
+        throw Exception(
+            'fetchGetFolderList Exception: ${responseBody['message']}');
+      }
+    } else {
+      print('error');
+      showSnackbar(context, '서버와 연결이 불안정합니다');
+      throw Exception('Failed to load Ranking');
+    }
   }
 }

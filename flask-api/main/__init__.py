@@ -2,7 +2,11 @@ import json
 from flask import Blueprint, jsonify
 
 from check import check_api
+from Search import search_api
+from recommend import recommend_api
+
 from utils import make_response
+
 
 main_api = Blueprint("main", __name__, url_prefix="/")
 SUCCESS = "success"
@@ -16,4 +20,6 @@ def main():
 api_urls = [
     main_api,
     check_api,
+    search_api,
+    recommend_api
 ]
