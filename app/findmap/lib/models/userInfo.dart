@@ -11,9 +11,10 @@ class UserInfo {
   int ScrapCount;
   int FollowCount;
   int HaertCount;
+  bool status;
 
   UserInfo(this.idx, this.profileUrl, this.nickName, this.description,
-      this.ScrapCount, this.FollowCount, this.HaertCount);
+      this.ScrapCount, this.FollowCount, this.HaertCount, this.status);
 
   factory UserInfo.fromJson(Map<String, dynamic> json) =>
       _$UserInfoFromJson(json);

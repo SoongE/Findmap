@@ -15,6 +15,7 @@ UserInfo _$UserInfoFromJson(Map<String, dynamic> json) {
     json['ScrapCount'] as int,
     json['FollowCount'] as int,
     json['HaertCount'] as int,
+    json['status'] as bool,
   );
 }
 
@@ -26,4 +27,5 @@ Map<String, dynamic> _$UserInfoToJson(UserInfo instance) => <String, dynamic>{
       'ScrapCount': instance.ScrapCount,
       'FollowCount': instance.FollowCount,
       'HaertCount': instance.HaertCount,
+      'status': instance.status,
     };
