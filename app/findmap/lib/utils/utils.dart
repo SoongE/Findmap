@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:io' show Platform;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -52,54 +53,44 @@ void shotConfirmAlert(
     context: context,
     barrierDismissible: true,
     builder: (BuildContext dialogContext) {
-      return CupertinoAlertDialog(
-        title: Text(title),
-        content: Text(content),
-        actions: [
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            child: Text(actionName),
-            onPressed: () => Navigator.of(context).pop(),
-          )
-        ],
-      );
+      if (Platform.isAndroid) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: [
+            CupertinoDialogAction(
+              child: Text(actionName),
+              onPressed: () => Navigator.of(context).pop(),
+            )
+          ],
+        );
+      } else {
+        return CupertinoAlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: [
+            CupertinoDialogAction(
+              child: Text(actionName),
+              onPressed: () => Navigator.of(context).pop(),
+            )
+          ],
+        );
+      }
     },
   );
 }
 
 Route createRoute(Widget secondPage) {
-  return PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) => secondPage,
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      var begin = Offset(0.0, 1.0);
-      var end = Offset.zero;
-      var curve = Curves.easeInOutQuart;
-
-      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-      return SlideTransition(
-        position: animation.drive(tween),
-        child: child,
-      );
-    },
+  return CupertinoPageRoute(
+    builder: (context) => secondPage,
+    fullscreenDialog: true,
   );
 }
 
 Route createRouteRight(Widget secondPage) {
-  return PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) => secondPage,
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      var begin = Offset(1.0, 0.0);
-      var end = Offset.zero;
-      var curve = Curves.easeInOutQuart;
-
-      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-      return SlideTransition(
-        position: animation.drive(tween),
-        child: child,
-      );
-    },
+  return CupertinoPageRoute(
+    builder: (context) => secondPage,
+    fullscreenDialog: false,
   );
 }
 
