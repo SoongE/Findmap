@@ -34,15 +34,15 @@ class _MainPageState extends State<MainPage>
   PageController _controller = PageController();
 
   static const List<IconData> _widgetIcons = <IconData>[
-    LineIcons.archive,
     LineIcons.search,
+    LineIcons.archive,
     LineIcons.layerGroup,
     LineIcons.bell,
     LineIcons.user,
   ];
   static final List<Color> _widgetColors = <Color>[
-    MyColors.archive,
     MyColors.search,
+    MyColors.archive,
     MyColors.feed,
     MyColors.alarm,
     MyColors.user,
@@ -55,8 +55,8 @@ class _MainPageState extends State<MainPage>
       ..onDataReceived = _handleSharedData
       ..getSharedData().then(_handleSharedData);
     _widgetOptions = <Widget>[
-      ArchivePage(user: widget.user),
       SearchPage(user: widget.user),
+      ArchivePage(user: widget.user),
       FeedPage(user: widget.user),
       AlarmPage(),
       UserPage(user: widget.user),
@@ -77,13 +77,7 @@ class _MainPageState extends State<MainPage>
     SystemChrome.setSystemUIOverlayStyle(
         SystemUiOverlayStyle(statusBarColor: Colors.white));
 
-    List<String> _widgetTitle = <String>[
-      "Archive",
-      "Search",
-      "Feed",
-      "Alarm",
-      widget.user.nickName,
-    ];
+    List<String> _widgetTitle = <String>["검색", "아카이브", "피드", "알림", "프로필"];
 
     return SafeArea(
       child: Scaffold(
