@@ -90,7 +90,7 @@ class _OtherUserPageState extends State<OtherUserPage>
     return Container(
       width: MediaQuery.of(context).size.width,
       child: Text(
-        userInfo.description ?? " ",
+        userInfo.description,
         style: const TextStyle(color: Colors.black, letterSpacing: 1.0),
       ),
     );
