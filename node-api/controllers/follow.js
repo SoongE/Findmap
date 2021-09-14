@@ -6,8 +6,8 @@ const users = {
         const followerIdx = req.decoded.userIdx;
         let {followingIdx} = req.body;
 
-        if (!followingIdx) return res.json({success: false, code: 2032, message: "followingIdx를 입력해 주세요."});
-        if (followerIdx == followingIdx) return res.json({success: false, code: 2032, message: "본인을 팔로우할 수 없습니다."});
+        if (!followingIdx) return res.json({success: false, code: 2401, message: "followingIdx를 입력해 주세요."});
+        if (followerIdx == followingIdx) return res.json({success: false, code: 2402, message: "본인을 팔로우할 수 없습니다."});
 
         try {
             // 로그인 확인
@@ -49,7 +49,7 @@ const users = {
             // 팔로워가 있는지 확인
             const [checkFollowing] = await followModel.checkFollowing(userIdx);
             if (checkFollowing[0] == undefined){
-                return res.json({success: true, code: 3101, message: "팔로워가 존재하지 않습니다."});
+                return res.json({success: true, code: 3401, message: "팔로워가 존재하지 않습니다."});
             }
             
             const followerRow = await followModel.selectFollowerList(userIdx);
@@ -70,11 +70,11 @@ const users = {
             // 팔로잉이 있는지 확인
             const [checkFollower] = await followModel.checkFollower(userIdx);
             if (checkFollower[0] == undefined){
-                return res.json({success: true, code: 3101, message: "팔로잉이 존재하지 않습니다."});
+                return res.json({success: true, code: 3402, message: "팔로잉이 존재하지 않습니다."});
             }
 
             const followingRow = await followModel.selectFollowingList(userIdx);
-            return res.json({success: true, code: 1000, message: "팔로잉 리스트 성공", result: followingRow[0]});
+            return res.json({success: true, code: 1000, message: "팔로잉 리스트 조회 성공", result: followingRow[0]});
         } catch (err) {
             console.log(error);
             return res.status(4000).send(`Error: ${err.message}`);

@@ -44,6 +44,7 @@ dependencies:
   device_info: ^2.0.2
   package_info: ^2.0.2
   ios_utsname_ext: ^2.0.0
+  syncfusion_flutter_charts: ^19.2.60
 
 dev_dependencies:
   flutter_test:

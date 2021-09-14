@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:findmap/models/user.dart';
+import 'package:findmap/src/feature_category.dart';
 import 'package:findmap/utils/device_info.dart';
 import 'package:findmap/utils/utils.dart';
 import 'package:findmap/views/login/first.dart';
@@ -28,6 +30,9 @@ class _SettingState extends State<Setting> {
   GlobalKey<S2SingleState<bool>> _confirmKey = GlobalKey<S2SingleState<bool>>();
   bool _confirmSelect = false;
 
+  GlobalKey<S2MultiState<int>> _categoryKey = GlobalKey<S2MultiState<int>>();
+  List<int> _categorySelect = [];
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -46,9 +51,10 @@ class _SettingState extends State<Setting> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _confirmPopUp(),
+              _categorySelectPopUp(),
               // _textButton('알림'),
               _textButton('공지사항', callback: _toNotice),
-              _textButton('맞춤 서비스 변경'),
+              _textButton('맞춤 서비스 변경', callback: _changeCategory),
               _textButton('팔로잉/팔로우', callback: _toFollowingFollow),
               _textButton('약관 확인', callback: _toDocumentToS),
               _textButton('오픈소스 라이선스 확인', callback: _toDocumentLicense),
@@ -109,6 +115,13 @@ class _SettingState extends State<Setting> {
     Navigator.of(context).push(createRoute(Notice()));
   }
 
+  void _changeCategory() async {
+    fetchGetUserCategory().then((value) => setState(() {
+          _categorySelect = value;
+          _categoryKey.currentState!.showModal();
+        }));
+  }
+
   void _withdrawal() async {
     _confirmKey.currentState!.showModal();
   }
@@ -126,6 +139,31 @@ class _SettingState extends State<Setting> {
         // : showSnackbar(context, "정상적으로 로그아웃되지 않았습니다"));
         : Navigator.pushAndRemoveUntil(
             context, createRoute(FirstPage()), (route) => false));
+  }
+
+  void _sendEmail() async {
+    String body = await _getEmailBody();
+
+    final Email email = Email(
+      body: body,
+      subject: '[${widget.user.nickName}] Findmap 문의',
+      recipients: ['findmap@gmail.com'],
+      cc: [],
+      bcc: [],
+      attachmentPaths: [],
+      isHTML: false,
+    );
+
+    print(body);
+
+    try {
+      await FlutterEmailSender.send(email);
+    } catch (error) {
+      String title = "";
+      String content =
+          "${widget.user.nickName}님 죄송합니다🤣\n\n기본 메일 앱을 사용할 수 없기 때문에 앱에서 바로 문의를 전송하기 어려운 상황입니다.\n\n아래 이메일로 연락주시면 Findmap 고객센터에서 친절하게 답변을 드리도록 하겠습니다.\n\n- 이메일: findmap@gmail.com\n- 전화: 010-0000-0000\n\n다시한번 불편을 드려서 죄송합니다.";
+      shotConfirmAlert(context, title, content, '확인');
+    }
   }
 
   Future<String> _getEmailBody() async {
@@ -161,31 +199,6 @@ class _SettingState extends State<Setting> {
     return body;
   }
 
-  void _sendEmail() async {
-    String body = await _getEmailBody();
-
-    final Email email = Email(
-      body: body,
-      subject: '[${widget.user.nickName}] Findmap 문의',
-      recipients: ['findmap@gmail.com'],
-      cc: [],
-      bcc: [],
-      attachmentPaths: [],
-      isHTML: false,
-    );
-
-    print(body);
-
-    try {
-      await FlutterEmailSender.send(email);
-    } catch (error) {
-      String title = "";
-      String content =
-          "${widget.user.nickName}님 죄송합니다🤣\n\n기본 메일 앱을 사용할 수 없기 때문에 앱에서 바로 문의를 전송하기 어려운 상황입니다.\n\n아래 이메일로 연락주시면 Findmap 고객센터에서 친절하게 답변을 드리도록 하겠습니다.\n\n- 이메일: findmap@gmail.com\n- 전화: 010-0000-0000\n\n다시한번 불편을 드려서 죄송합니다.";
-      shotConfirmAlert(context, title, content, '확인');
-    }
-  }
-
   Future<bool> fetchSignOut() async {
     final response = await http.patch(
       Uri.http(BASEURL, '/users/logout'),
@@ -219,6 +232,62 @@ class _SettingState extends State<Setting> {
         showSnackbar(context, responseBody['message']);
         throw Exception(
             'fetchWithdrawal Exception: ${responseBody['message']}');
+      }
+    } else {
+      showSnackbar(context, '서버와 연결이 불안정합니다');
+      throw Exception('Failed to connect to server');
+    }
+  }
+
+  Future<List<int>> fetchGetUserCategory() async {
+    final response = await http.get(
+      Uri.http(BASEURL, '/users/interest'),
+      headers: {
+        HttpHeaders.contentTypeHeader: "application/json",
+        "token": widget.user.accessToken,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = jsonDecode(response.body);
+
+      if (responseBody['success']) {
+        if (responseBody['result'] == null) return [];
+        List<int> interest = [];
+        for (var i in responseBody['result']) {
+          interest.add(i['categoryIdx']);
+        }
+        return interest;
+      } else {
+        showSnackbar(context, responseBody['message']);
+        throw Exception(
+            'fetchGetUserCategory Exception: ${responseBody['message']}');
+      }
+    } else {
+      showSnackbar(context, '서버와 연결이 불안정합니다');
+      throw Exception('Failed to connect to server');
+    }
+  }
+
+  Future<void> fetchChangeCategory(int idx) async {
+    Map<String, dynamic> param = {"categoryIdx": idx};
+
+    final response = await http.patch(
+      Uri.http(BASEURL, '/users/interest'),
+      headers: {
+        HttpHeaders.contentTypeHeader: "application/json",
+        "token": widget.user.accessToken,
+      },
+      body: json.encode(param),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = jsonDecode(response.body);
+      if (responseBody['success']) {
+      } else {
+        showSnackbar(context, responseBody['message']);
+        throw Exception(
+            'fetchChangeCategory Exception: ${responseBody['message']}');
       }
     } else {
       showSnackbar(context, '서버와 연결이 불안정합니다');
@@ -267,7 +336,7 @@ class _SettingState extends State<Setting> {
                       fontSize: 15,
                     ),
                   ),
-                  Padding(padding: const EdgeInsets.symmetric(vertical: 1)),
+                  Padding(padding: const EdgeInsets.symmetric(vertical: 5)),
                   Text('사용자와 관련된 모든 정보가 폐기되고 되돌릴 수 없습니다. 그래도 탈퇴하시겠습니까?')
                 ],
               ),
@@ -297,6 +366,52 @@ class _SettingState extends State<Setting> {
           ),
         );
       },
+      tileBuilder: (context, state) {
+        return Container();
+      },
+    );
+  }
+
+  Widget _categorySelectPopUp() {
+    return SmartSelect<int>.multiple(
+      key: _categoryKey,
+      value: _categorySelect,
+      modalTitle: '맞춤 서비스',
+      choiceConfig: S2ChoiceConfig(
+        overscrollColor: Colors.transparent,
+        isGrouped: true,
+        layout: S2ChoiceLayout.wrap,
+        type: S2ChoiceType.chips,
+      ),
+      onChange: (state) {
+        // For chang immediately
+        if (state.value.length > 5) {
+          showSnackbar(context, "관심사는 5개까지 선택 가능합니다.\n최근 수정한 내용은 반영되지 않습니다.");
+        } else {
+          var sendList = _categorySelect;
+          for (var i in state.value) {
+            var filtered = _categorySelect.where((e) => e == i);
+            if (filtered.isEmpty) {
+              sendList.add(i);
+            } else {
+              sendList.remove(i);
+            }
+          }
+          for (var i in sendList) {
+            fetchChangeCategory(i);
+          }
+        }
+      },
+      modalHeaderStyle: S2ModalHeaderStyle(
+        textStyle: TextStyle(color: Colors.black),
+      ),
+      modalType: S2ModalType.popupDialog,
+      choiceItems: S2Choice.listFrom(
+        source: CATEGORY,
+        value: (index, Map<String, dynamic> item) => item['index'],
+        title: (index, Map<String, dynamic> item) => item['name'],
+        group: (index, Map<String, dynamic> item) => item['group'],
+      ),
       tileBuilder: (context, state) {
         return Container();
       },

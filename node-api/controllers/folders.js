@@ -10,7 +10,7 @@ const folder = {
         try{
             const checkFolder = await folderModel.selectFolder(userIdx);
             if (checkFolder[0].name == name) {
-                return res.json({success: true, code: 3202, message: "같은 이름의 폴더는 존재할 수 없습니다."});
+                return res.json({success: true, code: 3201, message: "같은 이름의 폴더는 존재할 수 없습니다."});
             }
             const folderRow = await folderModel.postFolder(userIdx, name);
 
@@ -26,7 +26,7 @@ const folder = {
         try {
             const folderRow = await folderModel.selectFolder(userIdx);
             if (folderRow[0] == undefined) {
-              return res.json({success: true, code: 3201, message: "폴더가 존재하지 않습니다."});
+              return res.json({success: true, code: 3202, message: "폴더가 존재하지 않습니다."});
             }
             return res.json({success: true, code: 1000, message: "폴더 전체 조회 성공", result: folderRow});
         } catch (err) {
@@ -41,7 +41,7 @@ const folder = {
         try {
             const folderRow = await folderModel.selectFolderDetail(userIdx,folderIdx);
             if (folderRow[0] == undefined) {
-              return res.json({success: true, code: 3201, message: "폴더가 존재하지 않습니다."});
+              return res.json({success: true, code: 3202, message: "폴더가 존재하지 않습니다."});
             }
             return res.json({success: true, code: 1000, message: "폴더 상세 조회 성공", result: folderRow});
         } catch (err) {
@@ -60,7 +60,7 @@ const folder = {
               const result = await folderModel.updateFolderName(userIdx, folderIdx, name);
               const folderRow = await folderModel.selectFolderDetail(userIdx, folderIdx);
               if (folderRow[0] == undefined) {
-              return res.json({success: true, code: 3201, message: "폴더가 존재하지 않습니다."});
+              return res.json({success: true, code: 3202, message: "폴더가 존재하지 않습니다."});
               }
               
               return res.json({success: true, code: 1000, message: "폴더 제목 수정 성공", result: folderRow});
@@ -75,7 +75,7 @@ const folder = {
         try{
             const checkFolder = await folderModel.selectFolderDetail(userIdx,folderIdx);
             if (checkFolder[0] == undefined){
-                return res.json({success: true, code: 3201, message: "폴더가 존재하지 않습니다."});
+                return res.json({success: true, code: 3202, message: "폴더가 존재하지 않습니다."});
             }
             const result = await folderModel.deleteFolder(userIdx,folderIdx);
 
@@ -94,7 +94,7 @@ const folder = {
         try{
             const checkFolder = await folderModel.selectFolderDetail(userIdx,folderIdx);
             if (checkFolder[0] == undefined){
-                return res.json({success: true, code: 3201, message: "폴더가 존재하지 않습니다."});
+                return res.json({success: true, code: 3202, message: "폴더가 존재하지 않습니다."});
             }
             const scrapResult = await scrapModel.moveFolderScrap(userIdx,folderIdx,moveFolderIdx);
             const result = await folderModel.deleteFolder(userIdx,folderIdx);
@@ -111,7 +111,7 @@ const folder = {
         try{
             const checkFolder = await folderModel.selectFolderDetail(userIdx,folderIdx);
             if (checkFolder[0] == undefined){
-                return res.json({success: true, code: 3201, message: "폴더가 존재하지 않습니다."});
+                return res.json({success: true, code: 3202, message: "폴더가 존재하지 않습니다."});
             }
 
             const scrapResult = await scrapModel.deleteFolderScrap(userIdx,folderIdx);

@@ -101,15 +101,16 @@ const feed = {
         }
     },
     getFeedProfile: async (req, res) => {
+        const myIdx = req.decoded.userIdx;
         const userIdx = req.query.userIdx;
 
-        if (!userIdx) return res.json({success: false, code: 2601, message: "userIdx를 입력해주세요."});
+        if (!userIdx) return res.json({success: false, code: 2501, message: "userIdx를 입력해주세요."});
         
         try {
-            const [profileRow] = await feedModel.selectProfile(userIdx);
+            const [profileRow] = await feedModel.selectProfile(userIdx,myIdx);
 
             if (profileRow[0] == undefined){
-                return res.json({success: false, code: 3701, message: "유저 프로필 정보가 존재하지 않습니다."});
+                return res.json({success: false, code: 3501, message: "유저 프로필 정보가 존재하지 않습니다."});
             }
 
             return res.json({success: true, code: 1000, message: "유저 정보 조회 성공", result: profileRow});
@@ -121,13 +122,13 @@ const feed = {
     getFeed: async (req, res) => {
         const userIdx = req.query.userIdx;
 
-        if (!userIdx) return res.json({success: false, code: 2601, message: "userIdx를 입력해주세요."});
+        if (!userIdx) return res.json({success: false, code: 2501, message: "userIdx를 입력해주세요."});
         
         try {
             const [feedRow] = await feedModel.selectFeed(userIdx);
 
             if (feedRow[0] == undefined){
-                return res.json({success: false, code: 3702, message: "피드 정보가 존재하지 않습니다."});
+                return res.json({success: false, code: 3502, message: "피드 정보가 존재하지 않습니다."});
             }
 
             return res.json({success: true, code: 1000, message: "유저 피드 조회 성공", result: feedRow});

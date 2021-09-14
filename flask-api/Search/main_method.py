@@ -1,5 +1,5 @@
-import Searcher
-import model
+from Search import Searcher
+from Search import model
 
 class Mainmethod :
   def __init__(self) :

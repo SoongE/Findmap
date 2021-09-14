@@ -50,6 +50,31 @@ class _FollowingState extends State<Following> {
     );
   }
 
+  void fetchFollowing(int followingIdx) async {
+    Map<String, dynamic> param = {"followingIdx": followingIdx.toString()};
+
+    final response = await http.patch(
+      Uri.http(BASEURL, '/follow/'),
+      headers: {
+        HttpHeaders.contentTypeHeader: "application/json",
+        "token": widget.user.accessToken,
+      },
+      body: json.encode(param),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = jsonDecode(response.body);
+      if (responseBody['success']) {
+      } else {
+        showSnackbar(context, responseBody['message']);
+        throw Exception('fetchFollowing Exception: ${responseBody['message']}');
+      }
+    } else {
+      showSnackbar(context, '서버와 연결이 불안정합니다');
+      throw Exception('Failed to connect to server');
+    }
+  }
+
   Future<List<UserInfo>> fetchGetUserInfo() async {
     final response = await http.get(
       Uri.http(BASEURL, '/follow/follower-list',

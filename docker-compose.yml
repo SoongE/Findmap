@@ -11,14 +11,12 @@ services:
     restart: on-failure:10
     expose:
       - "5000"
-    environment:
-      - LC_ALL=C.UTF-8
-      - LANG=C.UTF-8
     container_name: flask-api
     tty: true
     stdin_open: true
     networks:
       - mindnet
+    command: 
 
   node-api:
     build:
@@ -29,11 +27,11 @@ services:
     restart: on-failure:10
     expose:
         - "3000"
+    container_name: node-api
     #command: pm2 start /node-api/node-api.json --no-daemon
     #command: node --debug /node-api/bin/node-api.js
     #command: node-debug /node-api/bin/node-api.js
     #command: nodemon --debug /node-api/node-api.js --watch /node-api
-    container_name: node-api
     tty: true
     stdin_open: true
     networks:
@@ -48,12 +46,12 @@ services:
       dockerfile: ./Dockerfile
     ports:
         - "80:80"
+    container_name: nginx
     links:
         # nginx has to link to flask-api (not vice-versa) so that nginx/sites-enabled/default has access to flask-api by service name (acts as host dns).
         #  each docker container has a seperate ip address below the docker-machine host, so you have to link containers to correctly pass to upstream flask port
         - flask-api:flask-api
         - node-api:node-api
-    container_name: nginx
     tty: true
     stdin_open: true
     networks:
