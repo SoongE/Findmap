@@ -217,3 +217,23 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
 ''';
+
+const String PERSONAL_INFORMATION = '''
+관련법규 : 개인정보 보호법 제15조, 제22조, 제24조
+
+1. 개인정보의 수집․이용 목적
+민원 내용 확인 및 처리 결과 통보
+
+2. 수집․이용하려는 개인정보 항목
+성명, 생년월일, 성별, 개인취향, 전화번호 등
+
+3. 개인정보 이용기간 및 보유기간
+회원탈퇴 후 최대 3개월
+
+4. 개인정보 제공 동의 거부 권리 및 동의 거부에 따른 불이익 내용 또는 제한사항
+귀하는 개인정보제공 동의를 거부할 권리가 있으며, 동의 거부에 따른 불이익은 없습니다. 다만 위 제공사항은 민원 처리 결과 통보에  반드시 필요한 사항으로 거부하실 경우 관련 처리 결과 통보가 불가능함을 알려드립니다.
+
+※ 개인정보 제공자가 동의한 내용외의 다른 목적으로 활용하지 않으며, 제공된 개인정보의 이용을 거부하고자 할 때에는 개인정보 관리책임자를 통해 열람, 정정, 삭제를 요구할 수 있습니다.
+
+본인은 본「개인정보의 수집·이용·제3자 제공 동의서」내용을 읽고 명확히 이해하였으며, 이에 동의합니다.
+''';

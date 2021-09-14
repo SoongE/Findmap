@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:findmap/models/user.dart';
+import 'package:findmap/src/feature_category.dart';
 import 'package:findmap/src/my_colors.dart';
+import 'package:findmap/src/text.dart';
 import 'package:findmap/utils/utils.dart';
 import 'package:findmap/views/login/validate.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,9 +13,10 @@ import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:line_icons/line_icons.dart';
+import 'package:smart_select/smart_select.dart';
 
-import 'sign_bar.dart';
 import '../mainPage.dart';
+import 'sign_bar.dart';
 
 class RegisterPage extends StatefulWidget {
   final String userEmail;
@@ -39,6 +42,8 @@ class _RegisterPageState extends State<RegisterPage> {
   late bool _userTOS2Agree;
 
   final GlobalKey<FormState> registerFormKey = GlobalKey<FormState>();
+  GlobalKey<S2MultiState<int>> _categoryKey = GlobalKey<S2MultiState<int>>();
+  List<int> _categorySelect = [];
 
   bool _isLoading = false;
 
@@ -136,12 +141,32 @@ class _RegisterPageState extends State<RegisterPage> {
                   decoration: inputDecorationBasic(
                       '전화번호', '010-0000-0000', LineIcons.phone),
                   inputFormatters: [MaskedInputFormatter('###-####-####')]),
-              TextFormField(
-                controller: _userTaste,
-                validator: (val) => CheckValidate().taste(val!),
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                decoration: inputDecorationBasic(
-                    '관심 주제/키워드', '클릭하여 선택해주세요', LineIcons.cocktail),
+              ElevatedButton(
+                onPressed: () {
+                  _categoryKey.currentState!.showModal();
+                },
+                child: Row(
+                  children: [
+                    _categorySelectPopUp(),
+                    Icon(LineIcons.cocktail, color: Colors.grey),
+                    Padding(padding: const EdgeInsets.symmetric(horizontal: 5)),
+                    Flexible(
+                      child: Text(
+                        _categorySelect.isEmpty
+                            ? '관심 주제/키워드'
+                            : _convertCategoryIndexToName(_categorySelect),
+                        style:
+                            TextStyle(fontSize: 16, color: MyColors.darkBlue),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.white,
+                  shadowColor: Colors.transparent,
+                  padding: const EdgeInsets.only(left: 10),
+                ),
               ),
               Padding(padding: EdgeInsets.symmetric(vertical: 5)),
               TextFormField(
@@ -151,7 +176,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 decoration: inputDecorationTOS('[필수] 이용약관', _userTOS1Agree),
                 onTap: () => {
                   FocusScope.of(context).requestFocus(new FocusNode()),
-                  _tosDialog('이용약관', '약관내용1', 1),
+                  _tosDialog('이용약관', TERMS_AND_CONDITIONS, 1),
                   _userTOS1.text = '[필수] 이용약관',
                 },
               ),
@@ -163,7 +188,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     inputDecorationTOS('[필수] 개인정보 수집 및 이용', _userTOS2Agree),
                 onTap: () => {
                   FocusScope.of(context).requestFocus(new FocusNode()),
-                  _tosDialog('개인정보 수집 및 이용', '약관내용2', 2),
+                  _tosDialog('개인정보 수집 및 이용', PERSONAL_INFORMATION, 2),
                   _userTOS2.text = '[필수] 개인정보 수집 및 이용',
                 },
               ),
@@ -187,6 +212,87 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
+  String _convertCategoryIndexToName(List<int> list) {
+    String value = '';
+    for (var i in list) {
+      value += CATEGORY_NAME[i]! + ', ';
+    }
+    return value;
+  }
+
+  Widget _categorySelectPopUp() {
+    return SmartSelect<int>.multiple(
+      key: _categoryKey,
+      value: _categorySelect,
+      modalTitle: '맞춤 서비스',
+      choiceConfig: S2ChoiceConfig(
+        overscrollColor: Colors.transparent,
+        isGrouped: true,
+        layout: S2ChoiceLayout.wrap,
+        type: S2ChoiceType.chips,
+      ),
+      onChange: (state) {
+        // For chang immediately
+        if (state.value.length > 5) {
+          showSnackbar(context, "관심사는 5개까지 선택 가능합니다.\n최근 수정한 내용은 반영되지 않습니다.");
+        } else {
+          var sendList = _categorySelect;
+          for (var i in state.value) {
+            var filtered = _categorySelect.where((e) => e == i);
+            if (filtered.isEmpty) {
+              sendList.add(i);
+            } else {
+              sendList.remove(i);
+            }
+          }
+          // for (var i in sendList) {
+          //   fetchChangeCategory(i);
+          // }
+          setState(() => _categorySelect = state.value);
+        }
+      },
+      modalHeaderStyle: S2ModalHeaderStyle(
+        textStyle: TextStyle(color: Colors.black),
+      ),
+      modalType: S2ModalType.popupDialog,
+      choiceItems: S2Choice.listFrom(
+        source: CATEGORY,
+        value: (index, Map<String, dynamic> item) => item['index'],
+        title: (index, Map<String, dynamic> item) => item['name'],
+        group: (index, Map<String, dynamic> item) => item['group'],
+      ),
+      tileBuilder: (context, state) {
+        return Container();
+      },
+    );
+  }
+
+  // Future<void> fetchChangeCategory(int idx) async {
+  //   Map<String, dynamic> param = {"categoryIdx": idx};
+  //
+  //   final response = await http.patch(
+  //     Uri.http(BASEURL, '/users/interest'),
+  //     headers: {
+  //       HttpHeaders.contentTypeHeader: "application/json",
+  //       "token": widget.user.accessToken,
+  //     },
+  //     body: json.encode(param),
+  //   );
+  //
+  //   if (response.statusCode == 200) {
+  //     var responseBody = jsonDecode(response.body);
+  //     if (responseBody['success']) {
+  //     } else {
+  //       showSnackbar(context, responseBody['message']);
+  //       throw Exception(
+  //           'fetchChangeCategory Exception: ${responseBody['message']}');
+  //     }
+  //   } else {
+  //     showSnackbar(context, '서버와 연결이 불안정합니다');
+  //     throw Exception('Failed to connect to server');
+  //   }
+  // }
+
   void _tosDialog(String title, String content, int tosNum) {
     showDialog<void>(
       context: context,
@@ -202,11 +308,10 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
           content: Builder(
             builder: (context) {
-              var height = MediaQuery.of(context).size.height;
-              var width = MediaQuery.of(context).size.width;
-
-              return Container(
-                  height: height, width: width, child: Text(content));
+              return SingleChildScrollView(
+                physics: BouncingScrollPhysics(),
+                child: Text(content),
+              );
             },
           ),
           actions: <Widget>[
