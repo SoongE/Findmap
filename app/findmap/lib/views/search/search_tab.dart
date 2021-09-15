@@ -64,6 +64,7 @@ class _SearchTabState extends State<SearchTab> {
                 plotAreaBorderColor: Colors.transparent,
                 series: <ChartSeries>[
                   BubbleSeries<ChartData, double>(
+                      animationDuration: 1000,
                       maximumRadius: MAX_RADIO,
                       minimumRadius: MIN_RADIO,
                       dataSource: chartData,
