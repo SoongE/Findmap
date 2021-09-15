@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:findmap/models/post_folder.dart';
 import 'package:flutter/material.dart';
 import 'package:smart_select/smart_select.dart';
@@ -24,12 +26,21 @@ class _AlarmPageState extends State<AlarmPage> {
     PostFolder(0, 0, "Zero", 0, 'createdAt', 'updatedAt', 'status').toJson(),
     PostFolder(1, 1, "One", 1, 'createdAt', 'updatedAt', 'status').toJson(),
     PostFolder(2, 2, "Two", 2, 'createdAt', 'updatedAt', 'status').toJson(),
-    PostFolder(3, 3, "Three", 3, 'createdAt', 'updatedAt', 'status').toJson()
+    PostFolder(3, 3, "Three", 3, 'createdAt', 'updatedAt', 'status').toJson(),
   ];
+
+  late Random _random;
+
+  @override
+  void initState() {
+    _random = Random();
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       children: [
         ElevatedButton(
           onPressed: () => _smartSelectKey.currentState!.showModal(),
@@ -39,32 +50,41 @@ class _AlarmPageState extends State<AlarmPage> {
             color: Colors.red,
           ),
         ),
-        SmartSelect<int>.single(
-          key: _smartSelectKey,
-          title: 'Frameworks',
-          value: folderValue,
-          onChange: (state) => setState(() => {folderValue = state.value}),
-          modalType: S2ModalType.bottomSheet,
-          modalHeader: false,
-          choiceLayout: S2ChoiceLayout.list,
-          modalHeaderStyle: S2ModalHeaderStyle(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-          ),
-          modalStyle: S2ModalStyle(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-          ),
-          choiceItems: S2Choice.listFrom<int, Map<String, dynamic>>(
-            source: folderOptions,
-            value: (index, item) => item['idx'],
-            title: (index, item) => item['name'],
-          ),
-          tileBuilder: (context, state) {
-            return Container();
+        ElevatedButton(
+          onPressed: () {
+            print(_random.nextDouble());
           },
+          child: Text("CLICK"),
         ),
       ],
+    );
+  }
+
+  Widget customSelect() {
+    return SmartSelect<int>.single(
+      key: _smartSelectKey,
+      title: 'Frameworks',
+      value: folderValue,
+      onChange: (state) => setState(() => {folderValue = state.value}),
+      modalType: S2ModalType.bottomSheet,
+      modalHeader: false,
+      choiceLayout: S2ChoiceLayout.list,
+      modalHeaderStyle: S2ModalHeaderStyle(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      ),
+      modalStyle: S2ModalStyle(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      ),
+      choiceItems: S2Choice.listFrom<int, Map<String, dynamic>>(
+        source: folderOptions,
+        value: (index, item) => item['idx'],
+        title: (index, item) => item['name'],
+      ),
+      tileBuilder: (context, state) {
+        return Container();
+      },
     );
   }
 }
