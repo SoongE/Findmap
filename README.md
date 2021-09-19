@@ -2,7 +2,7 @@
 
 <div align="center">
 <p align="center">
-    <img src="assets/logo.svg" alt="logo" width="250" height="250"/>
+    <img src="assets/logo.png" alt="logo" width="250" height="250"/>
 </p>
 <h4 align="center">AI기반 검색, 검색결과, 게시글 추천 SNS 서비스</h4>
 <p align="center">
@@ -40,6 +40,7 @@
     상업적 목적을 띄고 있지 않으며, 팀 <b>Ajou Nice</b>에 의해 개발되었습니다.
 </p>
 </div>
+
 
 ## Overview
 
