@@ -76,7 +76,7 @@ Findmap AI로 **검색 결과를 사용자 취향에 맞게 정렬**하여 검�
 
 ## Contributors
 
-|                       **🐈** 우다현                        |                       **🐕** 박지윤                        |                       **🦅** 승현수                        |                       **🐣** 오승민                        |
+|                       **🐈 우다현**                        |                       **🐕 박지윤**                        |                       **🦅 승현수**                        |                       **🐣 오승민**                        |
 | :-------------------------------------------------------: | :-------------------------------------------------------: | :-------------------------------------------------------: | :-------------------------------------------------------: |
 | ![](https://avatars.githubusercontent.com/u/60066586?v=4) | ![](https://avatars.githubusercontent.com/u/51026374?v=4) | ![](https://avatars.githubusercontent.com/u/72781752?v=4) | ![](https://avatars.githubusercontent.com/u/53206234?v=4) |
 |      [@defwdahyun0](https://github.com/defwdahyun0)       |         [@PrimWILL](https://github.com/PrimWILL)          |     [@SeungHyeon12](https://github.com/SeungHyeon12)      |           [@Rhcsky](https://github.com/rhcsky)            |
