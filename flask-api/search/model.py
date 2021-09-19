@@ -28,8 +28,3 @@ class Categorize :
         
         print(ctg_temp)
         return ctg_temp
-
-
-
-
-

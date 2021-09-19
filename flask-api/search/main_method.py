@@ -1,5 +1,5 @@
-import Searcher
-import model
+from search import searcher
+from search import model
 
 class Mainmethod :
   def __init__(self) :
@@ -39,7 +39,6 @@ class Mainmethod :
     result = sorted(self.result, key=lambda content: (content['title']))
     
     return result
-
 
 
 

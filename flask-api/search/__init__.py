@@ -2,7 +2,7 @@ from flask import Blueprint, request
 
 from utils import make_response
 
-import main
+from search import main_method
 
 search_api = Blueprint("search", __name__, url_prefix="/search")
 SUCCESS = "success"
@@ -10,8 +10,8 @@ FAILURE = "failure"
 
 @search_api.route('/')
 def main():
-    mp = main
-    resources =  mp()
+    mp = main_method
+    resources =  mp.main()
     return make_response(SUCCESS,resources)
 
 @search_api.route('/name', methods=['GET'])
