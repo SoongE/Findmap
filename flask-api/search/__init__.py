@@ -4,7 +4,7 @@ from utils import make_response
 
 import main
 
-search_api = Blueprint("check", __name__, url_prefix="/search")
+search_api = Blueprint("search", __name__, url_prefix="/search")
 SUCCESS = "success"
 FAILURE = "failure"
 
