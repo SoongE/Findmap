@@ -1,5 +1,6 @@
-## Findmap: 웹서핑의 지도
+# Findmap: 웹서핑의 지도
 
+<div align="center">
 <p align="center">
     <img src="assets/logo.svg" alt="logo" width="250" height="250"/>
 </p>
@@ -26,7 +27,6 @@
     <img src="https://img.shields.io/badge/Swift-4.2-FA7343?style=flat-square&logo=swift"/>
     <img src="https://img.shields.io/badge/Flutter-2.6.0-02569B?style=flat-square&logo=flutter"/>
 </p>
-
 <p align="center">
   <a href="#overview">Overview</a></a> * 
   <a href="#features">Features</a></a> * 
@@ -39,6 +39,7 @@
     <br/>
     상업적 목적을 띄고 있지 않으며, 팀 <b>Ajou Nice</b>에 의해 개발되었습니다.
 </p>
+</div>
 
 ## Overview
 
