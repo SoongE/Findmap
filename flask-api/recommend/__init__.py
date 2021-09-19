@@ -1,10 +1,10 @@
 from flask import Blueprint, request
 
 from utils import make_response
-import fasttext_word
+from recommend import fasttext_word
 
 
-recommend_api = Blueprint("check", __name__, url_prefix="/recommend")
+recommend_api = Blueprint("recommend", __name__, url_prefix="/recommend")
 SUCCESS = "success"
 FAILURE = "failure"
 
