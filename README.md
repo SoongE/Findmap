@@ -31,7 +31,7 @@
   <a href="#overview">Overview</a></a> * 
   <a href="#features">Features</a></a> * 
   <a href="#contributors">Contributors</a> * 
-  <a href="#page">Page</a> * 
+  <a href="#architecture">Architecture</a> * 
   <a href="#license">License</a> * 
   <a href="#reference">Reference</a>
 </p>
@@ -84,7 +84,9 @@ Findmap AI로 **검색 결과를 사용자 취향에 맞게 정렬**하여 검�
 |      [@defwdahyun0](https://github.com/defwdahyun0)       |         [@PrimWILL](https://github.com/PrimWILL)          |     [@SeungHyeon12](https://github.com/SeungHyeon12)      |           [@Rhcsky](https://github.com/rhcsky)            |
 |                    Leader, Node Server                    |                        ML, Flutter                        |                     ML, Flask Server                      |                        PM, Flutter                        |
 
-## Pages
+## Architecture
+
+업로드 예정
 
 [API docs](https://lab.hanium.or.kr/21_HF144/21_hf144/wikis/home)
 
