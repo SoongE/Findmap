@@ -54,7 +54,7 @@ class _SettingState extends State<Setting> {
               _categorySelectPopUp(),
               // _textButton('알림'),
               _textButton('공지사항', callback: _toNotice),
-              _textButton('맞춤 서비스 변경', callback: _changeCategory),
+              _textButton('관심 카테고리 변경', callback: _changeCategory),
               _textButton('팔로잉/팔로우', callback: _toFollowingFollow),
               _textButton('약관 확인', callback: _toDocumentToS),
               _textButton('오픈소스 라이선스 확인', callback: _toDocumentLicense),

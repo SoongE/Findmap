@@ -12,6 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:line_icons/line_icons.dart';
 
+import 'follower_following.dart';
+
 class UserPage extends StatefulWidget {
   final User user;
 
@@ -88,24 +90,32 @@ class _UserPageState extends State<UserPage>
         children: [
           circleImageLoader(userInfo.profileUrl, 65),
           displayCounter("스크랩", userInfo.ScrapCount.toString()),
-          displayCounter("팔로워", userInfo.FollowCount.toString()),
+          displayCounter("팔로워", userInfo.FollowCount.toString(),
+              callback: _toFollowingFollow),
           displayCounter("하트", userInfo.HaertCount.toString()),
         ],
       ),
     );
   }
 
-  Widget displayCounter(String name, String count) {
+  Widget displayCounter(String name, String count, {VoidCallback? callback}) {
     TextStyle textStyle = TextStyle(fontSize: 15);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(name, style: textStyle),
-        Padding(padding: const EdgeInsets.symmetric(vertical: 3)),
-        Text(count, style: textStyle),
-      ],
+    return GestureDetector(
+      onTap: () => callback!(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(name, style: textStyle),
+          Padding(padding: const EdgeInsets.symmetric(vertical: 3)),
+          Text(count, style: textStyle),
+        ],
+      ),
     );
+  }
+
+  void _toFollowingFollow() {
+    Navigator.of(context).push(createRoute(FollowerFollowing(widget.user)));
   }
 
   Widget _feedTile() {
