@@ -1,5 +1,4 @@
-import 'dart:math';
-
+import 'package:findmap/src/digit.dart';
 import 'package:findmap/src/my_colors.dart';
 import 'package:findmap/utils/utils.dart';
 import 'package:flutter/material.dart';
@@ -14,22 +13,20 @@ class SearchTab extends StatefulWidget {
 class _SearchTabState extends State<SearchTab> {
   static const int MAX_Y = 19;
   static const int MAX_X = 5;
-  static const int MAX_RADIO = 20;
-  static const int MIN_RADIO = 20;
+  static const int MAX_RADIO = 30;
+  static const int MIN_RADIO = 10;
 
   late TextEditingController _searchKeyword;
   bool _visibleSearchInput = false;
   late List<ChartData> chartData;
-  late Random _random;
 
   @override
   void initState() {
-    _random = Random();
     var colorList = CHART_COLOR.toList()..shuffle();
     chartData = [
       ChartData('추천단어1', 1, 4, 3, colorList[0]),
       ChartData('추천단어2', 2, 16, 5, colorList[1]),
-      ChartData('검색어', 3, 10, 20, colorList[2]),
+      ChartData('검색어', 3, 10, 30, colorList[2]),
       ChartData('추천단어4', 4, 14, 12, colorList[3]),
       ChartData('추천단어5', 5, 8, 15, colorList[4]),
     ];
@@ -67,6 +64,7 @@ class _SearchTabState extends State<SearchTab> {
                 plotAreaBorderColor: Colors.transparent,
                 series: <ChartSeries>[
                   BubbleSeries<ChartData, double>(
+                      animationDuration: 1000,
                       maximumRadius: MAX_RADIO,
                       minimumRadius: MIN_RADIO,
                       dataSource: chartData,
@@ -115,16 +113,15 @@ class _SearchTabState extends State<SearchTab> {
   void _tap(int? index) {
     setState(() {
       var colorList = CHART_COLOR.toList()..shuffle();
+      var xList = POSITION_X.toList()..shuffle();
+      var yList = POSITION_Y.toList()..shuffle();
+      var size = SIZE.toList()..shuffle();
       chartData = [
-        ChartData('추천단어10', _random.nextDouble() * MAX_X,
-            _random.nextDouble() * MAX_Y, 3, colorList[0]),
-        ChartData('추천단어20', _random.nextDouble() * MAX_X,
-            _random.nextDouble() * MAX_Y, 5, colorList[1]),
-        ChartData('새로운 검색어', 3, 10, 20, colorList[2]),
-        ChartData('추천단어40', _random.nextDouble() * MAX_X,
-            _random.nextDouble() * MAX_Y, 12, colorList[3]),
-        ChartData('추천단어50', _random.nextDouble() * MAX_X,
-            _random.nextDouble() * MAX_Y, 15, colorList[4]),
+        ChartData('추천단어10', xList[0], yList[0], size[0], colorList[0]),
+        ChartData('추천단어20', xList[1], yList[1], size[1], colorList[1]),
+        ChartData('새로운 검색어', 3, 10, 30, colorList[2]),
+        ChartData('추천단어40', xList[3], yList[3], size[2], colorList[3]),
+        ChartData('추천단어50', xList[4], yList[4], size[3], colorList[4]),
       ];
     });
   }

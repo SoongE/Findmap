@@ -2,7 +2,7 @@ import json
 from flask import Blueprint, jsonify
 
 from check import check_api
-from Search import search_api
+from search import search_api
 from recommend import recommend_api
 
 from utils import make_response

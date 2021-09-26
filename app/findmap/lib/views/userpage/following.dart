@@ -109,8 +109,8 @@ class _FollowingState extends State<Following> {
     return SizeTransition(
       sizeFactor: animation,
       child: GestureDetector(
-        onTap: () => Navigator.of(context).push(
-            createRoute(OtherUserPage(user: widget.user, userIdx: item.idx))),
+        onTap: () => Navigator.of(context).push(createRoute(OtherUserPage(
+            user: widget.user, userIdx: item.idx, isFollower: false))),
         child: ListTile(
           contentPadding: EdgeInsets.all(10),
           title: Row(

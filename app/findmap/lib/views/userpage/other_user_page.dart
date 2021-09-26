@@ -12,11 +12,16 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class OtherUserPage extends StatefulWidget {
-  OtherUserPage({Key? key, required this.user, required this.userIdx})
+  OtherUserPage(
+      {Key? key,
+      required this.user,
+      required this.userIdx,
+      required this.isFollower})
       : super(key: key);
 
   final int userIdx;
   final User user;
+  final bool isFollower;
 
   @override
   _OtherUserPageState createState() => _OtherUserPageState();
@@ -52,29 +57,34 @@ class _OtherUserPageState extends State<OtherUserPage>
                   style: TextStyle(color: Colors.black),
                 ),
                 actions: [
-                  Container(
-                    width: 70,
-                    margin: const EdgeInsets.only(right: 10),
-                    child: FittedBox(
-                        fit: BoxFit.fitWidth,
-                        child: OutlinedButton(
-                          onPressed: () {
-                            fetchFollowing(widget.userIdx);
-                            setState(() {
-                              userInfo.status = !userInfo.status;
-                            });
-                          },
-                          child: userInfo.status ? Text('팔로잉') : Text('팔로우'),
-                          style: ElevatedButton.styleFrom(
-                            primary:
-                                userInfo.status ? Colors.white : Colors.blue,
-                            onPrimary:
-                                userInfo.status ? Colors.blue : Colors.white,
-                            splashFactory: NoSplash.splashFactory,
-                            elevation: 0,
-                          ),
-                        )),
-                  )
+                  widget.isFollower
+                      ? Container()
+                      : Container(
+                          width: 70,
+                          margin: const EdgeInsets.only(right: 10),
+                          child: FittedBox(
+                              fit: BoxFit.fitWidth,
+                              child: OutlinedButton(
+                                onPressed: () {
+                                  fetchFollowing(widget.userIdx);
+                                  setState(() {
+                                    userInfo.status = !userInfo.status;
+                                  });
+                                },
+                                child:
+                                    userInfo.status ? Text('팔로잉') : Text('팔로우'),
+                                style: ElevatedButton.styleFrom(
+                                  primary: userInfo.status
+                                      ? Colors.white
+                                      : Colors.blue,
+                                  onPrimary: userInfo.status
+                                      ? Colors.black
+                                      : Colors.white,
+                                  splashFactory: NoSplash.splashFactory,
+                                  elevation: 0,
+                                ),
+                              )),
+                        )
                 ],
               ),
               body: _feedTile());
