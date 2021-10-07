@@ -11,8 +11,8 @@ FAILURE = "failure"
 
 @recommend_api.route('/')
 def main():
-    #ft = fasttext_word.model
-    resources = {"model" : "hi"}
+    ft = fasttext_word.model
+    resources = {"model" : ft.give_recommend}
     return make_response(SUCCESS,resources)
 
 
