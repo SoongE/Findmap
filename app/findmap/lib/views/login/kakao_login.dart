@@ -52,8 +52,7 @@ class _KakaoLoginState extends State<KakaoLogin> {
             userPassword: _userPassword,
           )));
     } catch (error) {
-      showSnackbar(context, "_issueAccessToken: 회원가입 중 문제가 발생했습니다");
-      print(error);
+      showSnackbar(context, "회원가입 중 문제가 발생했습니다");
     }
   }
 
@@ -62,17 +61,16 @@ class _KakaoLoginState extends State<KakaoLogin> {
       var code = await AuthCodeClient.instance.request();
       await _issueAccessToken(code);
     } catch (error) {
-      showSnackbar(context, "_loginWithWeb: 회원가입 중 문제가 발생했습니다");
+      showSnackbar(context, "회원가입 중 문제가 발생했습니다");
     }
   }
 
   Future<void> _loginWithKakaoApp() async {
-    print("application");
     try {
       var code = await AuthCodeClient.instance.requestWithTalk();
       await _issueAccessToken(code);
     } catch (error) {
-      showSnackbar(context, "_loginWithKakaoApp: 회원가입 중 문제가 발생했습니다");
+      showSnackbar(context, "회원가입 중 문제가 발생했습니다");
     }
   }
 
@@ -82,27 +80,15 @@ class _KakaoLoginState extends State<KakaoLogin> {
       child: CupertinoButton(
         onPressed: _isKakaoTalkInstalled ? _loginWithKakaoApp : _loginWithWeb,
         child: Container(
-          width: MediaQuery.of(context).size.width * 0.6,
+          width: MediaQuery.of(context).size.width * 0.2,
           height: MediaQuery.of(context).size.height * 0.07,
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: MyColors.myYellow),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.chat_bubble, color: Colors.black),
-              SizedBox(
-                width: 10,
-              ),
-              Text(
-                '카카오로 로그인하기',
-                style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w900,
-                    fontSize: 20),
-              ),
-            ],
+            shape: BoxShape.circle,
+            color: MyColors.myYellow,
           ),
+          child: Padding(
+              padding: const EdgeInsets.all(6),
+              child: Image.asset('assets/social/kakao_logo.png')),
         ),
       ),
     );
