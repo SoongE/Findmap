@@ -1,14 +1,15 @@
 import fasttext
 import re
+from app import model
 
 class model :
     def __init__(self) :
         self.recommend_list = []
     def give_recommend(self) :
         word = "아이언맨"
-        model = fasttext.load_model('./morphnamunaver.bin')
+        mod = model
 
-        words = model.get_nearest_neighbors(word, k=100)
+        words = mod.get_nearest_neighbors(word, k=100)
 
         for index in words :
           hangul = re.compile('[^ \uac00-\ud7a3]+')
