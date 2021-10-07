@@ -2,9 +2,9 @@ from flask import Blueprint, request
 
 from utils import make_response
 
-from Search import main_method
+from search import main_method
 
-search_api = Blueprint("check", __name__, url_prefix="/search")
+search_api = Blueprint("search", __name__, url_prefix="/search")
 SUCCESS = "success"
 FAILURE = "failure"
 

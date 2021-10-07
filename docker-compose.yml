@@ -16,7 +16,6 @@ services:
     stdin_open: true
     networks:
       - mindnet
-    command: 
 
   node-api:
     build:
