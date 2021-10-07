@@ -35,8 +35,7 @@ const scrap = {
 
             return res.json({success: true, code: 1000, message: "스크랩 성공", result: {"insertId": result[0].insertId}});
         } catch(err){
-          console.log(error);
-          return res.status(4000).send(`Error: ${err.message}`);
+            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     getScrap: async (req, res) => {
@@ -50,8 +49,7 @@ const scrap = {
             }
             return res.json({success: true, code: 1000, message: "스크랩 전체 조회 성공", result: result});
         } catch (err) {
-            console.log(error);
-            return res.status(4000).send(`Error: ${err.message}`);
+            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     getScrapByFolder: async (req, res) => {
@@ -71,8 +69,7 @@ const scrap = {
             }
             return res.json({success: true, code: 1000, message: "스크랩 폴더별 조회 성공", result: result});
         } catch (err) {
-            console.log(error);
-            return res.status(4000).send(`Error: ${err.message}`);
+            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     getScrapByCategory: async (req, res) => {
@@ -90,8 +87,7 @@ const scrap = {
             }
             return res.json({success: true, code: 1000, message: "스크랩 카테고리별 조회 성공", result: result});
         } catch (err) {
-            console.log(error);
-            return res.status(4000).send(`Error: ${err.message}`);
+            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     getScrapByDate: async (req, res) => {
@@ -110,8 +106,7 @@ const scrap = {
             }
             return res.json({success: true, code: 1000, message: "스크랩 날짜별 조회 성공", result: result});
         } catch (err) {
-            console.log(error);
-            return res.status(4000).send(`Error: ${err.message}`);
+            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     getScrapDetail: async (req, res) => {
@@ -125,8 +120,7 @@ const scrap = {
           }
           return res.json({success: true, code: 1000, message: "스크랩 상세 조회 성공", result: scrapRow});
       } catch (err) {
-          console.log(error);
-          return res.status(4000).send(`Error: ${err.message}`);
+        return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
       }
     },
     patchScrap: async (req, res) => {
@@ -163,8 +157,7 @@ const scrap = {
 
             return res.json({success: true, code: 1000, message: "스크랩 선택 수정 성공", result: scrapRow});
         }catch(err){
-            console.log(error);
-            return res.status(4000).send(`Error: ${err.message}`);
+            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     patchScrapTitle: async (req, res) => {
@@ -183,8 +176,7 @@ const scrap = {
 
             return res.json({success: true, code: 1000, message: "스크랩 제목 수정 성공", result: scrapRow});
         }catch(err){
-            console.log(error);
-            return res.status(4000).send(`Error: ${err.message}`);
+            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
         }
       },
     patchScrapSummary: async (req, res) => {
@@ -203,8 +195,7 @@ const scrap = {
   
             return res.json({success: true, code: 1000, message: "스크랩 줄거리 수정 성공", result: scrapRow});
         }catch(err){
-            console.log(error);
-            return res.status(4000).send(`Error: ${err.message}`);
+            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
         }
       },
     patchScrapComment: async (req, res) => {
@@ -223,8 +214,7 @@ const scrap = {
 
           return res.json({success: true, code: 1000, message: "스크랩 코멘트 수정 성공", result: scrapRow});
       }catch(err){
-          console.log(error);
-          return res.status(4000).send(`Error: ${err.message}`);
+          return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
       }
     },
     patchScrapFolder: async (req, res) => {
@@ -247,8 +237,7 @@ const scrap = {
             
             return res.json({success: true, code: 1000, message: "스크랩 폴더 수정 성공", result: scrapRow});
         }catch(err){
-            console.log(error);
-            return res.status(4000).send(`Error: ${err.message}`);
+            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     patchScrapFeedUp: async (req, res) => {
@@ -265,8 +254,7 @@ const scrap = {
             
             return res.json({success: true, code: 1000, message: "스크랩 피드 올리기 성공", result: scrapRow});
         }catch(err){
-            console.log(error);
-            return res.status(4000).send(`Error: ${err.message}`);
+            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     patchScrapFeedDown: async (req, res) => {
@@ -283,8 +271,7 @@ const scrap = {
             
             return res.json({success: true, code: 1000, message: "스크랩 피드 내리기 성공", result: scrapRow});
         }catch(err){
-            console.log(error);
-            return res.status(4000).send(`Error: ${err.message}`);
+            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     deleteScrap: async (req, res) => {
@@ -298,8 +285,7 @@ const scrap = {
             const result = await scrapModel.deleteScrap(userIdx,scrapIdx);
             return res.json({success: true, code: 1000, message: "스크랩 삭제 성공"});
         }catch(err){
-            console.log(error);
-            return res.status(4000).send(`Error: ${err.message}`);
+            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
         }
     }
 }
