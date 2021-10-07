@@ -119,7 +119,15 @@ class _SignInState extends State<SignIn> {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: KakaoLogin(),
+                    child: Row(
+                      children: [
+                        KakaoLogin(),
+                        socialLogin(
+                            'assets/social/google_logo.png', Colors.white),
+                        socialLogin(
+                            'assets/social/apple_logo.png', Colors.black),
+                      ],
+                    ),
                   )
                 ],
               ),
@@ -130,6 +138,19 @@ class _SignInState extends State<SignIn> {
     );
   }
 
+  Widget socialLogin(String logo, Color color) {
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.2,
+      height: MediaQuery.of(context).size.height * 0.07,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: color,
+      ),
+      child:
+          Padding(padding: const EdgeInsets.all(6), child: Image.asset(logo)),
+    );
+  }
+
   void _login() {
     setState(() {
       _isLoading = true;
@@ -137,7 +158,7 @@ class _SignInState extends State<SignIn> {
     if (loginFormKey.currentState!.validate()) {
       Future<User> user = fetchSignIn();
       user.then((value) => {
-        // Todo remove print
+            // Todo remove print
             print(value.toJson().toString()),
             showSnackbar(context, "환영합니다! ${value.nickName}님"),
             Navigator.pushAndRemoveUntil(
