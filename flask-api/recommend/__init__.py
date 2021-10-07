@@ -11,12 +11,12 @@ FAILURE = "failure"
 
 @recommend_api.route('/')
 def main():
-    ft = fasttext_word.model
+    ft = fasttext_word.model()    
     rec_list = ft.give_recommend()
     temp_str = ""
     for item in rec_list :
         temp_str = temp_str + item
-    resources = {"model" : temp_str}
+    resources = {"model" : temp}
     return make_response(SUCCESS,resources)
 
 
