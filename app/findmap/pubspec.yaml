@@ -65,6 +65,7 @@ flutter:
     - assets/logo.png
     - assets/archive_basic.png
     - assets/loading.gif
+    - assets/social/
   fonts:
     - family: FugazOne
       fonts:
