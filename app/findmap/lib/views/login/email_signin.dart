@@ -137,6 +137,8 @@ class _SignInState extends State<SignIn> {
     if (loginFormKey.currentState!.validate()) {
       Future<User> user = fetchSignIn();
       user.then((value) => {
+        // Todo remove print
+            print(value.toJson().toString()),
             showSnackbar(context, "환영합니다! ${value.nickName}님"),
             Navigator.pushAndRemoveUntil(
                 context, createRoute(MainPage(user: value)), (route) => false),
@@ -195,20 +197,15 @@ class _SignInState extends State<SignIn> {
   void _saveToSecurityStorage(dynamic body) {
     final storage = FlutterSecureStorage();
 
-    print("SAVE BODY:" + body.toString());
-    print(body['userIdx'].toString());
-    // Todo change to below
-    storage.write(key: 'userIdx', value: body['idx'].toString());
-    // storage.write(key: 'userIdx', value: body['userIdx'].toString());
+    storage.write(key: 'userIdx', value: body['userIdx'].toString());
     storage.write(key: 'token', value: body['token']);
     storage.write(key: 'nickName', value: body['nickName']);
     storage.write(key: 'name', value: body['name']);
     storage.write(key: 'email', value: body['email']);
-    storage.write(key: 'password', value: body['password']);
+    // storage.write(key: 'password', value: body['password']);
     storage.write(key: 'birthday', value: body['birthday']);
     storage.write(key: 'gender', value: body['gender']);
-    storage.write(key: 'phoneNum', value: body['phoneNum']);
-    storage.write(key: 'taste', value: body['taste']);
+    storage.write(key: 'taste', value: body['categoryList']);
   }
 
   InputDecoration signInInputDecorationPassword() {

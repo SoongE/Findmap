@@ -21,8 +21,12 @@ import 'sign_bar.dart';
 class RegisterPage extends StatefulWidget {
   final String userEmail;
   final String userPassword;
+  final String nickName;
+  final String thumbnailURL;
+  final String gender;
 
-  RegisterPage({Key? key, required this.userEmail, required this.userPassword})
+  RegisterPage(this.nickName, this.thumbnailURL, this.gender,
+      {Key? key, required this.userEmail, required this.userPassword})
       : super(key: key);
 
   @override
@@ -64,6 +68,13 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.nickName != '') {
+      _userNickName.text = widget.nickName;
+    }
+    if (widget.gender != '') {
+      _userGender.text = widget.gender;
+    }
+
     return Scaffold(
       appBar: AppBar(
         leading: BackButton(color: Colors.black),
@@ -349,6 +360,7 @@ class _RegisterPageState extends State<RegisterPage> {
           Future<User> user = fetchSignIn();
           user.then((value) => {
                 showSnackbar(context, "환영합니다! ${value.nickName}님"),
+                fetchRegisterProfile(widget.thumbnailURL, value.accessToken),
                 Navigator.pushAndRemoveUntil(context,
                     createRoute(MainPage(user: value)), (route) => false),
               });
@@ -375,7 +387,7 @@ class _RegisterPageState extends State<RegisterPage> {
       "nickName": _userNickName.text,
       "birthday": _userBirth.text,
       "gender": _gender,
-      "phoneNum": _userPhoneNumber.text.replaceAll('-', ''),
+      "categoryList": _intListToString(_categorySelect)
     };
     final response = await http.post(
       Uri.http(BASEURL, '/users/signup'),
@@ -413,20 +425,11 @@ class _RegisterPageState extends State<RegisterPage> {
     if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
       if (responseBody['success']) {
-        // ToDo: erase later
-        responseBody['result']['taste'] = _userTaste.text;
-        responseBody['result']['email'] = widget.userEmail;
-        responseBody['result']['password'] = widget.userPassword;
-        responseBody['result']['name'] = _userName.text;
-        responseBody['result']['nickName'] = _userNickName.text;
-        responseBody['result']['birthday'] = _userBirth.text;
-        responseBody['result']['gender'] = 'X';
-        responseBody['result']['phoneNum'] =
-            _userPhoneNumber.text.replaceAll('-', '');
-        print(responseBody['result']);
-        // Todo: to here
-        _saveToSecurityStorage(responseBody['result']);
-        return User.fromJson(responseBody['result']);
+        responseBody['result']['userInfo']['token'] =
+            responseBody['result']['token'];
+
+        _saveToSecurityStorage(responseBody['result']['userInfo']);
+        return User.fromJson(responseBody['result']['userInfo']);
       } else
         throw Exception('Response status is failure');
     } else {
@@ -442,11 +445,9 @@ class _RegisterPageState extends State<RegisterPage> {
     storage.write(key: 'nickName', value: body['nickName']);
     storage.write(key: 'name', value: body['name']);
     storage.write(key: 'email', value: body['email']);
-    storage.write(key: 'password', value: body['password']);
     storage.write(key: 'birthday', value: body['birthday']);
     storage.write(key: 'gender', value: body['gender']);
-    storage.write(key: 'phoneNum', value: body['phoneNum']);
-    storage.write(key: 'taste', value: body['taste']);
+    storage.write(key: 'taste', value: body['categoryList']);
   }
 
   InputDecoration inputDecorationBasic(String label, String hint, IconData icon,
@@ -498,5 +499,44 @@ class _RegisterPageState extends State<RegisterPage> {
       ),
       errorStyle: const TextStyle(color: MyColors.darkBlue),
     );
+  }
+
+  String _intListToString(List<int> categorySelect) {
+    String res = '';
+    for (var i in categorySelect) {
+      res += '${i.toString()},';
+    }
+    int _lastIndex = res.length;
+    res = res.substring(0, _lastIndex - 1);
+    return res;
+  }
+
+  void fetchRegisterProfile(String url, String userToken) async {
+    if (url == '') {
+      return;
+    }
+    Map<String, dynamic> param = {"profileUrl": url};
+
+    final response = await http.post(
+      Uri.http(BASEURL, '/users/info-profileUrl'),
+      headers: {
+        HttpHeaders.contentTypeHeader: "application/json",
+        "token": userToken,
+      },
+      body: json.encode(param),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = jsonDecode(response.body);
+      if (responseBody['success']) {
+      } else {
+        showSnackbar(context, responseBody['message']);
+        throw Exception(
+            'fetchRegisterProfile Exception: ${responseBody['message']}');
+      }
+    } else {
+      showSnackbar(context, '서버와 연결이 불안정합니다');
+      throw Exception('Failed to connect to server');
+    }
   }
 }
