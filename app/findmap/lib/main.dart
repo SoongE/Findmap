@@ -16,7 +16,7 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
     // SystemChrome.setSystemUIOverlayStyle(
     //     SystemUiOverlayStyle(statusBarColor: Colors.transparent));
 
@@ -63,6 +63,7 @@ class _SplashPageState extends State<SplashPage> {
 
     if (_userStatus) {
       var jsonStorage = jsonDecode(json.encode(userInfo));
+      print(jsonStorage.toString());
       jsonStorage['idx'] = int.parse(jsonStorage['idx']);
       var user = User.fromJson(jsonStorage);
 
