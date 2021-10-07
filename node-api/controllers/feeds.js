@@ -31,8 +31,7 @@ const feed = {
             }
 
         } catch (err) {
-            console.log(error);
-            return res.status(4000).send(`Error: ${err.message}`);
+            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     patchFeedHeart: async (req, res) => { // 피드 저장 등록/취소
@@ -66,8 +65,7 @@ const feed = {
             }
 
         } catch (err) {
-            console.log(error);
-            return res.status(4000).send(`Error: ${err.message}`);
+            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     patchFeedHistory: async (req, res) => { // 피드 저장 등록/취소
@@ -96,8 +94,7 @@ const feed = {
             }
 
         } catch (err) {
-            console.log(error);
-            return res.status(4000).send(`Error: ${err.message}`);
+            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     getFeedProfile: async (req, res) => {
@@ -115,8 +112,7 @@ const feed = {
 
             return res.json({success: true, code: 1000, message: "유저 정보 조회 성공", result: profileRow});
         } catch (err) {
-            console.log(error);
-            return res.status(4000).send(`Error: ${err.message}`);
+            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     getFeed: async (req, res) => {
@@ -133,8 +129,7 @@ const feed = {
 
             return res.json({success: true, code: 1000, message: "유저 피드 조회 성공", result: feedRow});
         } catch (err) {
-            console.log(error);
-            return res.status(4000).send(`Error: ${err.message}`);
+            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     getRecommendationFeed: async (req, res) => {
@@ -149,8 +144,7 @@ const feed = {
 
             return res.json({success: true, code: 1000, message: "추천 피드 조회 진행중"});
         } catch (err) {
-            console.log(error);
-            return res.status(4000).send(`Error: ${err.message}`);
+            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     getFollowingFeed: async (req, res) => {
@@ -164,8 +158,7 @@ const feed = {
             const feedRow = await feedModel.selectFollowingFeed(userIdx);
             return res.json({success: true, code: 1000, message: "팔로잉 피드 조회 성공", result: feedRow[0]});
         } catch (err) {
-            console.log(error);
-            return res.status(4000).send(`Error: ${err.message}`);
+            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
         }
     }
 }
