@@ -9,7 +9,7 @@ recommend_api = Blueprint("recommend", __name__, url_prefix="/recommend")
 SUCCESS = "success"
 FAILURE = "failure"
 
-@recommend_api.route('/',methods=["GET"])
+@recommend_api.route('/')
 def main():
     ft = fasttext_word.model
     resources = {"model" : "hi"}
