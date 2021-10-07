@@ -2,7 +2,6 @@ import 'package:findmap/src/my_colors.dart';
 import 'package:findmap/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:kakao_flutter_sdk/all.dart';
 
 import 'register.dart';
@@ -30,7 +29,6 @@ class _KakaoLoginState extends State<KakaoLogin> {
 
   _initKakaoTalkInstalled() async {
     final installed = await isKakaoTalkInstalled();
-    print('kakao Install : ' + installed.toString());
 
     setState(() {
       _isKakaoTalkInstalled = installed;
@@ -54,7 +52,8 @@ class _KakaoLoginState extends State<KakaoLogin> {
             userPassword: _userPassword,
           )));
     } catch (error) {
-      showSnackbar(context, "회원가입 중 문제가 발생했습니다");
+      showSnackbar(context, "_issueAccessToken: 회원가입 중 문제가 발생했습니다");
+      print(error);
     }
   }
 
@@ -63,7 +62,7 @@ class _KakaoLoginState extends State<KakaoLogin> {
       var code = await AuthCodeClient.instance.request();
       await _issueAccessToken(code);
     } catch (error) {
-      showSnackbar(context, "회원가입 중 문제가 발생했습니다");
+      showSnackbar(context, "_loginWithWeb: 회원가입 중 문제가 발생했습니다");
     }
   }
 
@@ -73,7 +72,7 @@ class _KakaoLoginState extends State<KakaoLogin> {
       var code = await AuthCodeClient.instance.requestWithTalk();
       await _issueAccessToken(code);
     } catch (error) {
-      showSnackbar(context, "회원가입 중 문제가 발생했습니다");
+      showSnackbar(context, "_loginWithKakaoApp: 회원가입 중 문제가 발생했습니다");
     }
   }
 
@@ -86,21 +85,21 @@ class _KakaoLoginState extends State<KakaoLogin> {
           width: MediaQuery.of(context).size.width * 0.6,
           height: MediaQuery.of(context).size.height * 0.07,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: MyColors.myYellow
-          ),
+              borderRadius: BorderRadius.circular(10),
+              color: MyColors.myYellow),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.chat_bubble, color: Colors.black),
-              SizedBox(width: 10,),
+              SizedBox(
+                width: 10,
+              ),
               Text(
                 '카카오로 로그인하기',
                 style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w900,
-                  fontSize: 20
-                ),
+                    color: Colors.black,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 20),
               ),
             ],
           ),
