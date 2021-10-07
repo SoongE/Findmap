@@ -10,8 +10,6 @@ class model :
 
         words = model.get_nearest_neighbors(word, k=100)
 
- \
-
         for index in words :
           hangul = re.compile('[^ \uac00-\ud7a3]+')
           result = hangul.sub('', index[1])
