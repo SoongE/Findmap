@@ -2,7 +2,7 @@ from flask import Blueprint, request
 
 from utils import make_response
 from recommend import fasttext_word
-from recommend import Item_filtered
+from recommend import item_filter
 
 
 recommend_api = Blueprint("recommend", __name__, url_prefix="/recommend")
@@ -18,6 +18,6 @@ def main():
 
 @recommend_api.route('/recofeed')
 def main():
-    ft = item_filtered()
-    resources = ft.give_recommend
+    item_f = item_filter.Item_filtered()
+    resources = item_f
     return make_response(SUCCESS,resources)
