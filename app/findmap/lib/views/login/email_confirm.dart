@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:findmap/src/my_colors.dart';
 import 'package:findmap/utils/utils.dart';
-import 'package:findmap/views/login/kakao_login.dart';
 import 'package:findmap/views/login/sign_bar.dart';
 import 'package:findmap/views/login/validate.dart';
 import 'package:flutter/material.dart';
@@ -101,10 +100,6 @@ class _EmailConfirmState extends State<EmailConfirm> {
                         ),
                       ),
                     ),
-                  ),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: KakaoLogin(),
                   ),
                 ],
               ),

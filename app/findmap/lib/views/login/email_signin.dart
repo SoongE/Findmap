@@ -12,6 +12,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 import '../mainPage.dart';
+import 'kakao_login.dart';
 
 class SignIn extends StatefulWidget {
   final VoidCallback onRegisterClicked;
@@ -49,7 +50,7 @@ class _SignInState extends State<SignIn> {
         child: Column(
           children: [
             Expanded(
-              flex: 3,
+              flex: 2,
               child: Align(
                 child: Column(children: [
                   Spacer(flex: 1),
@@ -116,6 +117,10 @@ class _SignInState extends State<SignIn> {
                       ),
                     ),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: KakaoLogin(),
+                  )
                 ],
               ),
             ),
