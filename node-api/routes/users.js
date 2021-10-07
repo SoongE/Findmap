@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+// const upload = require('../config/multer');
 
 const user = require('../controllers/users');
 const auth = require('../middlewares/auth');
@@ -50,6 +51,11 @@ router.get('/interest', auth.checkToken, user.getUserInterest);
 
 // 관심분야 선택
 router.patch('/interest', auth.checkToken, user.patchUserInterest);
+
+// 이미지 업로드 서버
+// router.post('/uploadImage/:bookstoreIdx', upload.array('profile'), user.updateImages);
+// 이미지 업로드
+// router.post('/profile', auth.checkToken, upload.single('profile'), user.updateProfile);
 
 /*
 // 유저 이메일 찾기 API

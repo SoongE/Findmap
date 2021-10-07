@@ -48,10 +48,6 @@ const users = {
         if (!gender) return res.json({success: false, code: 2015, message: "gender를 입력해 주세요.(M/W)"});
         if (!regexGender.test(gender)) return res.json({success: false, code: 2016, message: "gender는 M 혹은 W의 형태로 입력해주세요."});
 
-        // if (!categoryIdx) return res.json({success: false, code: 2030, message: "관심 카테고리를 선택해주세요."});
-        // if (1<=categoryIdx && categoryIdx<=4) return res.json({success: false, code: 2030, message: "1~4는 상위 관심 카테고리를 나타냅니다. 5~36의 하위 관심 카테고리를 선택해주세요."});
-        // if (categoryIdx<1 || categoryIdx>36) return res.json({success: false, code: 2030, message: "선택할 수 있는 범위를 넘어섰습니다. 5~36의 숫자를 입력해주세요."});
-       
         if(!categoryList) return res.json({success: false, code: 2030, message: "관심 카테고리 리스트를 선택해주세요."});
 
         var category = categoryList.split(',');
@@ -180,7 +176,20 @@ const users = {
                     success: true, code: 1000, message: "로그인 성공",
                     result: { 
                         "token": tokenResult[0].token, 
-                        "userInfo":emailRow[0]
+                        "userInfo": {
+                            "userIdx":emailRow[0].idx,
+                            "email": emailRow[0].email,
+                            "name": emailRow[0].name,
+                            "nickName": emailRow[0].nickName,
+                            "profileUrl": emailRow[0].profileUrl,
+                            "description": emailRow[0].description,
+                            "birthday": emailRow[0].birthday,
+                            "gender": emailRow[0].gender,
+                            "loginType": emailRow[0].loginType,
+                            "createdAt": emailRow[0].createdAt,
+                            "updatedAt": emailRow[0].updatedAt,
+                            "status": emailRow[0].status,
+                        }
                     }
                 });
             } else { // token 이미 존재, 존재하는 token으로 로그인
@@ -192,7 +201,20 @@ const users = {
                     success: true, code: 1000, message: "로그인 성공",
                     result: { 
                         "token": tokenResult[0].token, 
-                        "userInfo":emailRow[0]
+                        "userInfo": {
+                            "userIdx":emailRow[0].idx,
+                            "email": emailRow[0].email,
+                            "name": emailRow[0].name,
+                            "nickName": emailRow[0].nickName,
+                            "profileUrl": emailRow[0].profileUrl,
+                            "description": emailRow[0].description,
+                            "birthday": emailRow[0].birthday,
+                            "gender": emailRow[0].gender,
+                            "loginType": emailRow[0].loginType,
+                            "createdAt": emailRow[0].createdAt,
+                            "updatedAt": emailRow[0].updatedAt,
+                            "status": emailRow[0].status,
+                        }
                     }
                 });
             }
