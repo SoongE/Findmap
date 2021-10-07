@@ -1,4 +1,3 @@
-from flask import Flask
 import pandas as pd
 import os
 from sklearn.model_selection import train_test_split
@@ -30,8 +29,8 @@ def __init__() :
  SQL = " select st.userIdx, st.categoryIdx as keywordidx, count(*) as rating from ScrapTB st  group by categoryIdx  "  
 
 
-##rating_path = './'
-##ratings_df = pd.read_csv(os.path.join(rating_path, 'ratings.csv'), encoding='utf-8')
+ ##rating_path = './'
+ ##ratings_df = pd.read_csv(os.path.join(rating_path, 'ratings.csv'), encoding='utf-8')
 
  df  = pd.read_sql(SQL,db)
 
