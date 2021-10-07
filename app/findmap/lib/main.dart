@@ -6,8 +6,10 @@ import 'package:findmap/views/mainPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:kakao_flutter_sdk/common.dart';
 
 void main() {
+  KakaoContext.clientId = "d9dd1454cde30e58a6b666960f224c00";
   runApp(MyApp());
 }
 
