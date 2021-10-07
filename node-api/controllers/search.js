@@ -15,7 +15,7 @@ const search = {
         const userIdx = req.decoded.userIdx;
         
         if (!query) {
-            return res.json({success: false, code: 2701, message: "query를 입력해주세요"});
+            return res.json({success: false, code: 2601, message: "query를 입력해 주세요."});
         }
 
         try {
@@ -39,7 +39,7 @@ const search = {
             }
 
             if(searchResult[0] == undefined) {
-                return res.json({success: false, code: 3701, message: "검색 결과가 없습니다."});
+                return res.json({success: false, code: 3601, message: "검색 결과가 없습니다."});
             }
 
             return res.json({success: true, code: 1000, message: "피드 검색 완료", result: searchResult});
@@ -50,14 +50,14 @@ const search = {
     getSearchUser: async (req, res) => {
         const userQuery = req.query.query;
         if (!userQuery) {
-            return res.json({success: false, code: 2701, message: "query를 입력해주세요"});
+            return res.json({success: false, code: 2601, message: "query를 입력해주세요"});
         }
 
         try {
             const searchResult = await searchModel.searchUser(userQuery);
 
             if(searchResult[0] == undefined) {
-                return res.json({success: false, code: 3701, message: "검색 결과가 없습니다."});
+                return res.json({success: false, code: 3601, message: "검색 결과가 없습니다."});
             }
 
             return res.json({success: true, code: 1000, message: "유저 검색 완료", result: searchResult});
@@ -75,7 +75,7 @@ const search = {
 
             const searchRow = await searchModel.selectSearchLog(userIdx);
             if (searchRow[0] == undefined) {
-              return res.json({success: true, code: 3201, message: "검색 기록이 존재하지 않습니다."});
+              return res.json({success: true, code: 3602, message: "검색 기록이 존재하지 않습니다."});
             }
 
             return res.json({success: true, code: 1000, message: "검색 기록 조회 성공", result: searchRow});
@@ -87,12 +87,12 @@ const search = {
         const userIdx = req.decoded.userIdx;
         const wordIdx = req.query.wordIdx;
         if (!wordIdx) {
-            return res.json({success: false, code: 2701, message: "query를 입력해주세요"});
+            return res.json({success: false, code: 2602, message: "wordIdx를 입력해주세요"});
         }
         try {
             const checkSearchLog = await searchModel.checkSearchLog(userIdx,wordIdx);
             if (checkSearchLog[0] == undefined) {
-              return res.json({success: true, code: 3701, message: "검색 기록이 존재하지 않습니다."});
+              return res.json({success: true, code: 3602, message: "검색 기록이 존재하지 않습니다."});
             }
             const [searchRow] = await searchModel.deleteSearchLog(userIdx,wordIdx);
             return res.json({success: true, code: 1000, message: "검색 기록 삭제 성공"});
