@@ -176,12 +176,14 @@ class _SignInState extends State<SignIn> {
           ),
         );
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        throw Exception('Need to sign up: ${responseBody['message']}');
+        throw Exception(
+            'Need to sign up: ${responseBody['message'].toString()}');
       } else if (responseBody['code'] == 3005) {
         showSnackbar(context, "비밀번호가 일치하지 않습니다");
-        throw Exception('Password is not correct: ${responseBody['message']}');
+        throw Exception(
+            'Password is not correct: ${responseBody['message'].toString()}');
       } else {
-        showSnackbar(context, responseBody['message']);
+        showSnackbar(context, responseBody['message'].toString());
         throw Exception('Response status is failure: $responseBody');
       }
     } else {
@@ -193,7 +195,11 @@ class _SignInState extends State<SignIn> {
   void _saveToSecurityStorage(dynamic body) {
     final storage = FlutterSecureStorage();
 
-    storage.write(key: 'idx', value: body['idx'].toString());
+    print("SAVE BODY:" + body.toString());
+    print(body['userIdx'].toString());
+    // Todo change to below
+    storage.write(key: 'userIdx', value: body['idx'].toString());
+    // storage.write(key: 'userIdx', value: body['userIdx'].toString());
     storage.write(key: 'token', value: body['token']);
     storage.write(key: 'nickName', value: body['nickName']);
     storage.write(key: 'name', value: body['name']);

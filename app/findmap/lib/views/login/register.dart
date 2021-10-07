@@ -437,7 +437,7 @@ class _RegisterPageState extends State<RegisterPage> {
   void _saveToSecurityStorage(dynamic body) {
     final storage = FlutterSecureStorage();
 
-    storage.write(key: 'idx', value: body['idx'].toString());
+    storage.write(key: 'userIdx', value: body['userIdx'].toString());
     storage.write(key: 'token', value: body['token']);
     storage.write(key: 'nickName', value: body['nickName']);
     storage.write(key: 'name', value: body['name']);
