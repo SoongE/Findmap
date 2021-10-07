@@ -6,7 +6,7 @@ class Mainmethod :
     self.searcher = Searcher.Searcher()
     self.result = list()
   def main():
-    search_text = input("입력하시오 : ") # 추후 노드에서 받을 예정!
+    search_text = "아이언맨" # 추후 노드에서 받을 예정!
     
     # 검색 결과의 title 로부터 카테고리를 유추
     mod = model.Categorize(search_text)
