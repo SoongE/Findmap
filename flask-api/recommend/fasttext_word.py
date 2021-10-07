@@ -6,7 +6,7 @@ class model :
         self.model = fasttext.load_model('morphnamunaver.bin')
 
     def give_recommend(self) :
-        word = input("검색어를 입력해주세요 : ")
+        word = "아이언맨"
         words = self.model.get_nearest_neighbors(word, k=100)
 
         recommend_list = []
