@@ -123,9 +123,10 @@ const feed = {
         try {
             const [feedRow] = await feedModel.selectFeed(userIdx);
 
-            if (feedRow[0] == undefined){
-                return res.json({success: false, code: 3502, message: "피드 정보가 존재하지 않습니다."});
-            }
+            // if (feedRow[0] == undefined){
+            //     return res.json({success: false, code: 3502, message: "피드 정보가 존재하지 않습니다."});
+            // }
+            // 피드가 없어도 조회는 되어야하므로 에러 처리가 필요없다.
 
             return res.json({success: true, code: 1000, message: "유저 피드 조회 성공", result: feedRow});
         } catch (err) {

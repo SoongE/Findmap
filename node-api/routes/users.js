@@ -53,9 +53,9 @@ router.get('/interest', auth.checkToken, user.getUserInterest);
 router.patch('/interest', auth.checkToken, user.patchUserInterest);
 
 // 이미지 업로드 서버
-// router.post('/uploadImage/:bookstoreIdx', upload.array('profile'), user.updateImages);
+// router.post('/uploadImage/:profileIdx', upload.array('profile'), user.updateImages);
 // 이미지 업로드
-// router.post('/profile', auth.checkToken, upload.single('profile'), user.updateProfile);
+//router.post('/profile', auth.checkToken, upload.single('profile'), user.updateProfile);
 
 /*
 // 유저 이메일 찾기 API
