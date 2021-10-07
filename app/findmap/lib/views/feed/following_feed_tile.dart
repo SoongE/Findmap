@@ -5,6 +5,7 @@ import 'package:findmap/models/feed.dart';
 import 'package:findmap/models/user.dart';
 import 'package:findmap/utils/image_loader.dart';
 import 'package:findmap/utils/utils.dart';
+import 'package:findmap/views/userpage/other_user_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:line_icons/line_icons.dart';
@@ -102,7 +103,7 @@ class _FollowingFeedTileState extends State<FollowingFeedTile>
                   (int.parse(widget.feed.scrapHistoryCount) + 1).toString(),
               fetchClick(context, widget.feed),
               Navigator.push(
-                  context, createRoute(_webView(widget.feed.contentUrl)))
+                  context, createRoute(_webView(widget.feed.contentUrl))),
             },
             child: Container(
               decoration: BoxDecoration(
@@ -232,23 +233,28 @@ class _FollowingFeedTileState extends State<FollowingFeedTile>
   }
 
   Widget _userDescription(Feed feed) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        circleImageLoader(feed.userProfile, 50),
-        Padding(padding: const EdgeInsets.symmetric(horizontal: 5)),
-        Expanded(
-          flex: 1,
-          child: Text(
-            feed.userNickName,
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+    return GestureDetector(
+      onTap: () => Navigator.of(context).push(createRoute(OtherUserPage(
+          user: widget.user, userIdx: feed.userIdx, isFollower: true))),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          circleImageLoader(feed.userProfile, 50),
+          Padding(padding: const EdgeInsets.symmetric(horizontal: 5)),
+          Expanded(
+            flex: 1,
+            child: Text(
+              feed.userNickName,
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            ),
           ),
-        ),
-        Align(
-          alignment: Alignment.centerRight,
-          child: Text(feed.createdTerm, style: TextStyle(color: Colors.black)),
-        ),
-      ],
+          Align(
+            alignment: Alignment.centerRight,
+            child:
+                Text(feed.createdTerm, style: TextStyle(color: Colors.black)),
+          ),
+        ],
+      ),
     );
   }
 
