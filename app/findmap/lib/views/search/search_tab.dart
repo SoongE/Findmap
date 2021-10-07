@@ -1,11 +1,17 @@
+import 'package:findmap/models/user.dart';
 import 'package:findmap/src/digit.dart';
 import 'package:findmap/src/my_colors.dart';
 import 'package:findmap/utils/utils.dart';
+import 'package:findmap/views/search/search_result.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class SearchTab extends StatefulWidget {
+  const SearchTab({required this.user, Key? key}) : super(key: key);
+
+  final User user;
+
   @override
   State<StatefulWidget> createState() => _SearchTabState();
 }
@@ -107,7 +113,12 @@ class _SearchTabState extends State<SearchTab> {
     if (index != null) {
       _searchKeyWord = chartData[index].name;
     }
-    Navigator.push(context, createRoute(_webView(_searchKeyWord)));
+    // Navigator.push(context, createRoute(_webView(_searchKeyWord)));
+    Navigator.push(
+        context,
+        createRoute(SearchResult(
+          user: widget.user,
+        )));
   }
 
   void _tap(int? index) {
