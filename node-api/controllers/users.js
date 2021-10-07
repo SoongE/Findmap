@@ -61,6 +61,7 @@ const users = {
         }
 
         const loginType = 1;
+        const description = "안녕하세요. "+nickName+"입니다."
 
         try {
             //id 중복 확인
@@ -73,7 +74,7 @@ const users = {
             const hashedPassword = await crypto.createHash('sha512').update(password).digest('hex');
 
             // 회원 가입
-            const result = await userModel.signUp(email, password, hashedPassword, name, nickName, profileUrl, birthday, gender, loginType);
+            const result = await userModel.signUp(email, password, hashedPassword, name, nickName, profileUrl, birthday, gender, loginType, description);
             const [userInfoRow] = await userModel.selectUserInfoByEmail(email);
 
             userIdx = userInfoRow[0].idx;
@@ -537,7 +538,7 @@ const users = {
         } catch (err) {
             return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
         }
-    }
+    }  
 }
 
 module.exports = users;
