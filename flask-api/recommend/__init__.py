@@ -17,7 +17,7 @@ def main():
 
 
 @recommend_api.route('/recofeed')
-def main():
+def recommend():
     item_f = item_filter.Item_filtered()
     resources = item_f
     return make_response(SUCCESS,resources)
