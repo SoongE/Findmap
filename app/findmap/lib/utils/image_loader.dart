@@ -2,7 +2,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-List<String> _noneThumbnailUrl = [];
+List<String> _noneThumbnailUrl = [''];
 
 Widget imageLoader(AnimationController controller, String url) {
   if (_noneThumbnailUrl.contains(url)) {
