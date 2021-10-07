@@ -5,7 +5,7 @@ import numpy as np
 
 class Categorization:
     def __init__(self):
-        self.model = fasttext.load_model('모델 저장 위치')
+        self.model = fasttext.load_model('/home/jiyun/mount/NLP/model/0826101710_model.bin')
 
     def remove_label(self, pred):
         # fasttext를 사용할 때 카테고리에 붙는 __label__을 제거
@@ -50,6 +50,6 @@ class Categorization:
 
         return np.dot(category_pred_value_np, user_rate_np)
 
-
-
+    def get_category_of_keyword(self, keyword):
+        return [keyword, self.model.predict(keyword)[0][0]]
 

@@ -3,12 +3,13 @@ import 'dart:io';
 
 import 'package:async/async.dart';
 import 'package:findmap/models/hot_ranking.dart';
-import 'package:http/http.dart' as http;
+import 'package:findmap/models/user.dart';
+import 'package:findmap/src/feature_category.dart';
 import 'package:findmap/src/my_colors.dart';
 import 'package:findmap/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:findmap/models/user.dart';
 
 class RealtimeSearchTab extends StatefulWidget {
   final User user;
@@ -21,10 +22,26 @@ class RealtimeSearchTab extends StatefulWidget {
 
 class _RealtimeSearchTabState extends State<RealtimeSearchTab>
     with SingleTickerProviderStateMixin {
-  List<String> _tabs = ['종합', '뉴스', '음악', '영화', '스포츠', '책'];
+  late List<String> _tabs = ['종합'];
+  AsyncMemoizer<List<String>> _memoizer = AsyncMemoizer();
 
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder<List<String>>(
+      future: _memoizer.runOnce(() => fetchGetUserCategory()),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          _tabs.addAll(snapshot.data!);
+          return _tabController();
+        } else if (snapshot.hasError) {
+          return Text("${snapshot.error}");
+        }
+        return Container();
+      },
+    );
+  }
+
+  Widget _tabController() {
     return DefaultTabController(
       key: const ValueKey('child'),
       length: _tabs.length,
@@ -57,78 +74,82 @@ class _RealtimeSearchTabState extends State<RealtimeSearchTab>
             return false;
           },
           child: TabBarView(
-            children: [
-              GetRealtimeSearch(
-                categoryID: 0, user: widget.user,
-              ),
-              GetRealtimeSearch(
-                categoryID: 1, user: widget.user,
-              ),
-              GetRealtimeSearch(
-                categoryID: 2, user: widget.user,
-              ),
-              GetRealtimeSearch(
-                categoryID: 3, user: widget.user,
-              ),
-              GetRealtimeSearch(
-                categoryID: 4, user: widget.user,
-              ),
-              GetRealtimeSearch(
-                categoryID: 5, user: widget.user,
-              ),
-            ],
-          ),
+              children: List.generate(
+                  _tabs.length,
+                  (index) => GetRealtimeSearch(
+                      categoryName: _tabs[index], user: widget.user))),
         ),
       ),
     );
   }
+
+  Future<List<String>> fetchGetUserCategory() async {
+    final response = await http.get(
+      Uri.http(BASEURL, '/users/interest'),
+      headers: {
+        HttpHeaders.contentTypeHeader: "application/json",
+        "token": widget.user.accessToken,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = jsonDecode(response.body);
+
+      if (responseBody['success']) {
+        if (responseBody['result'] == null) return [];
+        List<String> interest = [];
+        for (var i in responseBody['result']) {
+          interest.add(CATEGORY_NAME[i['categoryIdx']] ?? '');
+        }
+        return interest;
+      } else {
+        showSnackbar(context, responseBody['message']);
+        throw Exception(
+            'fetchGetUserCategory Exception: ${responseBody['message']}');
+      }
+    } else {
+      showSnackbar(context, '서버와 연결이 불안정합니다');
+      throw Exception('Failed to connect to server');
+    }
+  }
 }
 
 class GetRealtimeSearch extends StatefulWidget {
-
-  final int categoryID;
+  final String categoryName;
   final User user;
 
-  GetRealtimeSearch({Key? key, required this.categoryID, required this.user}) : super(key: key);
+  GetRealtimeSearch({Key? key, required this.categoryName, required this.user})
+      : super(key: key);
 
   @override
   _GetRealtimeSearchState createState() => _GetRealtimeSearchState();
 }
 
 class _GetRealtimeSearchState extends State<GetRealtimeSearch> {
-  List<HotRanking> keyword1 = [HotRanking('', 0, '')];
-  List<HotRanking> keyword2 = [HotRanking('', 0, '')];
-  List<HotRanking> keyword3 = [HotRanking('', 0, '')];
-  List<HotRanking> keyword4 = [HotRanking('', 0, '')];
-  List<HotRanking> keyword5 = [HotRanking('', 0, '')];
-  List<HotRanking> keyword6 = [HotRanking('', 0, '')];
-
-  @override
-  void initState() {
-    fetchGetHotRanking().then((value) {
-      keyword1 = value;
-      setState(() {
-        // _folderList.addAll(value.map((e) => e.name));
-      });
-    });
-    super.initState();
-  }
+  List<HotRanking> _ranking = [];
 
   @override
   Widget build(BuildContext context) {
-    List<List<HotRanking>> keywords = [
-      keyword1,
-      keyword2,
-      keyword3,
-      keyword4,
-      keyword5,
-      keyword6
-    ];
-    var id = widget.categoryID;
+    return FutureBuilder<List<HotRanking>>(
+      future: fetchGetHotRanking(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          _ranking = snapshot.data!;
+          return _rankList();
+        } else if (snapshot.hasError) {
+          return Text("${snapshot.error}");
+        }
+        return Container();
+      },
+    );
+  }
+
+  Widget _rankList() {
+    int id = CATEGORY_INDEX[widget.categoryName] ?? 0;
 
     return ListView.separated(
       padding: const EdgeInsets.all(8.0),
-      itemCount: keywords.elementAt(id).length,
+      itemCount: _ranking.length,
       itemBuilder: (BuildContext context, int index) {
         return Container(
           padding: const EdgeInsets.fromLTRB(
@@ -139,23 +160,21 @@ class _GetRealtimeSearchState extends State<GetRealtimeSearch> {
           ),
           height: 40,
           child: InkWell(
-            onTap: () => Navigator.push(context,
-                createRoute(_webView(keywords.elementAt(id)[index].word))),
+            onTap: () => Navigator.push(
+                context, createRoute(_webView(_ranking[index].word))),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
-                    (index + 1).toString() +
-                        '      ' +
-                        '${keywords.elementAt(id)[index].word}',
-                    style: new TextStyle(
-                      fontWeight: FontWeight.w400,
-                      fontSize: 15.3,
-                    ),
+                  (index + 1).toString() + '      ' + '${_ranking[index].word}',
+                  style: new TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 15.3,
                   ),
+                ),
                 Text(
                   // 실시간 검색어 변동 순위
-                  '${keywords.elementAt(id)[index].changes}',
+                  '${_ranking[index].changes}',
                   style: new TextStyle(
                     fontWeight: FontWeight.w400,
                     fontSize: 15.3,

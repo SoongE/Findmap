@@ -125,7 +125,7 @@ const feed = {
             throw err;
         }
     },
-    selectProfile: async(userIdx) => {
+    selectProfile: async(userIdx,myIdx) => {
         const query = `
         SELECT 
             U.idx,
@@ -138,7 +138,7 @@ const feed = {
         FROM UserTB U
             WHERE U.idx = ? and U.status = 'Y'
         `;
-        const params = [userIdx];
+        const params = [userIdx,myIdx];
         try {
             const result = await pool.queryParam(query,params);
             return [result];

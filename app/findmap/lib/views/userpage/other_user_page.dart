@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:async/async.dart';
 import 'package:findmap/models/feed.dart';
 import 'package:findmap/models/user.dart';
 import 'package:findmap/models/userInfo.dart';
@@ -11,11 +12,16 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class OtherUserPage extends StatefulWidget {
-  OtherUserPage({Key? key, required this.user, required this.userIdx})
+  OtherUserPage(
+      {Key? key,
+      required this.user,
+      required this.userIdx,
+      required this.isFollower})
       : super(key: key);
 
   final int userIdx;
   final User user;
+  final bool isFollower;
 
   @override
   _OtherUserPageState createState() => _OtherUserPageState();
@@ -26,6 +32,8 @@ class _OtherUserPageState extends State<OtherUserPage>
   late UserInfo userInfo;
   List<Feed> feedData = [];
 
+  final _userInfoMemoizer = AsyncMemoizer<UserInfo>();
+
   @override
   void initState() {
     super.initState();
@@ -34,7 +42,7 @@ class _OtherUserPageState extends State<OtherUserPage>
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<UserInfo>(
-      future: fetchGetUserInfo(context),
+      future: _userInfoMemoizer.runOnce(() async => await fetchGetUserInfo()),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           userInfo = snapshot.data!;
@@ -48,6 +56,36 @@ class _OtherUserPageState extends State<OtherUserPage>
                   userInfo.nickName,
                   style: TextStyle(color: Colors.black),
                 ),
+                actions: [
+                  widget.isFollower
+                      ? Container()
+                      : Container(
+                          width: 70,
+                          margin: const EdgeInsets.only(right: 10),
+                          child: FittedBox(
+                              fit: BoxFit.fitWidth,
+                              child: OutlinedButton(
+                                onPressed: () {
+                                  fetchFollowing(widget.userIdx);
+                                  setState(() {
+                                    userInfo.status = !userInfo.status;
+                                  });
+                                },
+                                child:
+                                    userInfo.status ? Text('팔로잉') : Text('팔로우'),
+                                style: ElevatedButton.styleFrom(
+                                  primary: userInfo.status
+                                      ? Colors.white
+                                      : Colors.blue,
+                                  onPrimary: userInfo.status
+                                      ? Colors.black
+                                      : Colors.white,
+                                  splashFactory: NoSplash.splashFactory,
+                                  elevation: 0,
+                                ),
+                              )),
+                        )
+                ],
               ),
               body: _feedTile());
         } else if (snapshot.hasError) {
@@ -62,7 +100,7 @@ class _OtherUserPageState extends State<OtherUserPage>
     return Container(
       width: MediaQuery.of(context).size.width,
       child: Text(
-        userInfo.description ?? " ",
+        userInfo.description,
         style: const TextStyle(color: Colors.black, letterSpacing: 1.0),
       ),
     );
@@ -137,7 +175,32 @@ class _OtherUserPageState extends State<OtherUserPage>
     );
   }
 
-  Future<UserInfo> fetchGetUserInfo(BuildContext context) async {
+  void fetchFollowing(int followingIdx) async {
+    Map<String, dynamic> param = {"followingIdx": followingIdx.toString()};
+
+    final response = await http.patch(
+      Uri.http(BASEURL, '/follow/'),
+      headers: {
+        HttpHeaders.contentTypeHeader: "application/json",
+        "token": widget.user.accessToken,
+      },
+      body: json.encode(param),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = jsonDecode(response.body);
+      if (responseBody['success']) {
+      } else {
+        showSnackbar(context, responseBody['message']);
+        throw Exception('fetchFollowing Exception: ${responseBody['message']}');
+      }
+    } else {
+      showSnackbar(context, '서버와 연결이 불안정합니다');
+      throw Exception('Failed to connect to server');
+    }
+  }
+
+  Future<UserInfo> fetchGetUserInfo() async {
     final response = await http.get(
       Uri.http(
           BASEURL, '/feeds/profile', {'userIdx': widget.userIdx.toString()}),
@@ -152,6 +215,12 @@ class _OtherUserPageState extends State<OtherUserPage>
       if (responseBody['success'] == false) {
         showSnackbar(context, responseBody['message']);
       }
+
+      // add status
+      for (var i in responseBody['result']) {
+        i['status'] = true;
+      }
+
       return UserInfo.fromJson(responseBody['result'][0]);
     } else {
       showSnackbar(context, '서버와 연결이 불안정합니다');
