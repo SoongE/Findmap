@@ -22,6 +22,7 @@ class _SearchTabState extends State<SearchTab> {
   static const int MAX_RADIO = 30;
   static const int MIN_RADIO = 10;
 
+  final GlobalKey<FormState> _keywordKey = GlobalKey<FormState>();
   late TextEditingController _searchKeyword;
   bool _visibleSearchInput = false;
   late List<ChartData> chartData;
@@ -40,22 +41,48 @@ class _SearchTabState extends State<SearchTab> {
   }
 
   @override
+  void dispose() {
+    _searchKeyword.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     _searchKeyword = TextEditingController(text: '');
+
     return Scaffold(
       body: Column(
-        children: [
+        children: <Widget>[
           Container(
             padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
             child: AnimatedOpacity(
               opacity: _visibleSearchInput ? 1.0 : 0.0,
               duration: Duration(milliseconds: 300),
-              child: TextFormField(
-                controller: _searchKeyword,
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.search),
-                  labelText: "검색어를 입력하세요",
-                  border: OutlineInputBorder(),
+              child: Form(
+                key: this._keywordKey,
+                child: TextFormField(
+                  autofocus: _visibleSearchInput ? true : false,
+                  controller: _searchKeyword,
+                  textInputAction: TextInputAction.search,
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.search),
+                    labelText: "검색어를 입력하세요",
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if(value!.trim().isEmpty) {
+                      return '검색어를 최소 한 글자 이상 작성해주세요';
+                    }
+                    return null;
+                  },
+                  onFieldSubmitted: (value) {
+                    if (this._keywordKey.currentState!.validate()) {
+                      var newKeyword = _searchKeyword.text.trim();
+                      chartData[2].name = newKeyword;
+                      _visibleSearchInput = false;
+                      _tap(2);
+                    }
+                  },
                 ),
               ),
             ),
@@ -84,25 +111,27 @@ class _SearchTabState extends State<SearchTab> {
                         labelAlignment: ChartDataLabelAlignment.middle,
                       ),
                       onPointTap: (ChartPointDetails details) {
-                        _tap(details.pointIndex);
+                        if (details.pointIndex == 2) {
+                          // if click center keyword, then input new search keyword
+                          setState(() {
+                            _visibleSearchInput = true;
+                          });
+                        }
+                        else {
+                          if (_visibleSearchInput == true)
+                            _visibleSearchInput = !_visibleSearchInput;
+                          _tap(details.pointIndex);
+                        }
                       },
                       onPointLongPress: (ChartPointDetails details) {
                         _longTap(details.pointIndex);
-                      })
+                      },
+                  ),
                 ],
               ),
             ),
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            _visibleSearchInput = !_visibleSearchInput;
-          });
-        },
-        child: const Icon(Icons.search),
-        backgroundColor: MyColors.search,
       ),
     );
   }
@@ -122,6 +151,7 @@ class _SearchTabState extends State<SearchTab> {
   }
 
   void _tap(int? index) {
+    final String search_name = chartData[index as int].name;
     setState(() {
       var colorList = CHART_COLOR.toList()..shuffle();
       var xList = POSITION_X.toList()..shuffle();
@@ -130,7 +160,7 @@ class _SearchTabState extends State<SearchTab> {
       chartData = [
         ChartData('추천단어10', xList[0], yList[0], size[0], colorList[0]),
         ChartData('추천단어20', xList[1], yList[1], size[1], colorList[1]),
-        ChartData('새로운 검색어', 3, 10, 30, colorList[2]),
+        ChartData(search_name, 3, 10, 30, colorList[2]),
         ChartData('추천단어40', xList[3], yList[3], size[2], colorList[3]),
         ChartData('추천단어50', xList[4], yList[4], size[3], colorList[4]),
       ];
@@ -149,7 +179,7 @@ class _SearchTabState extends State<SearchTab> {
 }
 
 class ChartData {
-  final String name;
+  String name;
   final double x;
   final double y;
   final double size;
