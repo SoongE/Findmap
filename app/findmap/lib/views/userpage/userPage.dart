@@ -124,6 +124,30 @@ class _UserPageState extends State<UserPage>
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           feedData = snapshot.data!;
+          if (feedData.length == 0) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: [
+                  _header(),
+                  Padding(padding: const EdgeInsets.symmetric(vertical: 10)),
+                  _description(),
+                  Padding(padding: const EdgeInsets.symmetric(vertical: 10)),
+                  Flexible(
+                    flex: 2,
+                    child: Center(
+                      child: Text(
+                        "등록된 피드가 없습니다.\n피드를 등록해주세요",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 15, color: Colors.grey[700]),
+                      ),
+                    ),
+                  ),
+                  Flexible(flex: 2, child: Container()),
+                ],
+              ),
+            );
+          }
           return ListView.separated(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               physics: BouncingScrollPhysics(),
@@ -193,6 +217,7 @@ class _UserPageState extends State<UserPage>
 
     if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
+      print(response.body);
 
       if (responseBody['success'])
         return responseBody['result']
