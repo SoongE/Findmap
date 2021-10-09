@@ -4,12 +4,14 @@ import os ,sys
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 
-from app import mod
+
 
 class model :
     def __init__(self) :
         self.recommend_list = []
     def give_recommend(self) :
+        from app import mod
+        
         word = "아이언맨"
         model = mod
 
