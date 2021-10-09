@@ -4,7 +4,7 @@ import os
 from flask import Flask
 from flask import Flask, url_for, redirect, render_template, request, abort
 
-from main import api_urls
+from main import api_urlst
 from main.config import config_by_name
 
 
@@ -14,7 +14,7 @@ def create_app(config_name):
     app.config.from_object(config_by_name[config_name])
 
     # apply url
-    for url in api_urls:
+    for url in api_urlst:
         app.register_blueprint(url)
 
     return app

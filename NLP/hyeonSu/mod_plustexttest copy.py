@@ -1,5 +1,5 @@
 import torch.nn as nn
-import kobert.pytorch_kobert 
+
 
 class RNNClassifier(nn.Module):
 
@@ -35,8 +35,8 @@ class RNNClassifier(nn.Module):
         self.activation = nn.LogSoftmax(dim=-1)
 
     def forward(self, x):
-      
-        x = self.emb(x)
+
+        x = self.emb(x)  
         x, _ = self.rnn(x)  
         y = self.activation(self.generator(x[:, -1]))
 
