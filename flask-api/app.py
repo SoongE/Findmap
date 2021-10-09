@@ -1,4 +1,7 @@
 from main.runner import creating
+import fasttext
+
+mod = fasttext.load_model('.recommend/morphnamunaver.bin')
 
 app = creating.create_app("dev")
 app.app_context().push()
