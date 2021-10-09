@@ -24,4 +24,3 @@ api_urls = [
     recommend_api
 ]
 
-histirng = []

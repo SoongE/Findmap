@@ -5,7 +5,6 @@ from flask import Flask
 from flask import Flask, url_for, redirect, render_template, request, abort
 
 from main.config import config_by_name
-from main import histirng
 from main import api_urls
 
 
