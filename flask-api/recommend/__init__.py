@@ -20,7 +20,7 @@ def main():
     return make_response(SUCCESS,resources)
 
 
-@recommend_api.route('/recofeed',methods=["GET"])
+@recommend_api.route('/recofeed')
 def recommend():
     item_f = item_filter.Item_filtered()
     resources =  {"model" : item_f }
