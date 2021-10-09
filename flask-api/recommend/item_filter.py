@@ -7,7 +7,7 @@ import pymysql
 
 class Item_filtered :
 
- def __init__() : 
+ def __init__(self) : 
 
   host_name = "findmap-first-db.c2jag33neij8.ap-northeast-2.rds.amazonaws.com"
   user_name = "admin"
@@ -32,9 +32,10 @@ class Item_filtered :
  ##rating_path = './'
  ##ratings_df = pd.read_csv(os.path.join(rating_path, 'ratings.csv'), encoding='utf-8')
 
-  df  = pd.read_sql(SQL,db)
-
-  train_df, test_df = train_test_split(df, test_size=0.2, random_state=1234)
+  self.df  = pd.read_sql(SQL,db)
+  
+ def give_list(self) :
+  train_df, test_df = train_test_split(self.df, test_size=0.2, random_state=1234)
 
   def cos_matrix(a, b):
     cos_values = cosine_similarity(a.values, b.values)

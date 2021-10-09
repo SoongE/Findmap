@@ -22,7 +22,8 @@ def main():
 
 @recommend_api.route('/recofeed')
 def recommend():
-    item_f = item_filter.Item_filtered()
+    item_c = item_filter.Item_filtered
+    item_f = item_c.give_list()
     temp_str = ""
     for item in item_f :
         temp_str = temp_str + "," + item
