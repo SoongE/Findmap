@@ -1,7 +1,7 @@
 from main import runner
 import fasttext
 
-mod = fasttext.load_model('.recommend/morphnamunaver.bin')
+mod = fasttext.load_model('recommend/morphnamunaver.bin')
 
 app = runner.create_app("dev")
 app.app_context().push()
