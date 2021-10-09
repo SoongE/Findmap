@@ -17,7 +17,7 @@ def main():
     body = {"answer":"FINDMAP FLASK SERVER"}
     return make_response(SUCCESS, body)
 
-api_urlst = [
+api_urls = [
     main_api,
     check_api,
     search_api,
