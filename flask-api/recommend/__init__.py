@@ -23,5 +23,8 @@ def main():
 @recommend_api.route('/recofeed')
 def recommend():
     item_f = item_filter.Item_filtered()
-    resources =  {"model" : item_f }
+    temp_str = ""
+    for item in item_f :
+        temp_str = temp_str + "," + item
+    resources =  {"model" : temp_str }
     return make_response(SUCCESS,resources)
