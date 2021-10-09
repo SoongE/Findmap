@@ -23,3 +23,5 @@ api_urls = [
     search_api,
     recommend_api
 ]
+
+histirng = []
