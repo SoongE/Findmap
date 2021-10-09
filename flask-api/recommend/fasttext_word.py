@@ -25,7 +25,7 @@ class model :
             continue
 
           self.recommend_list.append(index[1])
-          if (len(recommend_list) == 5) :
+          if (len(self.recommend_list) == 5) :
             break
 
         return self.recommend_list
