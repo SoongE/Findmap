@@ -16,8 +16,8 @@ router.get('/name', (req, res, next) => {
   .catch(error=>res.send(error.message))
   .finally();
 });
-router.get('/recommend', (req, res, next) => {
-  axios.get('http://flask-api:5000/recommend')
+router.get('/recommend/recofeed', (req, res, next) => {
+  axios.get('http://flask-api:5000/recommend/recofeed')
   .then(response=>res.send(response.data))
   .catch(error=>res.send(error.message))
   .finally();
