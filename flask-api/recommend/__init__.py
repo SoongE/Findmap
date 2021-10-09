@@ -26,6 +26,6 @@ def recommend():
     item_f = item_c.give_list()
     temp_str = ""
     for item in item_f :
-        temp_str = temp_str + "," + item
+        temp_str = temp_str + "," + str(item)
     resources =  {"model" : temp_str }
     return make_response(SUCCESS,resources)
