@@ -1,4 +1,4 @@
-from main_c.runner import create_app
+from main.runner import create_app
 import fasttext
 
 app = create_app("dev")
