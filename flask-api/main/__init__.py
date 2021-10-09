@@ -1,10 +1,6 @@
 import json
 from flask import Blueprint, jsonify
 
-from check import check_api
-from search import search_api
-from recommend import recommend_api
-
 from utils import make_response
 
 
@@ -17,10 +13,4 @@ def main():
     body = {"answer":"FINDMAP FLASK SERVER"}
     return make_response(SUCCESS, body)
 
-api_urls = [
-    main_api,
-    check_api,
-    search_api,
-    recommend_api
-]
 
