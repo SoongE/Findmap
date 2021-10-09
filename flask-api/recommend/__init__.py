@@ -15,7 +15,7 @@ def main():
     rec_list = ft.give_recommend()
     temp_str = ""
     for item in rec_list :
-        temp_str = temp_str + item
+        temp_str = temp_str + "," + item
     resources = {"model" : temp_str}
     return make_response(SUCCESS,resources)
 
