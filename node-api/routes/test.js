@@ -29,7 +29,7 @@ router.get('/recommend/', (req, res, next) => {
   .finally();
 });
 router.get('/search/', (req, res, next) => {
-  axios.get('http://flask-api:5000/recommend/')
+  axios.get('http://flask-api:5000/search/')
   .then(response=>res.send(response.data))
   .catch(error=>res.send(error.message))
   .finally();
