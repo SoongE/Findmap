@@ -5,7 +5,7 @@ class Mainmethod :
   def __init__(self) :
     self.searcher = searcher.Searcher()
     self.result = list()
-  def main():
+  def main(self):
     search_text = "아이언맨" # 추후 노드에서 받을 예정!
     
     # 검색 결과의 title 로부터 카테고리를 유추
