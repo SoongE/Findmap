@@ -3,7 +3,7 @@ from search import model
 
 class Mainmethod :
   def __init__(self) :
-    self.searcher = Searcher.Searcher()
+    self.searcher = searcher.Searcher()
     self.result = list()
   def main():
     search_text = "아이언맨" # 추후 노드에서 받을 예정!

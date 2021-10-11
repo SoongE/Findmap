@@ -10,8 +10,9 @@ FAILURE = "failure"
 
 @search_api.route('/')
 def main():
-    mp = main_method
-    resources = {"search_html" : mp.main()}
+    mp = main_method.Mainmethod()
+    search_list = mp.main()
+    resources = {"search_html" : search_list}
     return make_response(SUCCESS,resources)
 
 @search_api.route('/name', methods=['GET'])
