@@ -91,12 +91,14 @@ class _KakaoLoginState extends State<KakaoLogin> {
 
   @override
   Widget build(BuildContext context) {
+    var sizeRatio = 0.13;
     return new Center(
       child: CupertinoButton(
+        padding: EdgeInsets.zero,
         onPressed: _isKakaoTalkInstalled ? _loginWithKakaoApp : _loginWithWeb,
         child: Container(
-          width: MediaQuery.of(context).size.width * 0.2,
-          height: MediaQuery.of(context).size.height * 0.07,
+          width: MediaQuery.of(context).size.width * sizeRatio,
+          height: MediaQuery.of(context).size.width * sizeRatio,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: MyColors.myYellow,

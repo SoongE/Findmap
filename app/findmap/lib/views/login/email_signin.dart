@@ -118,15 +118,19 @@ class _SignInState extends State<SignIn> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: Row(
-                      children: [
-                        KakaoLogin(),
-                        socialLogin(
-                            'assets/social/google_logo.png', Colors.white),
-                        socialLogin(
-                            'assets/social/apple_logo.png', Colors.black),
-                      ],
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16, horizontal: 20),
+                    child: Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          KakaoLogin(),
+                          socialLogin(
+                              'assets/social/google_logo.png', Colors.white),
+                          socialLogin(
+                              'assets/social/apple_logo.png', Colors.black),
+                        ],
+                      ),
                     ),
                   )
                 ],
@@ -139,9 +143,10 @@ class _SignInState extends State<SignIn> {
   }
 
   Widget socialLogin(String logo, Color color) {
+    var sizeRatio = 0.13;
     return Container(
-      width: MediaQuery.of(context).size.width * 0.2,
-      height: MediaQuery.of(context).size.height * 0.07,
+      width: MediaQuery.of(context).size.width * sizeRatio,
+      height: MediaQuery.of(context).size.width * sizeRatio,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: color,
