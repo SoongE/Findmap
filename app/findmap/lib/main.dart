@@ -63,8 +63,7 @@ class _SplashPageState extends State<SplashPage> {
 
     if (_userStatus) {
       var jsonStorage = jsonDecode(json.encode(userInfo));
-      print("main_checkUser: " + jsonStorage.toString());
-      jsonStorage['idx'] = int.parse(jsonStorage['idx']);
+      jsonStorage['userIdx'] = int.parse(jsonStorage['userIdx']);
       var user = User.fromJson(jsonStorage);
 
       Navigator.of(context).pushReplacement(

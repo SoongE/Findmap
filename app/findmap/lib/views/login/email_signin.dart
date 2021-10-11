@@ -119,7 +119,15 @@ class _SignInState extends State<SignIn> {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: KakaoLogin(),
+                    child: Row(
+                      children: [
+                        KakaoLogin(),
+                        socialLogin(
+                            'assets/social/google_logo.png', Colors.white),
+                        socialLogin(
+                            'assets/social/apple_logo.png', Colors.black),
+                      ],
+                    ),
                   )
                 ],
               ),
@@ -130,6 +138,19 @@ class _SignInState extends State<SignIn> {
     );
   }
 
+  Widget socialLogin(String logo, Color color) {
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.2,
+      height: MediaQuery.of(context).size.height * 0.07,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: color,
+      ),
+      child:
+          Padding(padding: const EdgeInsets.all(6), child: Image.asset(logo)),
+    );
+  }
+
   void _login() {
     setState(() {
       _isLoading = true;
@@ -137,6 +158,8 @@ class _SignInState extends State<SignIn> {
     if (loginFormKey.currentState!.validate()) {
       Future<User> user = fetchSignIn();
       user.then((value) => {
+            // Todo remove print
+            print(value.toJson().toString()),
             showSnackbar(context, "환영합니다! ${value.nickName}님"),
             Navigator.pushAndRemoveUntil(
                 context, createRoute(MainPage(user: value)), (route) => false),
@@ -176,12 +199,14 @@ class _SignInState extends State<SignIn> {
           ),
         );
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        throw Exception('Need to sign up: ${responseBody['message']}');
+        throw Exception(
+            'Need to sign up: ${responseBody['message'].toString()}');
       } else if (responseBody['code'] == 3005) {
         showSnackbar(context, "비밀번호가 일치하지 않습니다");
-        throw Exception('Password is not correct: ${responseBody['message']}');
+        throw Exception(
+            'Password is not correct: ${responseBody['message'].toString()}');
       } else {
-        showSnackbar(context, responseBody['message']);
+        showSnackbar(context, responseBody['message'].toString());
         throw Exception('Response status is failure: $responseBody');
       }
     } else {
@@ -193,16 +218,15 @@ class _SignInState extends State<SignIn> {
   void _saveToSecurityStorage(dynamic body) {
     final storage = FlutterSecureStorage();
 
-    storage.write(key: 'idx', value: body['idx'].toString());
+    storage.write(key: 'userIdx', value: body['userIdx'].toString());
     storage.write(key: 'token', value: body['token']);
     storage.write(key: 'nickName', value: body['nickName']);
     storage.write(key: 'name', value: body['name']);
     storage.write(key: 'email', value: body['email']);
-    storage.write(key: 'password', value: body['password']);
+    // storage.write(key: 'password', value: body['password']);
     storage.write(key: 'birthday', value: body['birthday']);
     storage.write(key: 'gender', value: body['gender']);
-    storage.write(key: 'phoneNum', value: body['phoneNum']);
-    storage.write(key: 'taste', value: body['taste']);
+    storage.write(key: 'taste', value: body['categoryList']);
   }
 
   InputDecoration signInInputDecorationPassword() {
