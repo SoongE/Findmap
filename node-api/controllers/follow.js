@@ -34,8 +34,7 @@ const users = {
             }
 
         } catch (err) {
-            console.log(error);
-            return res.status(4000).send(`Error: ${err.message}`);
+            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     getFollowerList: async (req, res) => {
@@ -55,8 +54,7 @@ const users = {
             const followerRow = await followModel.selectFollowerList(userIdx);
             return res.json({success: true, code: 1000, message: "팔로워 리스트 조회 성공", result: followerRow[0]});
         } catch (err) {
-            console.log(error);
-            return res.status(4000).send(`Error: ${err.message}`);
+            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     getFollowingList: async (req, res) => {
@@ -76,8 +74,7 @@ const users = {
             const followingRow = await followModel.selectFollowingList(userIdx);
             return res.json({success: true, code: 1000, message: "팔로잉 리스트 조회 성공", result: followingRow[0]});
         } catch (err) {
-            console.log(error);
-            return res.status(4000).send(`Error: ${err.message}`);
+            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
         }
     }
 }

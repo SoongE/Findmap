@@ -49,9 +49,9 @@ const users = {
             throw err;
         }
     },
-    signUp: async (email, password, hashedPassword, name, nickName, profileUrl, birthday, gender,loginType) => {
-        const fields = 'email, password, hashedPassword, name, nickName, profileUrl, birthday, gender,loginType';
-        const values = [email, password, hashedPassword, name, nickName, profileUrl, birthday, gender,loginType];
+    signUp: async (email, password, hashedPassword, name, nickName, profileUrl, birthday, gender,loginType, description) => {
+        const fields = 'email, password, hashedPassword, name, nickName, profileUrl, birthday, gender,loginType, description';
+        const values = [email, password, hashedPassword, name, nickName, profileUrl, birthday, gender,loginType, description];
         const query = `INSERT INTO UserTB(${fields}) VALUES(?,?,?,?,?,?,?,?,?)`;
         try {
             const result = await pool.queryParamArr(query, values);
