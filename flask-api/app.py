@@ -1,6 +1,9 @@
-from main.runner import create_app
+from main import runner
+import fasttext
 
-app = create_app("dev")
+mod = fasttext.load_model('recommend/morphnamunaver.bin')
+
+app = runner.create_app("dev")
 app.app_context().push()
 
 if __name__ == "__main__":
