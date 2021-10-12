@@ -10,7 +10,6 @@ class Mainmethod :
     
     # 검색 결과의 title 로부터 카테고리를 유추
     mod = model.Categorize(search_text)
-    mod.ctg()
     naver_result = self.searcher.naver_get_result(search_text)
     kakao_result = self.searcher.kakao_get_result(search_text)
 
