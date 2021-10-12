@@ -293,6 +293,9 @@ class _EmailConfirmState extends State<EmailConfirm> {
       Navigator.push(
           context,
           createRouteRight(RegisterPage(
+            '',
+            '',
+            '',
             userEmail: _userEmail.text,
             userPassword: _userPassword.text,
           )));
