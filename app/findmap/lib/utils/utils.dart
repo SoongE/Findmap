@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 
 const String BASEURL = '3.36.176.1:3000';
 
-void fetchExample(BuildContext context) async {
+Future<void> fetchExample(BuildContext context) async {
   Map<String, dynamic> param = {"param": 'param'};
 
   final response = await http.post(
@@ -33,6 +33,21 @@ void fetchExample(BuildContext context) async {
     showSnackbar(context, '서버와 연결이 불안정합니다');
     throw Exception('Failed to connect to server');
   }
+}
+
+Widget futureBuilderExample() {
+  return FutureBuilder(
+    // future: _memoizer,
+    builder: (BuildContext context, AsyncSnapshot snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return Text('');
+      } else if (snapshot.hasError) {
+        return Text('Error: ${snapshot.error}');
+      } else {
+        return Text("PAGE");
+      }
+    },
+  );
 }
 
 void showSnackbar(BuildContext context, String text,
@@ -92,6 +107,14 @@ Route createRouteRight(Widget secondPage) {
     builder: (context) => secondPage,
     fullscreenDialog: false,
   );
+}
+
+class NoGlowBehavior extends ScrollBehavior {
+  @override
+  Widget buildViewportChrome(
+      BuildContext context, Widget child, AxisDirection axisDirection) {
+    return child;
+  }
 }
 
 class HeroDialogRoute<T> extends PageRoute<T> {

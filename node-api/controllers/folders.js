@@ -16,8 +16,7 @@ const folder = {
 
             return res.json({success: true, code: 1000, message: "폴더 등록 성공", result: {"insertId": folderRow[0].insertId}});
         } catch(err){
-          console.log(error);
-          return res.status(4000).send(`Error: ${err.message}`);
+            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     getFolder: async (req, res) => {
@@ -30,8 +29,7 @@ const folder = {
             }
             return res.json({success: true, code: 1000, message: "폴더 전체 조회 성공", result: folderRow});
         } catch (err) {
-            console.log(error);
-            return res.status(4000).send(`Error: ${err.message}`);
+            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     getFolderDetail: async (req, res) => {
@@ -45,8 +43,7 @@ const folder = {
             }
             return res.json({success: true, code: 1000, message: "폴더 상세 조회 성공", result: folderRow});
         } catch (err) {
-            console.log(error);
-            return res.status(4000).send(`Error: ${err.message}`);
+            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     patchFolder: async (req, res) => {
@@ -65,8 +62,7 @@ const folder = {
               
               return res.json({success: true, code: 1000, message: "폴더 제목 수정 성공", result: folderRow});
         }catch(err){
-            console.log(error);
-            return res.status(4000).send(`Error: ${err.message}`);
+            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     deleteFolder: async (req, res) => {
@@ -81,8 +77,7 @@ const folder = {
 
             return res.json({success: true, code: 1000, message: "폴더 삭제 성공"});
         }catch(err){
-            console.log(error);
-            return res.status(4000).send(`Error: ${err.message}`);
+            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     deleteFolderOnly: async (req, res) => {
@@ -101,8 +96,7 @@ const folder = {
 
             return res.json({success: true, code: 1000, message: "폴더 삭제 및 하위 스크랩 이동 성공"});
         }catch(err){
-            console.log(error);
-            return res.status(4000).send(`Error: ${err.message}`);
+            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     deleteFolderAll: async (req, res) => {
@@ -119,8 +113,7 @@ const folder = {
 
             return res.json({success: true, code: 1000, message: "폴더 삭제 및 하위 스크랩 삭제 성공"});
         }catch(err){
-            console.log(error);
-            return res.status(4000).send(`Error: ${err.message}`);
+            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
         }
     }
 }

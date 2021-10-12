@@ -101,6 +101,7 @@ class _RealtimeSearchTabState extends State<RealtimeSearchTab>
         for (var i in responseBody['result']) {
           interest.add(CATEGORY_NAME[i['categoryIdx']] ?? '');
         }
+        print("USERINTEREST" + interest.toString());
         return interest;
       } else {
         showSnackbar(context, responseBody['message']);

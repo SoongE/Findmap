@@ -6,15 +6,17 @@ import 'package:findmap/views/mainPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:kakao_flutter_sdk/common.dart';
 
 void main() {
+  KakaoContext.clientId = "d9dd1454cde30e58a6b666960f224c00";
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
     // SystemChrome.setSystemUIOverlayStyle(
     //     SystemUiOverlayStyle(statusBarColor: Colors.transparent));
 
@@ -61,7 +63,7 @@ class _SplashPageState extends State<SplashPage> {
 
     if (_userStatus) {
       var jsonStorage = jsonDecode(json.encode(userInfo));
-      jsonStorage['idx'] = int.parse(jsonStorage['idx']);
+      jsonStorage['userIdx'] = int.parse(jsonStorage['userIdx']);
       var user = User.fromJson(jsonStorage);
 
       Navigator.of(context).pushReplacement(

@@ -10,7 +10,7 @@ class MainActivity : FlutterActivity() {
     private var sharedData: String = ""
 
     override fun onCreate(
-            savedInstanceState: Bundle?
+           savedInstanceState: Bundle?
     ) {
         super.onCreate(savedInstanceState)
         handleIntent()
@@ -27,7 +27,6 @@ class MainActivity : FlutterActivity() {
             }
         }
     }
-
 
     private fun handleIntent() {
         // intent is a property of this activity
