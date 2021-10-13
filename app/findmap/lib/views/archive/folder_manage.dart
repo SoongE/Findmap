@@ -75,10 +75,12 @@ class _FolderManageState extends State<FolderManage> {
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Text('');
-              } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
               } else {
-                _folderList = snapshot.data!;
+                if (snapshot.data == null) {
+                  _folderList = [];
+                } else {
+                  _folderList = snapshot.data!;
+                }
                 return Column(
                   children: [
                     Expanded(child: _folderListView()),
@@ -201,6 +203,7 @@ class _FolderManageState extends State<FolderManage> {
       var responseBody = jsonDecode(response.body);
 
       if (responseBody['success']) {
+        print(responseBody);
         int idx = responseBody['result']['insertId'];
         _folderList.add(PostFolder(idx, -1, name, -1, '', '', ''));
         _listKey.currentState!.insertItem(_folderList.length - 1);

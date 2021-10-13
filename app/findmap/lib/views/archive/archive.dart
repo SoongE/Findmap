@@ -134,7 +134,13 @@ class _ArchivePageState extends State<ArchivePage> {
               _archiveList = snapshot.data!;
               return _archiveListView(_archiveList);
             } else if (snapshot.data == null) {
-              return Text("ITS NULL");
+              return Center(
+                child: Text(
+                  "저장된 게시물이 없습니다.\n게시물을 저장해주세요.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 15, color: Colors.grey[700]),
+                ),
+              );
             } else if (snapshot.hasError) {
               return Text("${snapshot.error}");
             }
