@@ -36,7 +36,7 @@ class _UserPageState extends State<UserPage>
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<UserInfo>(
-      future: fetchGetUserInfo(context),
+      future: _fetchGetUserInfo(context),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           userInfo = snapshot.data!;
@@ -183,7 +183,7 @@ class _UserPageState extends State<UserPage>
     );
   }
 
-  Future<UserInfo> fetchGetUserInfo(BuildContext context) async {
+  Future<UserInfo> _fetchGetUserInfo(BuildContext context) async {
     final response = await http.get(
       Uri.http(BASEURL, '/feeds/profile',
           {'userIdx': widget.user.userIdx.toString()}),
@@ -195,13 +195,14 @@ class _UserPageState extends State<UserPage>
 
     if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
+
       if (responseBody['success'] == false) {
         showSnackbar(context, responseBody['message']);
       }
       return UserInfo.fromJson(responseBody['result'][0]);
     } else {
       showSnackbar(context, '서버와 연결이 불안정합니다');
-      throw Exception('fetchGetUserInfo: ${response.body}');
+      throw Exception('_fetchGetUserInfo: ${response.body}');
     }
   }
 
@@ -217,7 +218,6 @@ class _UserPageState extends State<UserPage>
 
     if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
-      print(response.body);
 
       if (responseBody['success'])
         return responseBody['result']

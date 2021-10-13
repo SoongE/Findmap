@@ -17,6 +17,7 @@ class DocumentView extends StatelessWidget {
           titleSpacing: 0,
           leading: BackButton(color: Colors.black),
           title: Text(title[name], style: TextStyle(color: Colors.black)),
+          elevation: 1,
           backgroundColor: Colors.white,
         ),
         body: SingleChildScrollView(
