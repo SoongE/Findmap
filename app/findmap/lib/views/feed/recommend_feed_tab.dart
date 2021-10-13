@@ -198,8 +198,10 @@ class _RecommendFeedTabState extends State<RecommendFeedTab>
 
     if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
-
       if (responseBody['success']) {
+        if (responseBody['code'] == 3202) {
+          return [];
+        }
         return responseBody['result']
             .map<PostFolder>((json) => PostFolder.fromJson(json))
             .toList();
