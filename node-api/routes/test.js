@@ -34,8 +34,8 @@ router.get('/search/', (req, res, next) => {
   .catch(error=>res.send(error.message))
   .finally();
 });
-router.get('/search/ctg', (req, res, next) => {
-  axios.get('http://flask-api:5000/search/ctg')
+router.get('/search/categorize', (req, res, next) => {
+  axios.get('http://flask-api:5000/search/categorize')
   .then(response=>res.send(response.data))
   .catch(error=>res.send(error.message))
   .finally();
