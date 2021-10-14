@@ -23,10 +23,12 @@ def main():
 @search_api.route('/categorize')
 def categorize():
     param_value = request.args["keyword"]
+     
+    search_idx_cl = model.Categorization()
+    search_idx_cl.categorize(param_value)
+   
 
-    search_idx_cl = model.Categorize(param_value)
-    search_idx = search_idx_cl.ctg()
-    body = {"ctg" : str(search_idx[0])}
+    body = {"ctg" : param_value}
     return make_response(SUCCESS, body)
 
 @search_api.route('/share', methods=['GET'])
