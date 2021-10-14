@@ -67,7 +67,7 @@ class Categorization:
 
             result[i]["pred"] = self.get_preference(category_pred_value, user_rate)
 
-<<<<<<< HEAD
+
     def get_preference(self, category_pred_value, user_rate):
         # 사용자의 카테고리별 선호도를 바탕으로 검색 결과의 선호도를 유추
         user_rate_np = np.array(user_rate).flatten()
@@ -75,16 +75,14 @@ class Categorization:
 
         return np.dot(category_pred_value_np, user_rate_np)
 
-    def get_category_of_keyword(self, keyword):
-        return [keyword, self.model.predict(keyword)[0][0]]
-=======
-def share(url):
-    # temporary url. It will get the current url from nodejs later.
-    crw = crawler.Crawler(url)
-    nlp = model.Model()
 
-    try:
-        if crw.robots_check():
+   def share(url):
+    # temporary url. It will get the current url from nodejs later.
+     crw = crawler.Crawler(url)
+     nlp = model.Model()
+
+     try:
+         if crw.robots_check():
             # this page admit crawling
             scrap_page = crw.crawl()
 
@@ -127,4 +125,4 @@ def share(url):
         scrap_page['category'] = None
 
     return scrap_page
->>>>>>> a9d51dec8d90bc2a1c5f0e810d82097ae02bdf0f
+
