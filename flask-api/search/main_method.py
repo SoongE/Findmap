@@ -2,15 +2,15 @@ from search import searcher
 from search import model
 
 class Mainmethod :
-  def __init__(self) :
-    self.searcher = Searcher.Searcher()
+  def __init__(self,search_idx) :
+    self.searcher = searcher.Searcher()
     self.result = list()
-  def main():
-    search_text = input("입력하시오 : ") # 추후 노드에서 받을 예정!
+    self.search = search_idx
+  def main(self):
+    search_text = self.search # 추후 노드에서 받을 예정!
     
     # 검색 결과의 title 로부터 카테고리를 유추
     mod = model.Categorize(search_text)
-    mod.ctg()
     naver_result = self.searcher.naver_get_result(search_text)
     kakao_result = self.searcher.kakao_get_result(search_text)
 

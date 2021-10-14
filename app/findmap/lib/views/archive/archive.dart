@@ -133,6 +133,8 @@ class _ArchivePageState extends State<ArchivePage> {
             if (snapshot.hasData) {
               _archiveList = snapshot.data!;
               return _archiveListView(_archiveList);
+            } else if (snapshot.data == null) {
+              return Text("ITS NULL");
             } else if (snapshot.hasError) {
               return Text("${snapshot.error}");
             }

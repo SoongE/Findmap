@@ -1,15 +1,19 @@
 import fasttext
 import re
+import os ,sys
+
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 
 class model :
-    def __init__(self) :
-        self.model = fasttext.load_model('morphnamunaver.bin')
-
+    def __init__(self,search_param) :
+        self.recommend_list = []
+        self.word = search_param
     def give_recommend(self) :
-        word = input("검색어를 입력해주세요 : ")
-        words = self.model.get_nearest_neighbors(word, k=100)
+        from app import mod
 
-        recommend_list = []
+        model = mod
+
+        words = model.get_nearest_neighbors(self.word, k=100)
 
         for index in words :
           hangul = re.compile('[^ \uac00-\ud7a3]+')
@@ -17,12 +21,12 @@ class model :
           if result == None :
             continue
 
-          if (re.findall(word,result) == None) :
+          if (re.findall(self.word,result) == None) :
             continue
 
-          recommend_list.append(index[1])
-          if (len(recommend_list) == 5) :
+          self.recommend_list.append(index[1])
+          if (len(self.recommend_list) == 5) :
             break
 
-        return recommend_list
+        return self.recommend_list
   

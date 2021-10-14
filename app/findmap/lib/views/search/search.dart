@@ -45,7 +45,7 @@ class SearchPage extends StatelessWidget {
           },
           child: TabBarView(
             children: [
-              SearchTab(),
+              SearchTab(user: user),
               RealtimeSearchTab(user: user),
             ],
           ),

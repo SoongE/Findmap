@@ -124,6 +124,8 @@ class _SettingState extends State<Setting> {
 
   void _withdrawal() async {
     _confirmKey.currentState!.showModal();
+    Navigator.pushAndRemoveUntil(
+        context, createRoute(FirstPage()), (route) => false);
   }
 
   void _logout() async {
@@ -136,9 +138,9 @@ class _SettingState extends State<Setting> {
             Navigator.pushAndRemoveUntil(
                 context, createRoute(FirstPage()), (route) => false),
           }
-        // : showSnackbar(context, "정상적으로 로그아웃되지 않았습니다"));
-        : Navigator.pushAndRemoveUntil(
-            context, createRoute(FirstPage()), (route) => false));
+        : showSnackbar(context, "정상적으로 로그아웃되지 않았습니다"));
+    // : Navigator.pushAndRemoveUntil(
+    //     context, createRoute(FirstPage()), (route) => false));
   }
 
   void _sendEmail() async {
