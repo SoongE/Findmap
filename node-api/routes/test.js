@@ -58,7 +58,7 @@ router.get('/post', (req,res,next) =>{
 router.get('/recommend/initrecom', (req, res, next) => {
   const keyword = req.query.keyword
 
-  axios.get('http://flask-api:5000//recommend/initrecom',{ params: { keyword: keyword } })
+  axios.get('http://flask-api:5000//recommend/initrecom',{ params: { useridx : useridx } })
   .then(response=>res.send(response.data))
   .catch(error=>res.send(error.message))
   .finally();
