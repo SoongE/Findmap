@@ -46,7 +46,9 @@ def protorecom() :
     print(list(i_strlist))
     for item in i_strlist :
       temp_f = fasttext_word.model(item)
-      for item in temp_f.give_recommend() :
+      t_ftext = temp_f.give_recommend()
+      print(t_ftext)
+      for item in  t_ftext:
         total_list.append(item)
     temp_str = ""
 
