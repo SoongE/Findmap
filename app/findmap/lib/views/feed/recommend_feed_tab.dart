@@ -28,6 +28,7 @@ class _RecommendFeedTabState extends State<RecommendFeedTab>
   List<PostFolder> folderList = [PostFolder(0, 0, '아카이브', 0, '', '', '')];
 
   PostFolder _selectedFolder = PostFolder(-1, -1, '', -1, '', '', '');
+  bool _isSelect = false;
 
   final _getFolderListMemoizer = AsyncMemoizer<List<PostFolder>>();
 
@@ -118,11 +119,14 @@ class _RecommendFeedTabState extends State<RecommendFeedTab>
 
   void _drawSaveToArchive(Feed feed) {
     showSaveToArchiveDialog().then((val) {
-      if (_selectedFolder.idx != -1) {
+      if (_isSelect) {
         fetchSaveScrap(feed, _selectedFolder).then((v) {});
+        setState(() {
+          feed.scrapStorageCount += 1;
+          _isSelect = false;
+        });
       }
     });
-    _selectedFolder.idx = -1;
   }
 
   showSaveToArchiveDialog() async {
@@ -146,6 +150,7 @@ class _RecommendFeedTabState extends State<RecommendFeedTab>
               title: Text(folderList[index].name),
               onTap: () {
                 _selectedFolder = folderList[index];
+                _isSelect = true;
                 Navigator.pop(context, folderList[index]);
               },
             ),
