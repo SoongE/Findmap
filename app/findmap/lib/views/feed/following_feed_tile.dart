@@ -202,7 +202,7 @@ class _FollowingFeedTileState extends State<FollowingFeedTile>
       if (responseBody['success']) {
       } else {
         showSnackbar(context, responseBody['message']);
-        throw Exception('FUNCTIONNAME Exception: ${responseBody['message']}');
+        throw Exception('fetchClick Exception: ${responseBody['message']}');
       }
     } else {
       showSnackbar(context, '서버와 연결이 불안정합니다');
@@ -224,7 +224,7 @@ class _FollowingFeedTileState extends State<FollowingFeedTile>
       if (responseBody['success']) {
       } else {
         showSnackbar(context, responseBody['message']);
-        throw Exception('FUNCTIONNAME Exception: ${responseBody['message']}');
+        throw Exception('fetchHeart Exception: ${responseBody['message']}');
       }
     } else {
       showSnackbar(context, '서버와 연결이 불안정합니다');
