@@ -125,7 +125,7 @@ const feed = {
             throw err;
         }
     },
-    selectProfile: async(userIdx,myIdx) => {
+    selectProfile: async(userIdx) => {
         const query = `
         SELECT 
             U.idx,
@@ -133,12 +133,12 @@ const feed = {
             U.nickName,
             U.description,
             (SELECT COUNT(*) FROM ScrapTB S WHERE U.idx = S.userIdx) AS ScrapCount,
-            (SELECT COUNT(*) FROM FollowTB F WHERE U.idx = F.followerIdx) AS FollowCount,
+            (SELECT COUNT(*) FROM FollowTB F WHERE U.idx = F.followingIdx) AS FollowCount,
             (SELECT COUNT(*) FROM FeedHeartTB FH WHERE FH.userIdx = U.idx) AS HaertCount
         FROM UserTB U
             WHERE U.idx = ? and U.status = 'Y'
         `;
-        const params = [userIdx,myIdx];
+        const params = [userIdx];
         try {
             const result = await pool.queryParam(query,params);
             return [result];
@@ -149,37 +149,38 @@ const feed = {
     },
     selectFeed: async(userIdx) => {
         const query = `
-        SELECT
-              S.idx AS scrapIdx
-             , UT.idx AS userIdx
-             , UT.nickName AS userNickName
-             , IFNULL(UT.profileUrl, 'N') as userProfile
-             , title, contentUrl, thumbnailUrl, summary
-             , IFNULL(S.comment, '') as comment
-             , date_format(S.createdAt, '%Y년 %m월 %d일 %H:%i')  AS createdAt
-             , case
-                    when timestampdiff(second, S.createdAt, current_timestamp) <= 60
-                        then concat(timestampdiff(second, S.createdAt, current_timestamp), '초 전')
-                    when timestampdiff(minute, S.createdAt, current_timestamp) <= 60
-                        then concat(timestampdiff(minute, S.createdAt, current_timestamp), '분 전')
-                    when timestampdiff(hour, S.createdAt, current_timestamp) <= 24
-                        then concat(timestampdiff(hour, S.createdAt, current_timestamp), '시간 전')
-                    when timestampdiff(day, S.createdAt, current_timestamp) <= 7
-                        then concat(timestampdiff(day, S.createdAt, current_timestamp), '일 전')
-                    when timestampdiff(week, S.createdAt, current_timestamp) <= 4 and timestampdiff(week, S.createdAt, current_timestamp) >= 1
-                        then concat(timestampdiff(week, S.createdAt, current_timestamp), '주 전')
-                    when timestampdiff(month, S.createdAt, current_timestamp) <= 12 and timestampdiff(month, S.createdAt, current_timestamp) >= 1
-                        then concat(timestampdiff(month, S.createdAt, current_timestamp), '개월 전')
-                    else concat(timestampdiff(year, S.createdAt, current_timestamp), '년 전')
+
+            SELECT
+                S.idx AS scrapIdx
+                 , UT.idx AS userIdx
+                 , UT.nickName AS userNickName
+                 , IFNULL(UT.profileUrl, 'N') as userProfile
+                 , title, contentUrl, thumbnailUrl, summary
+                 , IFNULL(S.comment, '') as comment
+                 , date_format(S.createdAt, '%Y년 %m월 %d일 %H:%i')  AS createdAt
+                 , case
+                       when timestampdiff(second, S.createdAt, current_timestamp) <= 60
+                           then concat(timestampdiff(second, S.createdAt, current_timestamp), '초 전')
+                       when timestampdiff(minute, S.createdAt, current_timestamp) <= 60
+                           then concat(timestampdiff(minute, S.createdAt, current_timestamp), '분 전')
+                       when timestampdiff(hour, S.createdAt, current_timestamp) <= 24
+                           then concat(timestampdiff(hour, S.createdAt, current_timestamp), '시간 전')
+                       when timestampdiff(day, S.createdAt, current_timestamp) <= 7
+                           then concat(timestampdiff(day, S.createdAt, current_timestamp), '일 전')
+                       when timestampdiff(week, S.createdAt, current_timestamp) <= 4 and timestampdiff(week, S.createdAt, current_timestamp) >= 1
+                           then concat(timestampdiff(week, S.createdAt, current_timestamp), '주 전')
+                       when timestampdiff(month, S.createdAt, current_timestamp) <= 12 and timestampdiff(month, S.createdAt, current_timestamp) >= 1
+                           then concat(timestampdiff(month, S.createdAt, current_timestamp), '개월 전')
+                       else concat(timestampdiff(year, S.createdAt, current_timestamp), '년 전')
                 end as createdTerm
-             , (select COUNT(*) FROM FeedHeartTB FHT where FHT.scrapIdx = S.idx) as scrapLikeCount
-             , (select COUNT(*) FROM FeedStorageTB FHT where FHT.scrapIdx = S.idx) as scrapStorageCount
-             , IFNULL((select SUM(count) FROM FeedHistoryTB FHT where FHT.scrapIdx = S.idx),0) as scrapHistoryCount
-             , IFNULL((select FHT.status from FeedHeartTB FHT where FHT.userIdx = S.userIdx and FHT.scrapIdx = S.idx),'N') AS userLikeStatus
-             , IFNULL((select FHT.status from FeedHistoryTB FHT where FHT.userIdx = S.userIdx and FHT.scrapIdx = S.idx),'N') AS userHistoryStatus
-             , IFNULL((select FST.status from FeedStorageTB FST where FST.userIdx = S.userIdx and FST.scrapIdx = S.idx),'N') AS userStorageStatus
+                 , (select COUNT(*) FROM FeedHeartTB FHT where FHT.scrapIdx = S.idx and FHT.status = 'Y') as scrapLikeCount
+                 , IFNULL((select SUM(count) FROM FeedHistoryTB FHT where FHT.scrapIdx = S.idx),0) as scrapHistoryCount
+                 , (select COUNT(*) FROM FeedStorageTB FST where FST.scrapIdx = S.idx and FST.status = 'Y') as scrapStorageCount
+                 , IFNULL((select FHT.status from FeedHeartTB FHT where FHT.userIdx = S.userIdx and FHT.scrapIdx = S.idx),'N') AS userLikeStatus
+                 , IFNULL((select FHT.status from FeedHistoryTB FHT where FHT.userIdx = S.userIdx and FHT.scrapIdx = S.idx),'N') AS userHistoryStatus
+                 , IFNULL((select FST.status from FeedStorageTB FST where FST.userIdx = S.userIdx and FST.scrapIdx = S.idx),'N') AS userStorageStatus
             FROM ScrapTB S
-                INNER JOIN UserTB UT ON UT.idx = S.userIdx
+                     INNER JOIN UserTB UT ON UT.idx = S.userIdx
             WHERE S.userIdx = ? and S.isFeed = 'Y' and S.status = 'Y'
             ORDER BY S.createdAt DESC;
         `;
@@ -217,9 +218,9 @@ const feed = {
                     then concat(timestampdiff(month, S.createdAt, current_timestamp), '개월 전')
                 else concat(timestampdiff(year, S.createdAt, current_timestamp), '년 전')
             end as createdTerm
-            , (select COUNT(*) FROM FeedHeartTB FHT where FHT.scrapIdx = S.idx) as scrapLikeCount
-            , (select COUNT(*) FROM FeedStorageTB FHT where FHT.scrapIdx = S.idx) as scrapStorageCount
+            , (select COUNT(*) FROM FeedHeartTB FHT where FHT.scrapIdx = S.idx and FHT.status = 'Y') as scrapLikeCount
             , IFNULL((select SUM(count) FROM FeedHistoryTB FHT where FHT.scrapIdx = S.idx),0) as scrapHistoryCount
+            , (select COUNT(*) FROM FeedStorageTB FST where FST.scrapIdx = S.idx and FST.status = 'Y') as scrapStorageCount
             , IFNULL((select FHT.status from FeedHeartTB FHT where FHT.userIdx = F.followerIdx and FHT.scrapIdx = S.idx),'N') AS userLikeStatus
             , IFNULL((select FHT.status from FeedHistoryTB FHT where FHT.userIdx = F.followerIdx and FHT.scrapIdx = S.idx),'N') AS userHistoryStatus
             , IFNULL((select FST.status from FeedStorageTB FST where FST.userIdx = F.followerIdx and FST.scrapIdx = S.idx),'N') AS userStorageStatus
@@ -235,6 +236,44 @@ const feed = {
             return [result];
         } catch (err) {
             console.log('팔로잉 피드 조회 ERROR: ', err);
+            throw err;
+        }
+    },
+    selectRecommendFeed: async(scrapIdx,myIdx) => {
+        const query = `
+            SELECT
+                S.idx AS scrapIdx
+                 , UT.idx AS userIdx
+                 , UT.nickName AS userNickName
+                 , IFNULL(UT.profileUrl, 'N') as userProfile
+                 , title, contentUrl, thumbnailUrl, summary
+                 , IFNULL(S.comment, '') as comment
+                 , date_format(S.createdAt, '%Y년 %m월 %d일 %H:%i')  AS createdAt
+                 , case
+                       when timestampdiff(second, S.createdAt, current_timestamp) <= 60
+                           then concat(timestampdiff(second, S.createdAt, current_timestamp), '초 전')
+                       when timestampdiff(minute, S.createdAt, current_timestamp) <= 60
+                           then concat(timestampdiff(minute, S.createdAt, current_timestamp), '분 전')
+                       when timestampdiff(hour, S.createdAt, current_timestamp) <= 24
+                           then concat(timestampdiff(hour, S.createdAt, current_timestamp), '시간 전')
+                       when timestampdiff(day, S.createdAt, current_timestamp) <= 7
+                           then concat(timestampdiff(day, S.createdAt, current_timestamp), '일 전')
+                       when timestampdiff(week, S.createdAt, current_timestamp) <= 4 and timestampdiff(week, S.createdAt, current_timestamp) >= 1
+                           then concat(timestampdiff(week, S.createdAt, current_timestamp), '주 전')
+                       when timestampdiff(month, S.createdAt, current_timestamp) <= 12 and timestampdiff(month, S.createdAt, current_timestamp) >= 1
+                           then concat(timestampdiff(month, S.createdAt, current_timestamp), '개월 전')
+                       else concat(timestampdiff(year, S.createdAt, current_timestamp), '년 전')
+                end as createdTerm
+            FROM ScrapTB S
+                     INNER JOIN UserTB UT ON UT.idx = S.userIdx
+            WHERE S.idx = ? and S.isFeed = 'Y' and S.status = 'Y';
+        `;
+        const params = [scrapIdx,myIdx];
+        try {
+            const result = await pool.queryParam(query,params);
+            return [result];
+        } catch (err) {
+            console.log('추천 피드 조회 ERROR: ', err);
             throw err;
         }
     }
