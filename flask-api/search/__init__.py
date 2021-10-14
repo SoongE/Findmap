@@ -29,3 +29,10 @@ def categorize():
     body = {"ctg" : str(search_idx[0])}
     return make_response(SUCCESS, body)
 
+@search_api.route('/share', methods=['GET'])
+def share():
+    param_value = request.args["url"]
+
+    result = model.shared(param_value)
+    body = {"result" : result}
+    return make_response(SUCCESS, body)
