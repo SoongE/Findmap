@@ -222,7 +222,7 @@ class _FollowingFeedTabState extends State<FollowingFeedTab>
             .map<PostFolder>((json) => PostFolder.fromJson(json))
             .toList();
       } else {
-        showSnackbar(context, responseBody['message']);
+        // showSnackbar(context, responseBody['message']);
         throw Exception(
             'fetchGetFolderList Exception: ${responseBody['message']}');
       }

@@ -211,7 +211,7 @@ class _RecommendFeedTabState extends State<RecommendFeedTab>
             .map<PostFolder>((json) => PostFolder.fromJson(json))
             .toList();
       } else {
-        showSnackbar(context, responseBody['message']);
+        // showSnackbar(context, responseBody['message']);
         throw Exception(
             'fetchGetFolderList Exception: ${responseBody['message']}');
       }
