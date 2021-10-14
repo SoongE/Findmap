@@ -27,7 +27,7 @@ class Recommend :
  def give_result(self) :
      result = []
 
-     for i in self.reco_list
+     for i in self.reco_list :
       temp = self.df[self.df['idx'] == i]
       result.append(temp['name'].values[0])
      return  result
