@@ -38,10 +38,8 @@ def recommend():
 def protorecom() :
     param_value = int(request.args["useridx"])
     item_c = item_filter.Item_filtered(param_value)
-    
-    temp_str = ""
-
     item_f = item_c.make_list()
     
     for item in item_f :
+      pass
        
