@@ -53,7 +53,7 @@ def protorecom() :
     for item in total_list :
         temp_str = temp_str + "," + item
     temp_str = item_f
-    print(temp_str)
+    print("결과값 :" +temp_str)
     resources =  {"searchinit" : temp_str}
     return make_response(SUCCESS,resources)
       
