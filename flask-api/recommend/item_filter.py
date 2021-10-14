@@ -8,33 +8,30 @@ import pymysql
 class Item_filtered :
 
  def __init__(self,user_idx) : 
-
-  host_name = "findmap-first-db.c2jag33neij8.ap-northeast-2.rds.amazonaws.com"
-  user_name = "admin"
-  password = "mypassword"
-  db_name = "findmap-first-db"
-
-
-  self.userid = int(user_idx)    ### node 로부터 user ID 를 받아야됨
-
-  db = pymysql.connect(
-    host = host_name,
-    port = 3306,
-    user = user_name,
-    passwd = password,
-    db = db_name,
-    charset = 'utf8'
-  )
-
-  SQL = " select st.userIdx, st.categoryIdx as keywordidx, count(*) as rating from ScrapTB st  group by categoryIdx  "  
+   host_name = "findmap-first-db.c2jag33neij8.ap-northeast-2.rds.amazonaws.com"
+   user_name = "admin"
+   password = "mypassword"
+   db_name = "findmap-first-db"
 
 
- ##rating_path = './'
- ##ratings_df = pd.read_csv(os.path.join(rating_path, 'ratings.csv'), encoding='utf-8')
+   self.userid = int(user_idx)    ### node 로부터 user ID 를 받아야됨
 
-  self.df  = pd.read_sql(SQL,db)
+   db = pymysql.connect(
+     host = host_name,
+     port = 3306,
+     user = user_name,
+     passwd = password,
+     db = db_name,
+     charset = 'utf8'
+   )
 
-  def make_list(self)  :
+   SQL = " select st.userIdx, st.categoryIdx as keywordidx, count(*) as rating from ScrapTB st  group by categoryIdx  "  
+
+
+
+   self.df  = pd.read_sql(SQL,db)
+
+ def make_list(self)  :
    train_df, test_df = train_test_split(self.df, test_size=0.2, random_state=1234)
 
    def cos_matrix(a, b):
