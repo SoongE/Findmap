@@ -23,9 +23,7 @@ class RealtimeSearchTab extends StatefulWidget {
 class _RealtimeSearchTabState extends State<RealtimeSearchTab>
     with SingleTickerProviderStateMixin {
   late List<String> _tabs = ['종합'];
-  late List<int> _tabsIdx = [
-    0,
-  ];
+  late List<int> _tabsIdx = [0];
   AsyncMemoizer<List<String>> _memoizer = AsyncMemoizer();
 
   @override
