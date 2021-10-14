@@ -55,5 +55,13 @@ router.get('/post', (req,res,next) =>{
   .catch(error=>res.send(error.message))
   .finally();
 });
+router.get('/recommend/initrecom', (req, res, next) => {
+  const keyword = req.query.keyword
+
+  axios.get('http://flask-api:5000//recommend/initrecom',{ params: { keyword: keyword } })
+  .then(response=>res.send(response.data))
+  .catch(error=>res.send(error.message))
+  .finally();
+});
 
 module.exports = router;
