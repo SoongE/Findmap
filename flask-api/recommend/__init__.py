@@ -43,8 +43,8 @@ def protorecom() :
     total_list = list()
 
     for item in item_f :
-      temp_f = fasttext_word(item)
-      for item in temp_f :
+      temp_f = fasttext_word.model(item)
+      for item in temp_f.give_recommend() :
         total_list.append(item)
     temp_str = ""
 
