@@ -40,7 +40,7 @@ def protorecom() :
     item_c = item_filter.Item_filtered(param_value)
     item_f = item_c.make_list()
     
-    temp numtostr_C = numtoStr.Recommend(item_f)
+    numtostr_C = numtoStr.Recommend(item_f)
     i_strlist = numtostr_C.give_result()
     total_list = list()
 
