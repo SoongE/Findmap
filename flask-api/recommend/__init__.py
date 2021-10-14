@@ -12,11 +12,7 @@ FAILURE = "failure"
 
 @recommend_api.route('/')
 def main():
-    param_dict = request.args.to_dict()
-    param_value = NULL
-    
-    for key in param_dict.keys() :
-      param_value = request.args[key]####     node 에서 
+    param_value = request.args["keyword"]
     ft = fasttext_word.model(param_value)    
     rec_list = ft.give_recommend()
     temp_str = ""
