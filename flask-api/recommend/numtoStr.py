@@ -22,7 +22,7 @@ class Recommend :
      charset = 'utf8'
    )
   
-  sql = "select * from CategoryTB"
+  sql = "select * from CategoryTB ct"
   self.df  = pd.read_sql(SQL,db)
 
  def give_result(self) :
