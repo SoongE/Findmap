@@ -1,9 +1,8 @@
 import crawler
 import model
 
-def main():
+def main(url):
     # temporary url. It will get the current url from nodejs later.
-    url = ""
     crw = crawler.Crawler(url)
     nlp = model.Model()
 
@@ -53,4 +52,4 @@ def main():
     print(scrap_page)
 
 if __name__ == '__main__':
-    main()
+    main('https://blog.naver.com/harusary84/222536179450?rvid=5A809C679DE6EE4D8E16DA0B300A64198F86')

@@ -35,6 +35,6 @@ def categorize():
 def share():
     param_value = request.args["url"]
 
-    result = model.shared(param_value)
+    result = main_method.share(param_value)
     body = {"result" : result}
     return make_response(SUCCESS, body)
