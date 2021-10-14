@@ -1,8 +1,6 @@
-import 'package:badges/badges.dart';
 import 'package:findmap/models/user.dart';
 import 'package:findmap/src/my_colors.dart';
 import 'package:findmap/utils/image_loader.dart';
-import 'package:findmap/views/alarm.dart';
 import 'package:findmap/views/archive/archive.dart';
 import 'package:findmap/views/archive/share.dart';
 import 'package:findmap/views/search/search.dart';
@@ -58,7 +56,7 @@ class _MainPageState extends State<MainPage>
       SearchPage(user: widget.user),
       ArchivePage(user: widget.user),
       FeedPage(user: widget.user),
-      AlarmPage(),
+      // AlarmPage(),
       UserPage(user: widget.user),
     ];
     super.initState();
@@ -171,32 +169,32 @@ class _MainPageState extends State<MainPage>
         icon: widgetIcons.elementAt(2),
         text: widgetTitle[2],
       ),
-      GButton(
-        gap: _gap,
-        iconActiveColor: widgetColors.elementAt(3),
-        iconColor: Colors.black,
-        textColor: widgetColors.elementAt(3),
-        backgroundColor: widgetColors.elementAt(3).withOpacity(.2),
-        iconSize: 24,
-        padding: _padding,
-        icon: widgetIcons.elementAt(3),
-        text: widgetTitle[3],
-        leading: _selectedIndex == 3 || _badge == 0
-            ? null
-            : Badge(
-                badgeColor: Colors.red.shade100,
-                elevation: 0,
-                position: BadgePosition.topEnd(top: -12, end: -12),
-                badgeContent: Text(
-                  _badge.toString(),
-                  style: TextStyle(color: Colors.red.shade900),
-                ),
-                child: Icon(
-                  LineIcons.heart,
-                  color: _selectedIndex == 3 ? Colors.pink : Colors.black,
-                ),
-              ),
-      ),
+      // GButton(
+      //   gap: _gap,
+      //   iconActiveColor: widgetColors.elementAt(3),
+      //   iconColor: Colors.black,
+      //   textColor: widgetColors.elementAt(3),
+      //   backgroundColor: widgetColors.elementAt(3).withOpacity(.2),
+      //   iconSize: 24,
+      //   padding: _padding,
+      //   icon: widgetIcons.elementAt(3),
+      //   text: widgetTitle[3],
+      //   leading: _selectedIndex == 3 || _badge == 0
+      //       ? null
+      //       : Badge(
+      //           badgeColor: Colors.red.shade100,
+      //           elevation: 0,
+      //           position: BadgePosition.topEnd(top: -12, end: -12),
+      //           badgeContent: Text(
+      //             _badge.toString(),
+      //             style: TextStyle(color: Colors.red.shade900),
+      //           ),
+      //           child: Icon(
+      //             LineIcons.heart,
+      //             color: _selectedIndex == 3 ? Colors.pink : Colors.black,
+      //           ),
+      //         ),
+      // ),
       GButton(
         gap: _gap,
         iconActiveColor: widgetColors.elementAt(4),
