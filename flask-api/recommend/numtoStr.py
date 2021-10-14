@@ -29,5 +29,5 @@ class Recommend :
 
      for i in self.reco_list :
       temp = self.df[self.df['idx'] == i]
-      result.append(temp['name'].values[0])
+      result.append(temp['name'].values)
      return  result
