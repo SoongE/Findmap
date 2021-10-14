@@ -4,7 +4,7 @@ from pymysql import NULL
 from utils import make_response
 from recommend import fasttext_word
 from recommend import item_filter
-
+from recommend import numtoStr
 
 recommend_api = Blueprint("recommend", __name__, url_prefix="/recommend")
 SUCCESS = "success"
@@ -40,16 +40,18 @@ def protorecom() :
     item_c = item_filter.Item_filtered(param_value)
     item_f = item_c.make_list()
     
-    #total_list = list()
+    temp numtostr_C = numtoStr.Recommend(item_f)
+    i_strlist = numtostr_C.give_result()
+    total_list = list()
 
-    #for item in item_f :
-      #temp_f = fasttext_word.model(item)
-      #for item in temp_f.give_recommend() :
-        #total_list.append(item)
-    #temp_str = ""
+    for item in i_strlist :
+      temp_f = fasttext_word.model(item)
+      for item in temp_f.give_recommend() :
+        total_list.append(item)
+    temp_str = ""
 
-    #for item in total_list :
-        #temp_str = temp_str + "," + item
+    for item in total_list :
+        temp_str = temp_str + "," + item
     temp_str = item_f
     print(temp_str)
     resources =  {"searchinit" : temp_str}
