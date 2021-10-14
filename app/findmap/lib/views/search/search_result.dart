@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:async/async.dart';
 import 'package:findmap/models/post.dart';
 import 'package:findmap/models/user.dart';
@@ -5,11 +8,14 @@ import 'package:findmap/utils/utils.dart';
 import 'package:findmap/views/search/search_result_tile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class SearchResult extends StatefulWidget {
-  const SearchResult({required this.user, Key? key}) : super(key: key);
+  const SearchResult({required this.user, required this.keyword, Key? key})
+      : super(key: key);
 
   final User user;
+  final String keyword;
 
   @override
   _SearchResultState createState() => _SearchResultState();
@@ -22,8 +28,7 @@ class _SearchResultState extends State<SearchResult> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future:
-          _memoizer.runOnce(() async => await fetchGetSearchResult(context)),
+      future: _memoizer.runOnce(() async => await fetchGetSearchResult()),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Text('');
@@ -74,45 +79,32 @@ class _SearchResultState extends State<SearchResult> {
     );
   }
 
-  Future<List<Post>> fetchGetSearchResult(BuildContext context) async {
-    return [
-      Post(0, 'title0', 'url', 'url', 'summary0', 'comment0', 1, 1, 'NONE'),
-      Post(1, 'title1', 'url', 'url', 'summary1', 'comment1', 1, 1, 'NONE'),
-      Post(2, 'title2', 'url', 'url', 'summary2', 'comment2', 1, 1, 'NONE'),
-      Post(3, 'title3', 'url', 'url', 'summary3', 'comment3', 1, 1, 'NONE'),
-      Post(0, 'title0', 'url', 'url', 'summary0', 'comment0', 1, 1, 'NONE'),
-      Post(1, 'title1', 'url', 'url', 'summary1', 'comment1', 1, 1, 'NONE'),
-      Post(2, 'title2', 'url', 'url', 'summary2', 'comment2', 1, 1, 'NONE'),
-      Post(3, 'title3', 'url', 'url', 'summary3', 'comment3', 1, 1, 'NONE'),
-      Post(0, 'title0', 'url', 'url', 'summary0', 'comment0', 1, 1, 'NONE'),
-      Post(1, 'title1', 'url', 'url', 'summary1', 'comment1', 1, 1, 'NONE'),
-      Post(2, 'title2', 'url', 'url', 'summary2', 'comment2', 1, 1, 'NONE'),
-      Post(3, 'title3', 'url', 'url', 'summary3', 'comment3', 1, 1, 'NONE'),
-    ];
-    // Map<String, dynamic> param = {"param": 'param'};
-    //
-    // final response = await http.post(
-    //   Uri.http(BASEURL, '/url'),
-    //   headers: {
-    //     HttpHeaders.contentTypeHeader: "application/json",
-    //     "token": "widget.user.accessToken",
-    //   },
-    //   body: json.encode(param),
-    // );
-    //
-    // if (response.statusCode == 200) {
-    //   var responseBody = jsonDecode(response.body);
-    //
-    //   if (responseBody['success']) {
-    //     //Todo
-    //   } else {
-    //     showSnackbar(context, responseBody['message']);
-    //     throw Exception(
-    //         'fetchGetSearchResult Exception: ${responseBody['message']}');
-    //   }
-    // } else {
-    //   showSnackbar(context, '서버와 연결이 불안정합니다');
-    //   throw Exception('Failed to connect to server');
-    // }
+  Future<List<Post>> fetchGetSearchResult() async {
+    Map<String, dynamic> param = {"keyword": widget.keyword};
+
+    final response = await http.post(
+      Uri.http(BASEURL, '/test/search'),
+      headers: {
+        HttpHeaders.contentTypeHeader: "application/json",
+        "token": "widget.user.accessToken",
+      },
+      body: json.encode(param),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = jsonDecode(response.body);
+      if (responseBody['success']) {
+        return responseBody['search_html']
+            .map<Post>((json) => Post.fromJson(json))
+            .toList();
+      } else {
+        showSnackbar(context, responseBody['message']);
+        throw Exception(
+            'fetchGetSearchResult Exception: ${responseBody['message']}');
+      }
+    } else {
+      showSnackbar(context, '서버와 연결이 불안정합니다');
+      throw Exception('Failed to connect to server');
+    }
   }
 }

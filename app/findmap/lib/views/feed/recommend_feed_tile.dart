@@ -95,10 +95,10 @@ class _RecommendFeedTileState extends State<RecommendFeedTile>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             SizedBox(
-              height: 150,
               child: Align(
                   alignment: Alignment.center,
-                  child: imageLoader(controller, widget.feed.thumbnailUrl)),
+                  child: imageLoader(
+                      controller, widget.feed.thumbnailUrl, BoxFit.fitWidth)),
             ),
             Padding(padding: const EdgeInsets.symmetric(vertical: 5)),
             _FeedDescription(

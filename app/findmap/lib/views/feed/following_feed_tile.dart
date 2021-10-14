@@ -121,8 +121,8 @@ class _FollowingFeedTileState extends State<FollowingFeedTile>
                     height: 100,
                     child: Align(
                         alignment: Alignment.center,
-                        child:
-                            imageLoader(controller, widget.feed.thumbnailUrl)),
+                        child: imageLoader(controller, widget.feed.thumbnailUrl,
+                            BoxFit.cover)),
                   ),
                   Padding(padding: const EdgeInsets.symmetric(horizontal: 10)),
                   Expanded(

@@ -99,8 +99,8 @@ class _SearchResultTileState extends State<SearchResultTile>
                     height: 100,
                     child: Align(
                         alignment: Alignment.center,
-                        child:
-                            imageLoader(controller, widget.post.thumbnailUrl)),
+                        child: imageLoader(controller, widget.post.thumbnailUrl,
+                            BoxFit.cover)),
                   ),
                   Padding(padding: const EdgeInsets.symmetric(horizontal: 10)),
                   Expanded(

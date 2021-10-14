@@ -147,6 +147,7 @@ class _SearchTabState extends State<SearchTab> {
         context,
         createRoute(SearchResult(
           user: widget.user,
+          keyword: _searchKeyWord,
         )));
   }
 

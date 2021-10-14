@@ -129,7 +129,7 @@ class _PostTileState extends State<PostTile>
           children: <Widget>[
             AspectRatio(
               aspectRatio: 1.0,
-              child: imageLoader(controller, widget.post.thumbnailUrl),
+              child: imageLoader(controller, widget.post.thumbnailUrl, BoxFit.cover),
             ),
             Expanded(
               child: GestureDetector(
