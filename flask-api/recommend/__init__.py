@@ -47,15 +47,15 @@ def protorecom() :
     for item in i_strlist :
       temp_f = fasttext_word.model(item)
       t_ftext = temp_f.give_recommend()
-      print(t_ftext)
+      
       for item in  t_ftext:
-        total_list.append(item)
+        total_list = total_list + item
     temp_str = ""
 
     for item in total_list :
         temp_str = temp_str + "," + item
     temp_str = item_f
-    print("결과값 :" +temp_str)
+    print(temp_str)
     resources =  {"searchinit" : temp_str}
     return make_response(SUCCESS,resources)
       
