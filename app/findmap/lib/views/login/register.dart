@@ -387,16 +387,16 @@ class _RegisterPageState extends State<RegisterPage> {
       "nickName": _userNickName.text,
       "birthday": _userBirth.text,
       "gender": _gender,
-      "profileUrl": widget.thumbnailURL,
+      "profileUrl": 'https://localhost',
       "categoryList": _intListToString(_categorySelect)
     };
-    print(body.toString());
+
     final response = await http.post(
       Uri.http(BASEURL, '/users/signup'),
       headers: {HttpHeaders.contentTypeHeader: "application/json"},
       body: json.encode(body),
     );
-    print(response.body);
+
     if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
       if (responseBody['success']) {
@@ -433,8 +433,7 @@ class _RegisterPageState extends State<RegisterPage> {
         _saveToSecurityStorage(responseBody['result']['userInfo']);
         return User.fromJson(responseBody['result']['userInfo']);
       } else
-        print(response.body);
-      throw Exception('Response status is failure');
+        throw Exception('Response status is failure');
     } else {
       throw Exception('Failed to load post');
     }

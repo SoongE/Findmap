@@ -279,6 +279,8 @@ class _EmailConfirmState extends State<EmailConfirm> {
       setState(() {
         _emailConfirmNumber =
             jsonDecode(response.body)['result']['authNumber'].toString();
+        print(response.body);
+        print("EMAILOCNFIRM, " + _emailConfirmNumber.toString());
       });
 
       return response.body;
