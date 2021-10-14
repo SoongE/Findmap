@@ -138,7 +138,7 @@ const search = {
             // 현재 순위 가져오기
             const searchWordResult = await searchModel.selectHotSearchWord();  
 
-            var changes = 'new';
+            var changes = 'NEW';
 
             // 처음 순위 매김
             if (getOldRanking.length < 1) {
