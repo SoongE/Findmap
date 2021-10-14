@@ -45,12 +45,11 @@ class _OtherUserPageState extends State<OtherUserPage>
   void initState() {
     _getFolderListMemoizer
         .runOnce(() async => await fetchGetFolderList().then((value) {
-      folderList.addAll(value);
-      return folderList;
-    }));
+              folderList.addAll(value);
+              return folderList;
+            }));
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -108,6 +107,7 @@ class _OtherUserPageState extends State<OtherUserPage>
       },
     );
   }
+
   void _drawSaveToArchive(Feed feed) {
     showSaveToArchiveDialog().then((val) {
       if (_isSelect) {
@@ -119,6 +119,7 @@ class _OtherUserPageState extends State<OtherUserPage>
       }
     });
   }
+
   showSaveToArchiveDialog() async {
     await showDialog(
       context: context,
@@ -133,16 +134,18 @@ class _OtherUserPageState extends State<OtherUserPage>
         content: Container(
           width: MediaQuery.of(context).size.width * 0.8,
           height: MediaQuery.of(context).size.height * 0.6,
-          child: ListView.builder(
-            physics: BouncingScrollPhysics(),
-            itemCount: folderList.length,
-            itemBuilder: (context, index) => ListTile(
-              title: Text(folderList[index].name),
-              onTap: () {
-                _selectedFolder = folderList[index];
-                _isSelect = true;
-                Navigator.pop(context, folderList[index]);
-              },
+          child: ScrollConfiguration(
+            behavior: NoGlowBehavior(),
+            child: ListView.builder(
+              itemCount: folderList.length,
+              itemBuilder: (context, index) => ListTile(
+                title: Text(folderList[index].name),
+                onTap: () {
+                  _selectedFolder = folderList[index];
+                  _isSelect = true;
+                  Navigator.pop(context, folderList[index]);
+                },
+              ),
             ),
           ),
         ),
@@ -150,6 +153,7 @@ class _OtherUserPageState extends State<OtherUserPage>
       barrierDismissible: true,
     );
   }
+
   Future<void> fetchSaveScrap(Feed feed, PostFolder folder) async {
     Map<String, dynamic> body = {
       "title": feed.title,
@@ -225,33 +229,37 @@ class _OtherUserPageState extends State<OtherUserPage>
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           feedData = snapshot.data!;
-          return ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              physics: BouncingScrollPhysics(),
-              separatorBuilder: (BuildContext context, int i) {
-                if (i == 0) return Container();
-                return Divider(height: 1);
-              },
-              itemCount: feedData.isEmpty ? 1 : feedData.length + 1,
-              itemBuilder: (context, index) {
-                if (index == 0) {
-                  // return the header
-                  return Column(children: [
-                    _header(),
-                    Padding(padding: const EdgeInsets.symmetric(vertical: 10)),
-                    _description(),
-                    Padding(padding: const EdgeInsets.symmetric(vertical: 10)),
-                  ]);
-                }
+          return ScrollConfiguration(
+            behavior: NoGlowBehavior(),
+            child: ListView.separated(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                separatorBuilder: (BuildContext context, int i) {
+                  if (i == 0) return Container();
+                  return Divider(height: 1);
+                },
+                itemCount: feedData.isEmpty ? 1 : feedData.length + 1,
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    // return the header
+                    return Column(children: [
+                      _header(),
+                      Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10)),
+                      _description(),
+                      Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10)),
+                    ]);
+                  }
 
-                index -= 1;
+                  index -= 1;
 
-                return FollowingFeedTile(
-                  feed: feedData[index],
-                  onArchivePressed: () => _drawSaveToArchive(feedData[index]),
-                  user: widget.user,
-                );
-              });
+                  return FollowingFeedTile(
+                    feed: feedData[index],
+                    onArchivePressed: () => _drawSaveToArchive(feedData[index]),
+                    user: widget.user,
+                  );
+                }),
+          );
         } else if (snapshot.hasError) {
           return Text("${snapshot.error}");
         }
@@ -259,6 +267,7 @@ class _OtherUserPageState extends State<OtherUserPage>
       },
     );
   }
+
   Future<List<PostFolder>> fetchGetFolderList() async {
     final response = await http.get(
       Uri.http(BASEURL, '/folders'),

@@ -163,12 +163,14 @@ class _ArchivePageState extends State<ArchivePage> {
     }
   }
 
-  ListView _archiveListView(data) {
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      physics: BouncingScrollPhysics(),
-      itemCount: data.length,
-      itemBuilder: (context, index) => _slider(index, data[index]),
+  ScrollConfiguration _archiveListView(data) {
+    return ScrollConfiguration(
+      behavior: NoGlowBehavior(),
+      child: ListView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        itemCount: data.length,
+        itemBuilder: (context, index) => _slider(index, data[index]),
+      ),
     );
   }
 
@@ -275,7 +277,7 @@ class _ArchivePageState extends State<ArchivePage> {
   }
 
   Widget _slider(int index, Post post) {
-    var isFeedShareLabel = post.isFeed == 'Y' ? '피드로 공유' : '피드 공유 해제';
+    var isFeedShareLabel = post.isFeed == 'Y' ? '피드 공유 해제' : '피드로 공유';
     return Slidable(
       key: UniqueKey(),
       startActionPane: ActionPane(

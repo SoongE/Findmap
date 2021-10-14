@@ -148,33 +148,37 @@ class _UserPageState extends State<UserPage>
               ),
             );
           }
-          return ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              physics: BouncingScrollPhysics(),
-              separatorBuilder: (BuildContext context, int i) {
-                if (i == 0) return Container();
-                return Divider(height: 1);
-              },
-              itemCount: feedData.isEmpty ? 1 : feedData.length + 1,
-              itemBuilder: (context, index) {
-                if (index == 0) {
-                  // return the header
-                  return Column(children: [
-                    _header(),
-                    Padding(padding: const EdgeInsets.symmetric(vertical: 10)),
-                    _description(),
-                    Padding(padding: const EdgeInsets.symmetric(vertical: 10)),
-                  ]);
-                }
+          return ScrollConfiguration(
+            behavior: NoGlowBehavior(),
+            child: ListView.separated(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                separatorBuilder: (BuildContext context, int i) {
+                  if (i == 0) return Container();
+                  return Divider(height: 1);
+                },
+                itemCount: feedData.isEmpty ? 1 : feedData.length + 1,
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    // return the header
+                    return Column(children: [
+                      _header(),
+                      Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10)),
+                      _description(),
+                      Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10)),
+                    ]);
+                  }
 
-                index -= 1;
+                  index -= 1;
 
-                return FollowingFeedTile(
-                  user: widget.user,
-                  feed: feedData[index],
-                  onArchivePressed: () {},
-                );
-              });
+                  return FollowingFeedTile(
+                    user: widget.user,
+                    feed: feedData[index],
+                    onArchivePressed: () {},
+                  );
+                }),
+          );
         } else if (snapshot.hasError) {
           return Text("${snapshot.error}");
         }
