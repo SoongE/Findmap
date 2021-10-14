@@ -1,5 +1,6 @@
 from search import searcher
 from search import model
+from search import crawler
 
 class Mainmethod :
   def __init__(self,search_idx) :
