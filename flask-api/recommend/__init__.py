@@ -43,7 +43,7 @@ def protorecom() :
     numtostr_C = numtoStr.Recommend(item_f)
     i_strlist = numtostr_C.give_result()
     total_list = list()
-
+    print(i_strlist)
     for item in i_strlist :
       temp_f = fasttext_word.model(item)
       for item in temp_f.give_recommend() :
