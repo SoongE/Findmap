@@ -130,6 +130,9 @@ class _FollowingFeedTabState extends State<FollowingFeedTab>
     showSaveToArchiveDialog().then((val) {
       if (_selectedFolder.idx != -1) {
         fetchSaveScrap(feed, _selectedFolder).then((v) {});
+        setState(() {
+          feed.scrapStorageCount += 1;
+        });
       }
     });
     _selectedFolder.idx = -1;
