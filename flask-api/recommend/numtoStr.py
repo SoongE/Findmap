@@ -10,7 +10,7 @@ class Recommend :
    password = "mypassword"
    db_name = "findmap-first-db"
 
-   sql = "select * from CategoryTB ct"
+   SQL = "select * from CategoryTB ct"
    self.reco_list = reco_list
 
    db = pymysql.connect(
