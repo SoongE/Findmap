@@ -49,9 +49,9 @@ def protorecom() :
       t_ftext = temp_f.give_recommend()
       
       for item in  t_ftext:
-        total_list = total_list + item
+        total_list.append(item)
     temp_str = ""
-
+    print(total_list)
     for item in total_list :
         temp_str = temp_str + "," + item
     temp_str = item_f
