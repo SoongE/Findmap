@@ -37,12 +37,12 @@ class Mainmethod :
     # 각 카테고리별 스크랩 수 / 최초 관심사 카테고리 등등...
 
 
-    mod.categorize(result)
+    mod.categorize(self.result)
 
     # node.js 로부터 사용자 정보 받아오기.
     # 각 카테고리별 스크랩 수 / 최초 관심사 카테고리 등등...
 
-    result = sorted(result, key=lambda content: (-content['pred'], content['title']))
+    result = sorted(self.result, key=lambda content: (-content['pred'], content['title']))
     for x in result:
         print(f'\n{x["title"]}\n{x["link"]}\n{x["description"]}\n')
 
