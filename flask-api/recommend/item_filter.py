@@ -7,7 +7,7 @@ import pymysql
 
 class Item_filtered :
 
- def __init__(self) : 
+ def __init__(self,user_idx) : 
 
   host_name = "findmap-first-db.c2jag33neij8.ap-northeast-2.rds.amazonaws.com"
   user_name = "admin"
@@ -15,7 +15,7 @@ class Item_filtered :
   db_name = "findmap-first-db"
 
 
-  userid = 0    ### node 로부터 user ID 를 받아야됨
+  self.userid = int(user_idx)    ### node 로부터 user ID 를 받아야됨
 
   db = pymysql.connect(
     host = host_name,
@@ -33,8 +33,6 @@ class Item_filtered :
  ##ratings_df = pd.read_csv(os.path.join(rating_path, 'ratings.csv'), encoding='utf-8')
 
   self.df  = pd.read_sql(SQL,db)
-  
- def give_list(self) :
   train_df, test_df = train_test_split(self.df, test_size=0.2, random_state=1234)
 
   def cos_matrix(a, b):
@@ -74,12 +72,12 @@ class Item_filtered :
     # userId의 전체 rating predictions 
     pred_ratings = np.matmul(user_sim.T.to_numpy(), user_rating) / (sim_sum+1)
     search_prediction_.loc[userId] = pred_ratings
-  max_rating_num = search_prediction_.loc[1].max()
+  max_rating_num = search_prediction_.loc[self.userid].max()
   search_ctg_idx = search_prediction_.columns.tolist()
   recommend_list = [] 
 
   for i in search_ctg_idx :
-    if search_prediction_[i].loc[1] == max_rating_num :
+    if search_prediction_[i].loc[self.userid] == max_rating_num :
         recommend_list.append(i)
   print("1번의 maximum 추천값")
   return recommend_list 

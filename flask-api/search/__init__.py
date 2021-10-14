@@ -1,8 +1,11 @@
 from flask import Blueprint, request
+from pymysql import NULL
 
 from utils import make_response
 
 from search import main_method
+
+from search import model
 
 search_api = Blueprint("search", __name__, url_prefix="/search")
 SUCCESS = "success"
@@ -10,20 +13,27 @@ FAILURE = "failure"
 
 @search_api.route('/')
 def main():
-    mp = main_method.Mainmethod()
+    param_dict = request.args.to_dict()
+    param_value = NULL
+
+    for key in param_dict.keys() :
+      param_value = request.args[key]#### 검색어 param
+
+    mp = main_method.Mainmethod(param_value)
     search_list = mp.main()
     resources = {"search_html" : search_list}
     return make_response(SUCCESS,resources)
 
-@search_api.route('/name', methods=['GET'])
-def name():
-    name = request.args["name"]
-    body = {"message" : f'FLASK SEND: Hello, {name}!'}
+@search_api.route('/categorize',)
+def categorize():
+    param_dict = request.args.to_dict()
+    param_value = NULL
+
+    for key in param_dict.keys() :
+      param_value = request.args[key]#### 검색어 param
+
+    search_idx_cl = model.Categorize(param_value)
+    search_idx = search_idx_cl.ctg()
+    body = {"ctg" : search_idx}
     return make_response(SUCCESS, body)
 
-@search_api.route('/post', methods=['POST'])
-def post():
-    data =  request.get_json()
-    print(f"title: {data['title']}")
-    body = {"log" : "Check your flask log"}
-    return make_response(SUCCESS, body)

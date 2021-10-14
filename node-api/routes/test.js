@@ -34,6 +34,12 @@ router.get('/search/', (req, res, next) => {
   .catch(error=>res.send(error.message))
   .finally();
 });
+router.get('/search/categorize', (req, res, next) => {
+  axios.get('http://flask-api:5000/search/categorize')
+  .then(response=>res.send(response.data))
+  .catch(error=>res.send(error.message))
+  .finally();
+});
 const body = { 'title': 'Axios POST Request Example' };
 router.get('/post', (req,res,next) =>{
   axios.post('http://flask-api:5000/test/post',body)
