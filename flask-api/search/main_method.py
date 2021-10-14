@@ -36,9 +36,8 @@ class Mainmethod :
     # node.js 로부터 사용자 정보 받아오기.
     # 각 카테고리별 스크랩 수 / 최초 관심사 카테고리 등등...
 
-        # 검색 결과의 title 로부터 카테고리를 유추
-    nlp = model.Categorization()
-    nlp.categorize(result)
+
+    mod.categorize(result)
 
     # node.js 로부터 사용자 정보 받아오기.
     # 각 카테고리별 스크랩 수 / 최초 관심사 카테고리 등등...
