@@ -40,17 +40,17 @@ def protorecom() :
     item_c = item_filter.Item_filtered(param_value)
     item_f = item_c.make_list()
     
-    total_list = list()
+    #total_list = list()
 
-    for item in item_f :
-      temp_f = fasttext_word.model(item)
-      for item in temp_f.give_recommend() :
-        total_list.append(item)
-    temp_str = ""
+    #for item in item_f :
+      #temp_f = fasttext_word.model(item)
+      #for item in temp_f.give_recommend() :
+        #total_list.append(item)
+    #temp_str = ""
 
-    for item in total_list :
-        temp_str = temp_str + "," + item
-    
+    #for item in total_list :
+        #temp_str = temp_str + "," + item
+    temp_str = item_f
     print(temp_str)
     resources =  {"searchinit" : temp_str}
     return make_response(SUCCESS,resources)
