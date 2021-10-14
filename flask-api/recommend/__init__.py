@@ -24,11 +24,7 @@ def main():
 
 @recommend_api.route('/recofeed')
 def recommend():
-    param_dict = request.args.get('id')###  node 에서 
-    param_value = NULL
-    
-    for key in param_dict.keys() :
-      param_value = request.args[key]
+    param_value = int(request.args["useridx"])
     item_c = item_filter.Item_filtered(param_value)
     item_f = item_c.give_list()
     temp_str = ""

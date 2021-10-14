@@ -17,7 +17,9 @@ router.get('/name', (req, res, next) => {
   .finally();
 });
 router.get('/recommend/recofeed', (req, res, next) => {
-  axios.get('http://flask-api:5000/recommend/recofeed')
+  const useridx = req.query.useridx
+
+  axios.get('http://flask-api:5000/recommend/recofeed',{ params: {useridx : useridx}} )
   .then(response=>res.send(response.data))
   .catch(error=>res.send(error.message))
   .finally();

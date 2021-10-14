@@ -20,7 +20,7 @@ def main():
     resources = {"search_html" : search_list}
     return make_response(SUCCESS,resources)
 
-@search_api.route('/categorize',)
+@search_api.route('/categorize')
 def categorize():
     param_value = request.args["keyword"]
 
