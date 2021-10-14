@@ -26,6 +26,6 @@ def categorize():
 
     search_idx_cl = model.Categorize(param_value)
     search_idx = search_idx_cl.ctg()
-    body = {"ctg" : search_idx}
+    body = {"ctg" : str(search_idx)}
     return make_response(SUCCESS, body)
 
