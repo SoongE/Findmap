@@ -194,7 +194,7 @@ class _ArchivePageState extends State<ArchivePage> {
             .map<Post>((json) => Post.fromJson(json))
             .toList();
       } else {
-        showSnackbar(context, responseBody['message']);
+        // showSnackbar(context, responseBody['message']);
         throw Exception(
             'fetchGetFolderArchive Exception: ${responseBody['message']}');
       }
@@ -220,7 +220,7 @@ class _ArchivePageState extends State<ArchivePage> {
             .map<Post>((json) => Post.fromJson(json))
             .toList();
       else {
-        showSnackbar(context, responseBody['message']);
+        // showSnackbar(context, responseBody['message']);
         throw Exception(
             'fetchGetArchive Exception: ${responseBody['message']}');
       }
@@ -266,7 +266,7 @@ class _ArchivePageState extends State<ArchivePage> {
             .map<PostFolder>((json) => PostFolder.fromJson(json))
             .toList();
       else {
-        showSnackbar(context, responseBody['message']);
+        // showSnackbar(context, responseBody['message']);
         throw Exception(
             'fetchGetFolderList Exception: ${responseBody['message']}');
       }
