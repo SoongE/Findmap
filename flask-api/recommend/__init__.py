@@ -26,7 +26,7 @@ def main():
 def recommend():
     param_value = int(request.args["useridx"])
     item_c = item_filter.Item_filtered(param_value)
-    item_f = item_c.give_list()
+    item_f = item_c.make_list()
     temp_str = ""
     for item in item_f :
         temp_str = temp_str + "," + str(item)
