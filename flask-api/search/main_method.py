@@ -98,5 +98,4 @@ def share(url):
         scrap_page['img_url'] = None
         scrap_page['category'] = None
 
-    print(scrap_page)
     return scrap_page
