@@ -1,7 +1,6 @@
 import pymysql 
 import pandas as pd 
 
-
 class Recommend :
 
  def __init__(self,reco_list) : 
