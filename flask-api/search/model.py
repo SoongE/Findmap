@@ -76,7 +76,7 @@ class Categorization:
         return np.dot(category_pred_value_np, user_rate_np)
 
 
-   def share(url):
+    def share(url):
     # temporary url. It will get the current url from nodejs later.
      crw = crawler.Crawler(url)
      nlp = model.Model()
@@ -108,7 +108,7 @@ class Categorization:
                 scrap_page['category'] = None
 
 
-        else:
+         else:
             # this page doesn't admit crawling
             scrap_page = dict()
             scrap_page['url'] = url
@@ -116,7 +116,7 @@ class Categorization:
             scrap_page['description'] = None
             scrap_page['img_url'] = None
             scrap_page['category'] = None
-    except:
+     except:
         scrap_page = dict()
         scrap_page['url'] = url
         scrap_page['title'] = None
@@ -124,5 +124,5 @@ class Categorization:
         scrap_page['img_url'] = None
         scrap_page['category'] = None
 
-    return scrap_page
+     return scrap_page
 
