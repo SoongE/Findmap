@@ -6,7 +6,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-const String BASEURL = '3.36.176.1:3000';
+// const String BASEURL = '3.36.176.1:3000';
+const String BASEURL = '3.35.200.151';
 
 Future<void> fetchExample(BuildContext context) async {
   Map<String, dynamic> param = {"param": 'param'};

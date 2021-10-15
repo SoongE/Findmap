@@ -20,9 +20,9 @@ class SharePage extends StatefulWidget {
 }
 
 class _SharePageState extends State<SharePage> {
-  late TextEditingController _titleScrapPage;
+  var _titleScrapPage = TextEditingController(text: "");
   var _commentScrapPage = TextEditingController(text: "");
-  var _newFolderName = TextEditingController(text: null);
+  var _newFolderName = TextEditingController(text: "");
   var _categoryIdx = -1;
   var _thumbnailUrl = '';
   bool _isPublic = false; // false 면 비공개 true 면 공개
@@ -56,16 +56,19 @@ class _SharePageState extends State<SharePage> {
     final response =
         await http.get(Uri.http(BASEURL, '/test/share', param), headers: {
       HttpHeaders.contentTypeHeader: "application/json",
-      "token": "widget.user.accessToken",
-    });
+      "token": widget.user.accessToken,
+    }).timeout(Duration(minutes: 2));
 
     if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
-
+      print(responseBody['result']);
       if (responseBody['success']) {
-        _titleScrapPage.text = responseBody['title'];
-        _commentScrapPage.text = responseBody['description'];
-        _categoryIdx = CATEGORY_INDEX[responseBody['category']] ?? 0;
+        setState(() {
+          _titleScrapPage.text = responseBody['result']['title'];
+          _commentScrapPage.text = responseBody['result']['description'];
+          _categoryIdx =
+              CATEGORY_INDEX[responseBody['result']['category']] ?? 0;
+        });
       } else {
         showSnackbar(context, responseBody['message']);
         throw Exception(
@@ -73,7 +76,7 @@ class _SharePageState extends State<SharePage> {
       }
     } else {
       showSnackbar(context, '서버와 연결이 불안정합니다');
-      throw Exception('Failed to connect to server');
+      throw Exception('Failed to connect to server\n${response.body}');
     }
   }
 
@@ -116,8 +119,6 @@ class _SharePageState extends State<SharePage> {
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Text('');
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
                   } else {
                     return Padding(
                       padding: const EdgeInsets.all(8.0),

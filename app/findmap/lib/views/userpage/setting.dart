@@ -162,7 +162,7 @@ class _SettingState extends State<Setting> {
     final Email email = Email(
       body: body,
       subject: '[${widget.user.nickName}] Findmap 문의',
-      recipients: ['findmap@gmail.com'],
+      recipients: ['findmap.official@gmail.com'],
       cc: [],
       bcc: [],
       attachmentPaths: [],
