@@ -18,9 +18,9 @@ class MyColors {
   static const Color orange = Color(0xffFFA62B);
   static const Color darkOrange = Color(0xffCC7700);
 
-  static const Color water = Color(0xff7AC2ED);
-  static const Color mountain = Color(0xffD1E16F);
-  static const Color ice = Color(0xffE6F8FC);
+  static const Color water = Color(0xff7ac2ed);
+  static const Color mountain = Color(0xffd1e16f);
+  static const Color ice = Color(0xffe6f8fc);
 }
 
 const List<Color> CHART_COLOR = [

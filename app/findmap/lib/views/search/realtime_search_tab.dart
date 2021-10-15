@@ -179,13 +179,27 @@ class _GetRealtimeSearchState extends State<GetRealtimeSearch> {
                     fontSize: 15.3,
                   ),
                 ),
+                '${_ranking[index].changes}'.contains('UP') ?
+                Icon(
+                  Icons.arrow_drop_down_rounded,
+                  color: Colors.blue,
+                ) :
+                '${_ranking[index].changes}'.contains('DOWN') ?
+                Icon(
+                  Icons.arrow_drop_up_rounded,
+                  color: Colors.red,
+                ) :
+                '${_ranking[index].changes}'.contains('NEW') ?
+                Icon(
+                  Icons.star_rounded,
+                  color: Colors.yellow,
+                  size: 18.0,
+                ):
                 Text(
-                  // 실시간 검색어 변동 순위
-                  '${_ranking[index].changes}',
+                  '-  ',
                   style: new TextStyle(
-                    fontWeight: FontWeight.w400,
-                    fontSize: 15.3,
-                  ),
+                    color: Colors.black26,
+                  )
                 ),
               ],
             ),
