@@ -13,7 +13,7 @@ class model :
 
         model = mod
 
-        words = model.get_nearest_neighbors(self.word, k=100)
+        words = model.get_nearest_neighbors(self.word, k=30)
 
         for index in words :
           hangul = re.compile('[^ \uac00-\ud7a3]+')
