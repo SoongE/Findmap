@@ -20,6 +20,12 @@ def main():
   
     mp = main_method.Mainmethod(keyword, userIdx)
     search_list = mp.main()
+
+    for search in search_list:
+        search['contentUrl'] = search.pop('link')
+        search['summary'] = search.pop('description')
+        search['thumbnailUrl'] = ' '
+
     resources = {"search_html" : search_list}
     return make_response(SUCCESS,resources)
 

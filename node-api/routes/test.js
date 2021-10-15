@@ -32,12 +32,11 @@ router.get('/recommend/', (req, res, next) => {
   .catch(error=>res.send(error.message))
   .finally();
 });
-router.get('/search/', (req, res, next) => {
+router.get('/search', (req, res, next) => {
   const keyword = req.query.keyword
-  const userIdx = req.qeury.userIdx
-  console.log(keyword)
-  console.log(userIdx)
-  
+  // const userIdx = req.qeury.userIdx
+  const userIdx = 0
+
   axios.get('http://flask-api:5000/search',{ params: { keyword: keyword , userIdx:userIdx} })
   .then(response=>res.send(response.data))
   .catch(error=>res.send(error.message))
@@ -54,6 +53,7 @@ router.get('/search/categorize', (req, res, next) => {
 });
 router.get('/share', (req, res, next) => {
   const url = req.query.url
+
   axios.get('http://flask-api:5000/search/share',{ params: { url: url } })
   .then(response=>res.send(response.data))
   .catch(error=>res.send(error.message))
