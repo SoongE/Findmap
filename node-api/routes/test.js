@@ -49,16 +49,8 @@ router.get('/search/categorize', (req, res, next) => {
   .catch(error=>res.send(error.message))
   .finally();
 });
-<<<<<<< HEAD
-
 router.get('/share', (req, res, next) => {
   const url = req.query.url
-  console.log("HAHAHAHAHAH")
-  console.log(url)
-=======
-router.get('/share', (req, res, next) => {
-  const url = req.query.url
->>>>>>> hs_final
   axios.get('http://flask-api:5000/search/share',{ params: { url: url } })
   .then(response=>res.send(response.data))
   .catch(error=>res.send(error.message))
