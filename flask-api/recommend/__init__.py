@@ -44,4 +44,4 @@ def protorecom() :
     item_f = item_c.make_list()
     
     for item in item_f :
-       
+       print(item)

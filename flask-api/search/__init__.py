@@ -29,3 +29,11 @@ def categorize():
     body = {"ctg" : search_idx}
     return make_response(SUCCESS, body)
 
+@search_api.route('/share', methods=['GET'])
+def share():
+    url = request.args["url"]
+    print(f"FLASK SHARE URL {url}")
+    result = main_method.share(url)
+
+    body = {"result" : result}
+    return make_response(SUCCESS, body)

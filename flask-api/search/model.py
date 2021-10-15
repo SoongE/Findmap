@@ -50,3 +50,19 @@ class Categorize :
         k = self.df[self.df['name'] == ctg_temp]
         print(ctg_temp)
         return list(k['idx'].values)
+
+
+
+class PororoModel:
+    def __init__(self):
+        self.summ = Pororo(task="summarization", model="abstractive", lang="ko")
+        self.zsl = Pororo(task="zero-topic")
+        pass
+
+    def summarize(self, contents):
+        # summarize contents of the page
+        return self.summ(contents)
+
+    def categorize(self, contents, category_list):
+        # categorize contents
+        return self.zsl(contents, category_list)
