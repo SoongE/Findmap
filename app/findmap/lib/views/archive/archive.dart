@@ -134,7 +134,13 @@ class _ArchivePageState extends State<ArchivePage> {
               _archiveList = snapshot.data!;
               return _archiveListView(_archiveList);
             } else if (snapshot.data == null) {
-              return Text("ITS NULL");
+              return Center(
+                child: Text(
+                  "저장된 게시물이 없습니다.\n게시물을 저장해주세요.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 15, color: Colors.grey[700]),
+                ),
+              );
             } else if (snapshot.hasError) {
               return Text("${snapshot.error}");
             }
@@ -157,12 +163,14 @@ class _ArchivePageState extends State<ArchivePage> {
     }
   }
 
-  ListView _archiveListView(data) {
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      physics: BouncingScrollPhysics(),
-      itemCount: data.length,
-      itemBuilder: (context, index) => _slider(index, data[index]),
+  ScrollConfiguration _archiveListView(data) {
+    return ScrollConfiguration(
+      behavior: NoGlowBehavior(),
+      child: ListView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        itemCount: data.length,
+        itemBuilder: (context, index) => _slider(index, data[index]),
+      ),
     );
   }
 
@@ -186,7 +194,7 @@ class _ArchivePageState extends State<ArchivePage> {
             .map<Post>((json) => Post.fromJson(json))
             .toList();
       } else {
-        showSnackbar(context, responseBody['message']);
+        // showSnackbar(context, responseBody['message']);
         throw Exception(
             'fetchGetFolderArchive Exception: ${responseBody['message']}');
       }
@@ -212,7 +220,7 @@ class _ArchivePageState extends State<ArchivePage> {
             .map<Post>((json) => Post.fromJson(json))
             .toList();
       else {
-        showSnackbar(context, responseBody['message']);
+        // showSnackbar(context, responseBody['message']);
         throw Exception(
             'fetchGetArchive Exception: ${responseBody['message']}');
       }
@@ -258,7 +266,7 @@ class _ArchivePageState extends State<ArchivePage> {
             .map<PostFolder>((json) => PostFolder.fromJson(json))
             .toList();
       else {
-        showSnackbar(context, responseBody['message']);
+        // showSnackbar(context, responseBody['message']);
         throw Exception(
             'fetchGetFolderList Exception: ${responseBody['message']}');
       }
@@ -269,7 +277,7 @@ class _ArchivePageState extends State<ArchivePage> {
   }
 
   Widget _slider(int index, Post post) {
-    var isFeedShareLabel = post.isFeed == 'Y' ? '피드로 공유' : '피드 공유 해제';
+    var isFeedShareLabel = post.isFeed == 'Y' ? '피드 공유 해제' : '피드로 공유';
     return Slidable(
       key: UniqueKey(),
       startActionPane: ActionPane(

@@ -36,7 +36,7 @@ class _UserPageState extends State<UserPage>
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<UserInfo>(
-      future: fetchGetUserInfo(context),
+      future: _fetchGetUserInfo(context),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           userInfo = snapshot.data!;
@@ -148,33 +148,37 @@ class _UserPageState extends State<UserPage>
               ),
             );
           }
-          return ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              physics: BouncingScrollPhysics(),
-              separatorBuilder: (BuildContext context, int i) {
-                if (i == 0) return Container();
-                return Divider(height: 1);
-              },
-              itemCount: feedData.isEmpty ? 1 : feedData.length + 1,
-              itemBuilder: (context, index) {
-                if (index == 0) {
-                  // return the header
-                  return Column(children: [
-                    _header(),
-                    Padding(padding: const EdgeInsets.symmetric(vertical: 10)),
-                    _description(),
-                    Padding(padding: const EdgeInsets.symmetric(vertical: 10)),
-                  ]);
-                }
+          return ScrollConfiguration(
+            behavior: NoGlowBehavior(),
+            child: ListView.separated(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                separatorBuilder: (BuildContext context, int i) {
+                  if (i == 0) return Container();
+                  return Divider(height: 1);
+                },
+                itemCount: feedData.isEmpty ? 1 : feedData.length + 1,
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    // return the header
+                    return Column(children: [
+                      _header(),
+                      Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10)),
+                      _description(),
+                      Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10)),
+                    ]);
+                  }
 
-                index -= 1;
+                  index -= 1;
 
-                return FollowingFeedTile(
-                  user: widget.user,
-                  feed: feedData[index],
-                  onArchivePressed: () {},
-                );
-              });
+                  return FollowingFeedTile(
+                    user: widget.user,
+                    feed: feedData[index],
+                    onArchivePressed: () {},
+                  );
+                }),
+          );
         } else if (snapshot.hasError) {
           return Text("${snapshot.error}");
         }
@@ -183,7 +187,7 @@ class _UserPageState extends State<UserPage>
     );
   }
 
-  Future<UserInfo> fetchGetUserInfo(BuildContext context) async {
+  Future<UserInfo> _fetchGetUserInfo(BuildContext context) async {
     final response = await http.get(
       Uri.http(BASEURL, '/feeds/profile',
           {'userIdx': widget.user.userIdx.toString()}),
@@ -195,13 +199,14 @@ class _UserPageState extends State<UserPage>
 
     if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
+
       if (responseBody['success'] == false) {
         showSnackbar(context, responseBody['message']);
       }
       return UserInfo.fromJson(responseBody['result'][0]);
     } else {
       showSnackbar(context, '서버와 연결이 불안정합니다');
-      throw Exception('fetchGetUserInfo: ${response.body}');
+      throw Exception('_fetchGetUserInfo: ${response.body}');
     }
   }
 
@@ -217,7 +222,6 @@ class _UserPageState extends State<UserPage>
 
     if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
-      print(response.body);
 
       if (responseBody['success'])
         return responseBody['result']

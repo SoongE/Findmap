@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:async/async.dart';
 import 'package:findmap/models/user.dart';
 import 'package:findmap/src/feature_category.dart';
 import 'package:findmap/utils/device_info.dart';
@@ -31,7 +32,10 @@ class _SettingState extends State<Setting> {
   bool _confirmSelect = false;
 
   GlobalKey<S2MultiState<int>> _categoryKey = GlobalKey<S2MultiState<int>>();
-  List<int> _categorySelect = [];
+  List<int> _categorySelect = [7, 8, 9, 10];
+
+  final AsyncMemoizer<List<int>> getUserCategoryMemoizer =
+      AsyncMemoizer<List<int>>();
 
   @override
   Widget build(BuildContext context) {
@@ -45,27 +49,38 @@ class _SettingState extends State<Setting> {
           elevation: 0,
         ),
         body: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _confirmPopUp(),
-              _categorySelectPopUp(),
-              // _textButton('알림'),
-              _textButton('공지사항', callback: _toNotice),
-              _textButton('관심 카테고리 변경', callback: _changeCategory),
-              _textButton('팔로잉/팔로우', callback: _toFollowingFollow),
-              _textButton('약관 확인', callback: _toDocumentToS),
-              _textButton('오픈소스 라이선스 확인', callback: _toDocumentLicense),
-              _textButton('비밀번호 변경'),
-              _textButton('문의', callback: _sendEmail),
-              _textButton('회원탈퇴', callback: _withdrawal),
-              _textButton('로그아웃', callback: _logout),
-              _footer(),
-            ],
-          ),
-        ),
+            padding: const EdgeInsets.all(10),
+            child: FutureBuilder<List<int>>(
+              future: getUserCategoryMemoizer
+                  .runOnce(() async => await fetchGetUserCategory()),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Text('');
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                }
+                _categorySelect = snapshot.data!;
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _confirmPopUp(),
+                    _categorySelectPopUp(),
+                    // _textButton('알림'),
+                    _textButton('공지사항', callback: _toNotice),
+                    _textButton('관심 카테고리 변경', callback: _changeCategory),
+                    _textButton('팔로잉/팔로우', callback: _toFollowingFollow),
+                    _textButton('약관 확인', callback: _toDocumentToS),
+                    _textButton('오픈소스 라이선스 확인', callback: _toDocumentLicense),
+                    _textButton('비밀번호 변경'),
+                    _textButton('문의', callback: _sendEmail),
+                    _textButton('회원탈퇴', callback: _withdrawal),
+                    _textButton('로그아웃', callback: _logout),
+                    _footer(),
+                  ],
+                );
+              },
+            )),
       ),
     );
   }
@@ -116,10 +131,8 @@ class _SettingState extends State<Setting> {
   }
 
   void _changeCategory() async {
-    fetchGetUserCategory().then((value) => setState(() {
-          _categorySelect = value;
-          _categoryKey.currentState!.showModal();
-        }));
+    fetchGetUserCategory().then((value) => _categorySelect = value);
+    _categoryKey.currentState!.showModal();
   }
 
   void _withdrawal() async {
@@ -149,14 +162,12 @@ class _SettingState extends State<Setting> {
     final Email email = Email(
       body: body,
       subject: '[${widget.user.nickName}] Findmap 문의',
-      recipients: ['findmap@gmail.com'],
+      recipients: ['findmap.official@gmail.com'],
       cc: [],
       bcc: [],
       attachmentPaths: [],
       isHTML: false,
     );
-
-    print(body);
 
     try {
       await FlutterEmailSender.send(email);
@@ -252,7 +263,7 @@ class _SettingState extends State<Setting> {
 
     if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
-
+      print(responseBody);
       if (responseBody['success']) {
         if (responseBody['result'] == null) return [];
         List<int> interest = [];
@@ -386,7 +397,8 @@ class _SettingState extends State<Setting> {
         type: S2ChoiceType.chips,
       ),
       onChange: (state) {
-        // For chang immediately
+        // For changing immediately
+        print(state.value);
         if (state.value.length > 5) {
           showSnackbar(context, "관심사는 5개까지 선택 가능합니다.\n최근 수정한 내용은 반영되지 않습니다.");
         } else {

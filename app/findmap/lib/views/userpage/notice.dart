@@ -15,6 +15,13 @@ class _NoticeState extends State<Notice> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          leading: BackButton(color: Colors.black),
+          title: Text('공지사항', style: TextStyle(color: Colors.black)),
+          titleSpacing: 0,
+          elevation: 1,
+          backgroundColor: Colors.white,
+        ),
         body: ListView.separated(
           itemBuilder: (context, index) {
             return GestureDetector(

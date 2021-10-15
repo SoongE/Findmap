@@ -28,6 +28,7 @@ class _RecommendFeedTabState extends State<RecommendFeedTab>
   List<PostFolder> folderList = [PostFolder(0, 0, '아카이브', 0, '', '', '')];
 
   PostFolder _selectedFolder = PostFolder(-1, -1, '', -1, '', '', '');
+  bool _isSelect = false;
 
   final _getFolderListMemoizer = AsyncMemoizer<List<PostFolder>>();
 
@@ -118,11 +119,14 @@ class _RecommendFeedTabState extends State<RecommendFeedTab>
 
   void _drawSaveToArchive(Feed feed) {
     showSaveToArchiveDialog().then((val) {
-      if (_selectedFolder.idx != -1) {
+      if (_isSelect) {
         fetchSaveScrap(feed, _selectedFolder).then((v) {});
+        setState(() {
+          feed.scrapStorageCount += 1;
+          _isSelect = false;
+        });
       }
     });
-    _selectedFolder.idx = -1;
   }
 
   showSaveToArchiveDialog() async {
@@ -146,6 +150,7 @@ class _RecommendFeedTabState extends State<RecommendFeedTab>
               title: Text(folderList[index].name),
               onTap: () {
                 _selectedFolder = folderList[index];
+                _isSelect = true;
                 Navigator.pop(context, folderList[index]);
               },
             ),
@@ -198,13 +203,15 @@ class _RecommendFeedTabState extends State<RecommendFeedTab>
 
     if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
-
       if (responseBody['success']) {
+        if (responseBody['code'] == 3202) {
+          return [];
+        }
         return responseBody['result']
             .map<PostFolder>((json) => PostFolder.fromJson(json))
             .toList();
       } else {
-        showSnackbar(context, responseBody['message']);
+        // showSnackbar(context, responseBody['message']);
         throw Exception(
             'fetchGetFolderList Exception: ${responseBody['message']}');
       }
@@ -217,7 +224,7 @@ class _RecommendFeedTabState extends State<RecommendFeedTab>
   Future<List<Feed>> fetchGetRecommendFeeds(BuildContext context) async {
     final response = await http.get(
       // TODO change to feeds/recommend
-      Uri.http(BASEURL, '/feeds/following'),
+      Uri.http(BASEURL, '/feeds/recommendation', {'scrapIdxList': '2,3,4,5'}),
       headers: {
         HttpHeaders.contentTypeHeader: "application/json",
         "token": widget.user.accessToken,

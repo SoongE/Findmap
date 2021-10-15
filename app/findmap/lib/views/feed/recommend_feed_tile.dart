@@ -34,16 +34,10 @@ class _FeedDescription extends StatelessWidget {
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         Padding(padding: const EdgeInsets.symmetric(vertical: 1)),
-        Row(
-          children: [
-            Text(source,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(color: Colors.grey, fontSize: 12)),
-            Text(" ㆍ " + createdTerm,
-                style: TextStyle(color: Colors.grey, fontSize: 12)),
-          ],
-        ),
+        Text(source + " ㆍ " + createdTerm,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(color: Colors.grey, fontSize: 12)),
         Padding(padding: const EdgeInsets.symmetric(vertical: 1)),
         Text(
           subtitle,
@@ -101,10 +95,10 @@ class _RecommendFeedTileState extends State<RecommendFeedTile>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             SizedBox(
-              height: 150,
               child: Align(
                   alignment: Alignment.center,
-                  child: imageLoader(controller, widget.feed.thumbnailUrl)),
+                  child: imageLoader(
+                      controller, widget.feed.thumbnailUrl, BoxFit.fitWidth)),
             ),
             Padding(padding: const EdgeInsets.symmetric(vertical: 5)),
             _FeedDescription(

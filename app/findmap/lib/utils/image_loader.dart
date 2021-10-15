@@ -2,9 +2,9 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-List<String> _noneThumbnailUrl = [''];
+List<String> _noneThumbnailUrl = ['', 'https://profile'];
 
-Widget imageLoader(AnimationController controller, String url) {
+Widget imageLoader(AnimationController controller, String url, BoxFit fit) {
   if (_noneThumbnailUrl.contains(url)) {
     return Image.asset('assets/archive_basic.png', fit: BoxFit.cover);
   }
@@ -25,8 +25,6 @@ Widget imageLoader(AnimationController controller, String url) {
           return FadeTransition(
             opacity: controller,
             child: ExtendedRawImage(
-              width: 100,
-              height: 100,
               fit: BoxFit.cover,
               image: state.extendedImageInfo?.image,
             ),

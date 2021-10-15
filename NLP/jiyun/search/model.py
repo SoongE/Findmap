@@ -2,10 +2,29 @@ import pandas as pd
 import fasttext
 import random
 import numpy as np
+import pymysql 
 
 class Categorization:
     def __init__(self):
         self.model = fasttext.load_model('/home/jiyun/mount/NLP/model/0826101710_model.bin')
+        
+        # host_name = "findmap-first-db.c2jag33neij8.ap-northeast-2.rds.amazonaws.com"
+        # user_name = "admin"
+        # password = "mypassword"
+        # db_name = "findmap-first-db"
+        
+        # db = pymysql.connect(
+        #        host = host_name,
+        #        port = 3306,
+        #         user = user_name,
+        #         passwd = password,
+        #         db = db_name,
+        #         charset = 'utf8'
+        #  )
+
+        # SQL = "" ## sql 입력
+
+        # self.df = pd.read_sql(SQL,db)
 
     def remove_label(self, pred):
         # fasttext를 사용할 때 카테고리에 붙는 __label__을 제거
@@ -25,9 +44,14 @@ class Categorization:
                          '세계여행': 0, '맛집': 0, 'IT/컴퓨터': 0, '사회/정치': 0, '건강/의학': 0, '비즈니스/경제': 0, '어학/외국어': 0, '교육/학문': 0}
 
         user_rate = list()
-        for x in range(32):
-            user_rate.append(random.uniform(-1, 1))
-        print(user_rate)
+        user_rate = [0.126436, 0.134778, 0.235164, 0.311223, 0.983456, 0.123415, 0.995632, -0.235162, 
+                    0.458636, 0.231463, 0.234515, -0.562231, -0.352111, 0.654724, 0.231523, 
+                    -0.968704, -0.869472, -0.112235, -0.162246, -0.236613, 0.212356, -0.123573, -0.235616, -0.760286,
+                    0.123835, -0.582454, -0.235671, -0.146256, 0.212356, 0.123856, 0.233156, -0.321563]
+        #for x in range(32):
+            #user_rate.append(random.uniform(-1, 1))
+        #print(user_rate)
+        ## 여기서 처리하면됩니다.
 
         for i, x in enumerate(result):
             title = x["title"]
@@ -52,4 +76,3 @@ class Categorization:
 
     def get_category_of_keyword(self, keyword):
         return [keyword, self.model.predict(keyword)[0][0]]
-

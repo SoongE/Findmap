@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:async/async.dart';
 import 'package:findmap/models/post_folder.dart';
 import 'package:findmap/models/user.dart';
+import 'package:findmap/src/feature_category.dart';
 import 'package:findmap/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,14 +20,15 @@ class SharePage extends StatefulWidget {
 }
 
 class _SharePageState extends State<SharePage> {
-  late TextEditingController _titleScrapPage;
+  var _titleScrapPage = TextEditingController(text: "");
   var _commentScrapPage = TextEditingController(text: "");
-  var _newFolderName = TextEditingController(text: null);
+  var _newFolderName = TextEditingController(text: "");
+  var _categoryIdx = -1;
+  var _thumbnailUrl = '';
   bool _isPublic = false; // false 면 비공개 true 면 공개
   List<String> _folderList = ['아카이브'];
   List<PostFolder> _postFolderList = [];
   String _selectedValue = '아카이브';
-  final AsyncMemoizer _memoizer = AsyncMemoizer();
   final GlobalKey<FormState> folderFormKey = GlobalKey<FormState>();
 
   @override
@@ -49,12 +50,34 @@ class _SharePageState extends State<SharePage> {
     super.dispose();
   }
 
-  _getScrapData() {
-    return this._memoizer.runOnce(() async {
-      _titleScrapPage =
-          TextEditingController(text: "오늘의 일기: 오늘은 너무너무 덥다 | 네이버 블로그");
-      return 'Call Data';
-    });
+  Future<void> fetchGetScrapData(String url) async {
+    Map<String, dynamic> param = {"url": url};
+
+    final response =
+        await http.get(Uri.http(BASEURL, '/test/share', param), headers: {
+      HttpHeaders.contentTypeHeader: "application/json",
+      "token": widget.user.accessToken,
+    }).timeout(Duration(minutes: 2));
+
+    if (response.statusCode == 200) {
+      var responseBody = jsonDecode(response.body);
+      print(responseBody['result']);
+      if (responseBody['success']) {
+        setState(() {
+          _titleScrapPage.text = responseBody['result']['title'];
+          _commentScrapPage.text = responseBody['result']['description'];
+          _categoryIdx =
+              CATEGORY_INDEX[responseBody['result']['category']] ?? 0;
+        });
+      } else {
+        showSnackbar(context, responseBody['message']);
+        throw Exception(
+            'fetchGetScrapData Exception: ${responseBody['message']}');
+      }
+    } else {
+      showSnackbar(context, '서버와 연결이 불안정합니다');
+      throw Exception('Failed to connect to server\n${response.body}');
+    }
   }
 
   findFolderUsingIndexWhere(List _folderList, String _newFolderName) {
@@ -92,12 +115,10 @@ class _SharePageState extends State<SharePage> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             FutureBuilder(
-                future: this._getScrapData(),
+                future: fetchGetScrapData(widget.url),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Text('');
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
                   } else {
                     return Padding(
                       padding: const EdgeInsets.all(8.0),

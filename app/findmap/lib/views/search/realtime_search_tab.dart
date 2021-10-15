@@ -23,6 +23,7 @@ class RealtimeSearchTab extends StatefulWidget {
 class _RealtimeSearchTabState extends State<RealtimeSearchTab>
     with SingleTickerProviderStateMixin {
   late List<String> _tabs = ['종합'];
+  late List<int> _tabsIdx = [0];
   AsyncMemoizer<List<String>> _memoizer = AsyncMemoizer();
 
   @override
@@ -31,7 +32,6 @@ class _RealtimeSearchTabState extends State<RealtimeSearchTab>
       future: _memoizer.runOnce(() => fetchGetUserCategory()),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          _tabs.addAll(snapshot.data!);
           return _tabController();
         } else if (snapshot.hasError) {
           return Text("${snapshot.error}");
@@ -77,7 +77,9 @@ class _RealtimeSearchTabState extends State<RealtimeSearchTab>
               children: List.generate(
                   _tabs.length,
                   (index) => GetRealtimeSearch(
-                      categoryName: _tabs[index], user: widget.user))),
+                      categoryIdx: _tabsIdx[index],
+                      categoryName: _tabs[index],
+                      user: widget.user))),
         ),
       ),
     );
@@ -99,9 +101,10 @@ class _RealtimeSearchTabState extends State<RealtimeSearchTab>
         if (responseBody['result'] == null) return [];
         List<String> interest = [];
         for (var i in responseBody['result']) {
+          _tabs.add(CATEGORY_NAME[i['categoryIdx']] ?? '');
+          _tabsIdx.add(i['categoryIdx']);
           interest.add(CATEGORY_NAME[i['categoryIdx']] ?? '');
         }
-        print("USERINTEREST" + interest.toString());
         return interest;
       } else {
         showSnackbar(context, responseBody['message']);
@@ -118,8 +121,13 @@ class _RealtimeSearchTabState extends State<RealtimeSearchTab>
 class GetRealtimeSearch extends StatefulWidget {
   final String categoryName;
   final User user;
+  final int categoryIdx;
 
-  GetRealtimeSearch({Key? key, required this.categoryName, required this.user})
+  GetRealtimeSearch(
+      {Key? key,
+      required this.categoryIdx,
+      required this.categoryName,
+      required this.user})
       : super(key: key);
 
   @override
@@ -146,8 +154,6 @@ class _GetRealtimeSearchState extends State<GetRealtimeSearch> {
   }
 
   Widget _rankList() {
-    int id = CATEGORY_INDEX[widget.categoryName] ?? 0;
-
     return ListView.separated(
       padding: const EdgeInsets.all(8.0),
       itemCount: _ranking.length,
@@ -173,13 +179,27 @@ class _GetRealtimeSearchState extends State<GetRealtimeSearch> {
                     fontSize: 15.3,
                   ),
                 ),
+                '${_ranking[index].changes}'.contains('UP') ?
+                Icon(
+                  Icons.arrow_drop_down_rounded,
+                  color: Colors.blue,
+                ) :
+                '${_ranking[index].changes}'.contains('DOWN') ?
+                Icon(
+                  Icons.arrow_drop_up_rounded,
+                  color: Colors.red,
+                ) :
+                '${_ranking[index].changes}'.contains('NEW') ?
+                Icon(
+                  Icons.star_rounded,
+                  color: Colors.yellow,
+                  size: 18.0,
+                ):
                 Text(
-                  // 실시간 검색어 변동 순위
-                  '${_ranking[index].changes}',
+                  '-  ',
                   style: new TextStyle(
-                    fontWeight: FontWeight.w400,
-                    fontSize: 15.3,
-                  ),
+                    color: Colors.black26,
+                  )
                 ),
               ],
             ),
@@ -205,7 +225,8 @@ class _GetRealtimeSearchState extends State<GetRealtimeSearch> {
 
   Future<List<HotRanking>> fetchGetHotRanking() async {
     final response = await http.get(
-      Uri.http(BASEURL, '/search/hot'),
+      Uri.http(BASEURL, '/search/hot',
+          {'categoryIdx': widget.categoryIdx.toString()}),
       headers: {
         HttpHeaders.contentTypeHeader: "application/json",
         "token": widget.user.accessToken,
@@ -214,7 +235,6 @@ class _GetRealtimeSearchState extends State<GetRealtimeSearch> {
 
     if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
-      print('200');
       if (responseBody['success']) {
         return responseBody['result']
             .map<HotRanking>((json) => HotRanking.fromJson(json))
@@ -225,7 +245,6 @@ class _GetRealtimeSearchState extends State<GetRealtimeSearch> {
             'fetchGetFolderList Exception: ${responseBody['message']}');
       }
     } else {
-      print('error');
       showSnackbar(context, '서버와 연결이 불안정합니다');
       throw Exception('Failed to load Ranking');
     }

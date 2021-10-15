@@ -28,6 +28,7 @@ class _FollowingFeedTabState extends State<FollowingFeedTab>
   List<PostFolder> folderList = [PostFolder(0, 0, '아카이브', 0, '', '', '')];
 
   PostFolder _selectedFolder = PostFolder(-1, -1, '', -1, '', '', '');
+  bool _isSelect = false;
 
   final _getFolderListMemoizer = AsyncMemoizer<List<PostFolder>>();
 
@@ -102,28 +103,40 @@ class _FollowingFeedTabState extends State<FollowingFeedTab>
         controller: _refreshController,
         onRefresh: _onRefresh,
         // onLoading: _onLoading,
-        child: ListView.separated(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          physics: BouncingScrollPhysics(),
-          itemCount: data.length,
-          separatorBuilder: (BuildContext context, int i) => Divider(height: 1),
-          itemBuilder: (context, index) => FollowingFeedTile(
-            user: widget.user,
-            feed: data[index],
-            onArchivePressed: () => _drawSaveToArchive(data[index]),
-          ),
-        ),
+        child: data.length == 0
+            ? Center(
+                child: Text(
+                  "팔로잉하는 사람이 없습니다.\n사람들을 팔로잉 해보세요!",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 15, color: Colors.grey[700]),
+                ),
+              )
+            : ListView.separated(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                physics: BouncingScrollPhysics(),
+                itemCount: data.length,
+                separatorBuilder: (BuildContext context, int i) =>
+                    Divider(height: 1),
+                itemBuilder: (context, index) => FollowingFeedTile(
+                  user: widget.user,
+                  feed: data[index],
+                  onArchivePressed: () => _drawSaveToArchive(data[index]),
+                ),
+              ),
       ),
     );
   }
 
   void _drawSaveToArchive(Feed feed) {
     showSaveToArchiveDialog().then((val) {
-      if (_selectedFolder.idx != -1) {
+      if (_isSelect) {
         fetchSaveScrap(feed, _selectedFolder).then((v) {});
+        setState(() {
+          feed.scrapStorageCount += 1;
+          _isSelect = false;
+        });
       }
     });
-    _selectedFolder.idx = -1;
   }
 
   showSaveToArchiveDialog() async {
@@ -147,6 +160,7 @@ class _FollowingFeedTabState extends State<FollowingFeedTab>
               title: Text(folderList[index].name),
               onTap: () {
                 _selectedFolder = folderList[index];
+                _isSelect = true;
                 Navigator.pop(context, folderList[index]);
               },
             ),
@@ -201,11 +215,14 @@ class _FollowingFeedTabState extends State<FollowingFeedTab>
       var responseBody = jsonDecode(response.body);
 
       if (responseBody['success']) {
+        if (responseBody['code'] == 3202) {
+          return [];
+        }
         return responseBody['result']
             .map<PostFolder>((json) => PostFolder.fromJson(json))
             .toList();
       } else {
-        showSnackbar(context, responseBody['message']);
+        // showSnackbar(context, responseBody['message']);
         throw Exception(
             'fetchGetFolderList Exception: ${responseBody['message']}');
       }
