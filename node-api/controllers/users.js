@@ -34,7 +34,7 @@ const users = {
         if (!regexNickName.test(nickName)) return res.json({success: false, code: 2009, message: "nickName은 2~10자리의 한글,영문,숫자로만 입력이 가능합니다."});
         if (regexSpc.test(nickName)) return res.json({success: false, code: 2010, message: "nickName에는 공백 또는 특수문자를 입력할 수 없습니다."});
 
-        // if (!profileUrl) profileUrl = 'default image';
+        // if (!profileUrl) profileUrl = "http://storage.enuri.info/pic_upload/knowbox2/202009/0841147752020092540507c61-d3bc-4f18-a8ff-cd36a240ca2f.jpg";
         // var img='';
         // if(req.file !== undefined)
         //     img = req.file.location;
@@ -74,7 +74,7 @@ const users = {
             const hashedPassword = await crypto.createHash('sha512').update(password).digest('hex');
 
             // 회원 가입
-            const result = await userModel.signUp(email, password, hashedPassword, name, nickName, profileUrl, birthday, gender, loginType, description);
+            const result = await userModel.signUp(email, password, hashedPassword, name, nickName, profileUrl, description, birthday, gender, loginType);
             const [userInfoRow] = await userModel.selectUserInfoByEmail(email);
 
             userIdx = userInfoRow[0].idx;
@@ -89,7 +89,7 @@ const users = {
             return res.json({success: true, code: 1000, message: "회원가입 성공", result: {userIdx: userInfoRow[0].idx}});
 
         } catch (err) {
-            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
+            return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     signUpSimple: async (req, res) => {
@@ -120,7 +120,7 @@ const users = {
             // 회원 가입 성공
             return res.json({success: true, code: 1000, message: "간편 회원가입 성공", result: {userIdx: userInfoRow[0].idx}});
         } catch (err) {
-            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
+            return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     signIn: async (req, res) => {
@@ -221,7 +221,7 @@ const users = {
             }
 
         } catch (err) {
-            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
+            return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     authSendEmail: async (req, res) => {
@@ -272,7 +272,7 @@ const users = {
         if (!CacheData) return res.json({success: false, code: 2022, message: "인증 캐시 데이터를 가져오지 못했습니다."});
         if (CacheData != verifyCode) return res.json({success: false, code: 2023, message: "인증번호가 일치하지 않습니다."});
 
-        return res.json({success: false, code: 1000, message: "이메일 검증 성공"});
+        return res.json({success: true, code: 1000, message: "이메일 검증 성공"});
 
     },
     logout: async (req, res) => {
@@ -285,7 +285,7 @@ const users = {
             const result = await userModel.deleteJWT(userIdx);
             return res.json({success: true, code: 1000, message: "로그아웃 성공", result: {"userIdx": userIdx}});
         } catch (err) {
-            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
+            return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     withdraw: async (req, res) => {
@@ -298,9 +298,9 @@ const users = {
             const deleteUserResult = await userModel.withdraw(userIdx);
             const deleteJWTResult = await userModel.deleteJWT(userIdx);
             
-            return res.json({success: false, code: 1000, message: "회원 탈퇴 성공", result: {"userIdx": userIdx}});
+            return res.json({success: true, code: 1000, message: "회원 탈퇴 성공", result: {"userIdx": userIdx}});
         } catch (err) {
-            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
+            return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     getUserInfo: async (req, res) => {
@@ -314,7 +314,7 @@ const users = {
             const [userInfoRow] = await userModel.selectUserInfo(userIdx);
             return res.json({success: true, code: 1000, message: "유저 정보 조회 성공", result: userInfoRow[0]});
         } catch (err) {
-            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
+            return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     patchUserInfo: async (req, res) => {
@@ -354,7 +354,7 @@ const users = {
 
             return res.json({success: true, code: 1000, message: "유저 정보 수정 성공", result: userInfoRow[0]});
         } catch (err) {
-            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
+            return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     patchUserName: async (req, res) => {
@@ -376,7 +376,7 @@ const users = {
 
             return res.json({success: true, code: 1000, message: "유저 name 수정 성공", result: userInfoRow[0]});
         } catch (err) {
-            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
+            return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     patchUserNickName: async (req, res) => {
@@ -398,7 +398,7 @@ const users = {
 
             return res.json({success: true, code: 1000, message: "유저 nickName 수정 성공", result: userInfoRow[0]});
         } catch (err) {
-            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
+            return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     patchUserProfileUrl: async (req, res) => {
@@ -419,7 +419,7 @@ const users = {
 
             return res.json({success: true, code: 1000, message: "유저 profileUrl 수정 성공", result: userInfoRow[0]});
         } catch (err) {
-            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
+            return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     patchUserBirthDay: async (req, res) => {
@@ -440,7 +440,7 @@ const users = {
 
             return res.json({success: true, code: 1000, message: "유저 birthday 수정 성공", result: userInfoRow[0]});
         } catch (err) {
-            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
+            return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     patchUserGender: async (req, res) => {
@@ -461,7 +461,7 @@ const users = {
 
             return res.json({success: true, code: 1000, message: "유저 gender 수정 성공", result: userInfoRow[0]});
         } catch (err) {
-            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
+            return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     patchUserDescription: async (req, res) => {
@@ -479,7 +479,7 @@ const users = {
 
             return res.json({success: true, code: 1000, message: "유저 description 추가 성공", result: userInfoRow[0]});
         } catch (err) {
-            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
+            return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     getUserInterest: async (req, res) => {
@@ -493,12 +493,12 @@ const users = {
             const [userInterestRow] = await userModel.selectUserInterest(userIdx);
 
             if (userInterestRow[0] == undefined){
-                return res.json({success: true, code: 3011, message: "유저 관심 카테고리가 존재하지 않습니다."});
+                return res.json({success: false, code: 3011, message: "유저 관심 카테고리가 존재하지 않습니다."});
             }
 
             return res.json({success: true, code: 1000, message: "유저 관심 카테고리 조회 성공", result: userInterestRow});
         } catch (err) {
-            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
+            return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     patchUserInterest: async (req, res) => { // 관심 카테고리 선택
@@ -536,7 +536,7 @@ const users = {
             }
 
         } catch (err) {
-            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
+            return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
         }
     }  
 }

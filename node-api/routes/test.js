@@ -17,19 +17,33 @@ router.get('/name', (req, res, next) => {
   .finally();
 });
 router.get('/recommend/recofeed', (req, res, next) => {
-  axios.get('http://flask-api:5000/recommend/recofeed')
+  const useridx = req.query.keyword
+
+  axios.get('http://flask-api:5000/recommend/recofeed',{ params: {useridx : useridx}} )
   .then(response=>res.send(response.data))
   .catch(error=>res.send(error.message))
   .finally();
 });
 router.get('/recommend/', (req, res, next) => {
-  axios.get('http://flask-api:5000/recommend/')
+  const keyword = req.query.keyword
+
+  axios.get('http://flask-api:5000/recommend',{ params: { keyword: keyword } })
   .then(response=>res.send(response.data))
   .catch(error=>res.send(error.message))
   .finally();
 });
 router.get('/search/', (req, res, next) => {
-  axios.get('http://flask-api:5000/search/')
+  const keyword = req.query.keyword
+  
+  axios.get('http://flask-api:5000/search/',{ params: { keyword: keyword } })
+  .then(response=>res.send(response.data))
+  .catch(error=>res.send(error.message))
+  .finally();
+});
+router.get('/search/categorize', (req, res, next) => {
+  const keyword = req.query.keyword
+
+  axios.get('http://flask-api:5000/search/categorize',{ params: { keyword: keyword } })
   .then(response=>res.send(response.data))
   .catch(error=>res.send(error.message))
   .finally();

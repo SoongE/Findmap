@@ -200,20 +200,43 @@ const search = {
             throw err;
         }
     },
-    selectRanking: async(userIdx, folderIdx) => {
+    selectAllRanking: async() => {
         const query = `
-            SELECT 
-                word, 
+            SELECT
+                word,
                 ranking,
                 case when changes is null or changes = ""
                     then 'new'
-                    else changes
+                else changes
                 end as changes
             FROM SearchRankingTB SR
-                INNER JOIN SearchWordTB SW on SW.idx = SR.wordIdx
+                     INNER JOIN SearchWordTB SW on SW.idx = SR.wordIdx
             GROUP BY wordIdx;
         `;
-        const params = [userIdx, folderIdx];
+        const params = [];
+        try {
+            const result = await pool.queryParam(query,params);
+            return result;
+        } catch (err) {
+            console.log('랭킹 조회 ERROR: ', err);
+            throw err;
+        }
+    },
+    selectRanking: async(categoryIdx) => {
+        const query = `
+            SELECT
+                word,
+                ranking,
+                case when changes is null or changes = ""
+                    then 'new'
+                else changes
+                end as changes
+            FROM SearchRankingTB SR
+                     INNER JOIN SearchWordTB SW on SW.idx = SR.wordIdx
+            WHERE SW.categoryIdx1 = ${categoryIdx} or SW.categoryIdx2 = ${categoryIdx} or SW.categoryIdx3 = ${categoryIdx}
+            GROUP BY wordIdx;
+        `;
+        const params = [categoryIdx];
         try {
             const result = await pool.queryParam(query,params);
             return result;
@@ -234,9 +257,9 @@ const search = {
             throw err;
         }
     },
-    updateChange: async(wordIdx,change) => {
+    updateChange: async(wordIdx,changes) => {
         const query = `UPDATE SearchRankingTB SET changes = ? WHERE wordIdx = ?;`
-        const params = [change, wordIdx];
+        const params = [changes, wordIdx];
         try {
             const result = await pool.queryParam(query,params);
             return [result];

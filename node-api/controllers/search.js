@@ -1,12 +1,40 @@
+var express = require('express');
+var router = express.Router();
+
 let searchModel = require('../models/search');
 let userModel = require('../models/users');
 
 const search = {
     getSearchInternet: async (req, res) => {
+        let searchQuery;
+        const query = req.query.query;
+        const userIdx = req.decoded.userIdx;
+
+        if (!query) {
+            return res.json({success: false, code: 2601, message: "query를 입력해 주세요."});
+        }
+
         try {
-            return res.json({success: true, code: 1000, message: "검색 진행중"});
-        } catch (err) {
-            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
+            // 로그인 확인
+            const checkJWT = await userModel.checkJWT(userIdx);
+            if (checkJWT[0].length < 1) return res.json({success: false, code: 3007, message: "로그인되어 있지 않습니다."});
+
+            const searchQuery = query.trim();
+
+            // 검색 기록 저장
+            const insertSearchLog = await searchModel.insertSearchLog(userIdx,searchQuery);
+
+            // 검색어 저장
+            const checkSearchWord = await searchModel.selectSearchWord(searchQuery);
+            if (checkSearchWord.length < 1) {
+                const insertSearchWord = await searchModel.insertSearchWord(searchQuery);
+            } else {
+                const updateSearchWord = await searchModel.updateSearchWord(searchQuery);
+            }
+
+            return res.json({success: true, code: 1000, message: "검색기록, 검색어 저장 완료"});
+        } catch(err){
+            return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     getSearchFeed: async (req, res) => {
@@ -44,7 +72,7 @@ const search = {
 
             return res.json({success: true, code: 1000, message: "피드 검색 완료", result: searchResult});
         } catch(err){
-            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
+            return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     getSearchUser: async (req, res) => {
@@ -62,7 +90,7 @@ const search = {
 
             return res.json({success: true, code: 1000, message: "유저 검색 완료", result: searchResult});
         } catch (err) {
-            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
+            return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     getSearchLog: async (req, res) => {
@@ -75,12 +103,12 @@ const search = {
 
             const searchRow = await searchModel.selectSearchLog(userIdx);
             if (searchRow[0] == undefined) {
-              return res.json({success: true, code: 3602, message: "검색 기록이 존재하지 않습니다."});
+              return res.json({success: false, code: 3602, message: "검색 기록이 존재하지 않습니다."});
             }
 
             return res.json({success: true, code: 1000, message: "검색 기록 조회 성공", result: searchRow});
         } catch (err) {
-            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
+            return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     deleteSearchLog: async (req, res) => {
@@ -92,12 +120,12 @@ const search = {
         try {
             const checkSearchLog = await searchModel.checkSearchLog(userIdx,wordIdx);
             if (checkSearchLog[0] == undefined) {
-              return res.json({success: true, code: 3602, message: "검색 기록이 존재하지 않습니다."});
+              return res.json({success: false, code: 3602, message: "검색 기록이 존재하지 않습니다."});
             }
             const [searchRow] = await searchModel.deleteSearchLog(userIdx,wordIdx);
             return res.json({success: true, code: 1000, message: "검색 기록 삭제 성공"});
         } catch (err) {
-            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
+            return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     postHotSearchWord: async (req, res) => {
@@ -110,14 +138,14 @@ const search = {
             // 현재 순위 가져오기
             const searchWordResult = await searchModel.selectHotSearchWord();  
 
-            var change = 'new';
+            var changes = 'NEW';
 
             // 처음 순위 매김
             if (getOldRanking.length < 1) {
                 for (searchWord of searchWordResult) {
                     // 순위 테이블에 추가
                     console.log(searchWord);
-                    const insertRanking = await searchModel.insertRanking(searchWord.idx, searchWord.ranking, change);
+                    const insertRanking = await searchModel.insertRanking(searchWord.idx, searchWord.ranking, changes);
                 }
             } else {
                 // 기존 순위 테이블 삭제
@@ -125,7 +153,7 @@ const search = {
 
                 // 새로운 순위 테이블 추가
                 for (searchWord of searchWordResult) {
-                    const insertRanking = await searchModel.insertRanking(searchWord.idx, searchWord.ranking, change);
+                    const insertRanking = await searchModel.insertRanking(searchWord.idx, searchWord.ranking, changes);
                 }
                 
                 // 순위 변동 조회
@@ -134,18 +162,18 @@ const search = {
                         if (currentSearchWord.idx == oldSearchWord.wordIdx) {
                             // 순위 상승
                             if ((oldSearchWord.ranking - currentSearchWord.ranking) > 0) {
-                                change = `UP ${(oldSearchWord.ranking - currentSearchWord.ranking)}`;
-                                const insertChange = await searchModel.updateChange(currentSearchWord.idx, change);
+                                changes = `UP ${(oldSearchWord.ranking - currentSearchWord.ranking)}`;
+                                const insertChanges = await searchModel.updateChange(currentSearchWord.idx, changes);
                             }
                             // 순위 하락
                             else if ((oldSearchWord.ranking - currentSearchWord.ranking) < 0) {
-                                change = `DOWN ${(currentSearchWord.ranking - oldSearchWord.ranking)}`;
-                                const insertChange = await searchModel.updateChange(currentSearchWord.idx, change);
+                                changes = `DOWN ${(currentSearchWord.ranking - oldSearchWord.ranking)}`;
+                                const insertChange = await searchModel.updateChange(currentSearchWord.idx, changes);
                             }
                             // 순위 유지
                             else if ((oldSearchWord.ranking - currentSearchWord.ranking) == 0) {
-                                change = `-`;
-                                const updateChange = await searchModel.updateChange(currentSearchWord.idx, change);
+                                changes = `-`;
+                                const updateChange = await searchModel.updateChange(currentSearchWord.idx, changes);
                             }
                         }
                     }
@@ -154,22 +182,26 @@ const search = {
             }
             return res.json({success: true, code: 1000, message: "검색어 순위 등록 성공"});
         } catch(err){
-            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
+            return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
         }
     },
     getHotSearchWord: async (req, res) => {
+        const categoryIdx = req.query.categoryIdx;
+
+        if (!categoryIdx) return res.json({success: false, code: 2603, message: "categoryIdx를 입력해 주세요. 모든 카테고리는 0입니다."});
+
         try {
-            const searchResult = await searchModel.selectRanking();  
+            var searchResult;
+
+            if(categoryIdx == 0) {
+                searchResult = await searchModel.selectAllRanking();
+            } else {
+                searchResult = await searchModel.selectRanking(categoryIdx);
+            }
+
             return res.json({success: true, code: 1000, message: "실시간 검색어 조회 성공", result: searchResult});
         } catch (err) {
-            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
-        }
-    },
-    getRecommendWord: async (req, res) => {
-        try {
-            return res.json({success: true, code: 1000, message: "검색어 추천 진행중"});
-        } catch (err) {
-            return res.json({success: true, code: 4000, message: 'Server Error : ' + err.message});
+            return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
         }
     }
 }
