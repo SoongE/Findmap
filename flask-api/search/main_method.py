@@ -3,15 +3,16 @@ from search import model
 from search import crawler
 
 class Mainmethod :
-    def __init__(self,search_idx) :
+    def __init__(self,search_idx,user_idx) :
         self.searcher = searcher.Searcher()
         self.result = list()
         self.search = search_idx
+        self.user_idx = user_idx
     def main(self):
         search_text = self.search # 추후 노드에서 받을 예정!
         
         # 검색 결과의 title 로부터 카테고리를 유추
-        mod = model.Categorize(search_text)
+        mod = model.Categorization()
         naver_result = self.searcher.naver_get_result(search_text)
         kakao_result = self.searcher.kakao_get_result(search_text)
 
@@ -36,9 +37,8 @@ class Mainmethod :
 
         # node.js 로부터 사용자 정보 받아오기.
         # 각 카테고리별 스크랩 수 / 최초 관심사 카테고리 등등...
-
-
-        mod.categorize(self.result)
+        
+        mod.categorize(self.result, self.user_idx)
 
         # node.js 로부터 사용자 정보 받아오기.
         # 각 카테고리별 스크랩 수 / 최초 관심사 카테고리 등등...

@@ -13,9 +13,12 @@ FAILURE = "failure"
 
 @search_api.route('/')
 def main():
-    param_value = request.args["keyword"]
+    keyword = request.args["keyword"]
+    userIdx = request.args["userIdx"]
+
+    print(userIdx, keyword, 'FLASK')
   
-    mp = main_method.Mainmethod(param_value)
+    mp = main_method.Mainmethod(keyword, userIdx)
     search_list = mp.main()
     resources = {"search_html" : search_list}
     return make_response(SUCCESS,resources)
@@ -27,7 +30,6 @@ def categorize():
      
     search_idx_cl = model.Categorization()
     search_idx_cl.categorize(keyword, userIdx)
-   
 
     body = {"ctg" : param_value}
     return make_response(SUCCESS, body)

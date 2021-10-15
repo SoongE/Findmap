@@ -7,7 +7,7 @@ from pororo import Pororo
 
 class Categorization:
     def __init__(self):
-        self.model = fasttext.load_model('0826101710_model.bin')
+        self.model = fasttext.load_model('/root/search/0826101710_model.bin')
         
         # host_name = "findmap-first-db.c2jag33neij8.ap-northeast-2.rds.amazonaws.com"
         # user_name = "admin"

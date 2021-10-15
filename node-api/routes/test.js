@@ -34,8 +34,11 @@ router.get('/recommend/', (req, res, next) => {
 });
 router.get('/search/', (req, res, next) => {
   const keyword = req.query.keyword
+  const userIdx = req.qeury.userIdx
+  console.log(keyword)
+  console.log(userIdx)
   
-  axios.get('http://flask-api:5000/search/',{ params: { keyword: keyword } })
+  axios.get('http://flask-api:5000/search',{ params: { keyword: keyword , userIdx:userIdx} })
   .then(response=>res.send(response.data))
   .catch(error=>res.send(error.message))
   .finally();
