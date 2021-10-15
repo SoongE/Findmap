@@ -22,10 +22,11 @@ def main():
 
 @search_api.route('/categorize')
 def categorize():
-    param_value = request.args["keyword"]
+    keyword = request.args["keyword"]
+    userIdx = request.args["userIdx"]
      
     search_idx_cl = model.Categorization()
-    search_idx_cl.categorize(param_value)
+    search_idx_cl.categorize(keyword, userIdx)
    
 
     body = {"ctg" : param_value}

@@ -54,7 +54,7 @@ class Mainmethod :
 def share(url):
     # temporary url. It will get the current url from nodejs later.
     crw = crawler.Crawler(url)
-    nlp = model.Model()
+    nlp = model.PororoModel()
 
     try:
         if crw.robots_check():
