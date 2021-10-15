@@ -17,7 +17,8 @@ class Crawler:
         chrome_options.add_argument('--headless')
         chrome_options.add_argument('--no-sandbox')
         chrome_options.add_argument('--disable-dev-shm-usage')
-        self.driver = webdriver.Chrome('/workspace/chromedriver', chrome_options=chrome_options)
+
+        self.driver = webdriver.Chrome('/root/search/chromedriver', chrome_options=chrome_options)
 
     def robots_check(self):
         domain_name = self.get_host_domain()

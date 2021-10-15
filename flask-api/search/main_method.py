@@ -1,5 +1,6 @@
 from search import searcher
 from search import model
+from search import crawler
 
 class Mainmethod :
   def __init__(self,search_idx) :
@@ -36,10 +37,19 @@ class Mainmethod :
     # node.js 로부터 사용자 정보 받아오기.
     # 각 카테고리별 스크랩 수 / 최초 관심사 카테고리 등등...
 
-    result = sorted(self.result, key=lambda content: (content['title']))
+
+    mod.categorize(self.result)
+
+    # node.js 로부터 사용자 정보 받아오기.
+    # 각 카테고리별 스크랩 수 / 최초 관심사 카테고리 등등...
+
+    result = sorted(self.result, key=lambda content: (-content['pred'], content['title']))
+    for x in result:
+        print(f'\n{x["title"]}\n{x["link"]}\n{x["description"]}\n')
+
+    # result = sorted(self.result, key=lambda content: (content['title']))
     
     return result
-
 
 def share(url):
     # temporary url. It will get the current url from nodejs later.
@@ -72,6 +82,36 @@ def share(url):
             else:
                 scrap_page['category'] = None
 
+def share(url):
+    # temporary url. It will get the current url from nodejs later.
+    crw = crawler.Crawler(url)
+    nlp = model.PororoModel()
+
+    try:
+        if crw.robots_check():
+            # this page admit crawling
+            scrap_page = crw.crawl()
+
+            title = scrap_page['title']
+
+            if 'sentences' in scrap_page:
+                sentences = scrap_page['sentences']
+                if sentences is not None:
+                    description = nlp.summarize(sentences)
+                    scrap_page['description'] = description
+
+            if title is not None:
+                try:
+                    category_list = ['문학/책', '영화', '미술/디자인', '공연/전시', '음악', '드라마', '스타/연예인', '만화/애니',
+                                     '방송', '일상/생각', '육아/결혼', '애완/반려동물', '좋은글/이미지', '패션/미용', '인테리어/DIY',
+                                     '요리/레시피', '상품리뷰', '원예/재배', '게임', '스포츠', '사진', '자동차', '취미', '국내여행',
+                                     '세계여행', '맛집', 'IT/컴퓨터', '사회/정치', '건강/의학', '비즈니스/경제', '외학/외국어', '교육/학문']
+                    category_predict = nlp.categorize(title, category_list)
+                    scrap_page['category'] = max(category_predict, key=category_predict.get)
+                except:
+                    scrap_page['category'] = None
+            else:
+                scrap_page['category'] = None
 
         else:
             # this page doesn't admit crawling
@@ -90,4 +130,3 @@ def share(url):
         scrap_page['category'] = None
 
     return scrap_page
-

@@ -22,18 +22,20 @@ def main():
 
 @search_api.route('/categorize')
 def categorize():
-    param_value = request.args["keyword"]
+    keyword = request.args["keyword"]
+    userIdx = request.args["userIdx"]
+     
+    search_idx_cl = model.Categorization()
+    search_idx_cl.categorize(keyword, userIdx)
+   
 
-    search_idx_cl = model.Categorize(param_value)
-    search_idx = search_idx_cl.ctg()
-    body = {"ctg" : search_idx}
+    body = {"ctg" : param_value}
     return make_response(SUCCESS, body)
 
 @search_api.route('/share', methods=['GET'])
 def share():
-    url = request.args["url"]
-    print(f"FLASK SHARE URL {url}")
-    result = main_method.share(url)
+    param_value = request.args["url"]
 
+    result = main_method.share(param_value)
     body = {"result" : result}
     return make_response(SUCCESS, body)

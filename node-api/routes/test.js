@@ -42,17 +42,23 @@ router.get('/search/', (req, res, next) => {
 });
 router.get('/search/categorize', (req, res, next) => {
   const keyword = req.query.keyword
+  const userIdx = req.qeury.userIdx
 
-  axios.get('http://flask-api:5000/search/categorize',{ params: { keyword: keyword } })
+  axios.get('http://flask-api:5000/search/categorize',{ params: { keyword: keyword , userIdx:userIdx} })
   .then(response=>res.send(response.data))
   .catch(error=>res.send(error.message))
   .finally();
 });
+<<<<<<< HEAD
 
 router.get('/share', (req, res, next) => {
   const url = req.query.url
   console.log("HAHAHAHAHAH")
   console.log(url)
+=======
+router.get('/share', (req, res, next) => {
+  const url = req.query.url
+>>>>>>> hs_final
   axios.get('http://flask-api:5000/search/share',{ params: { url: url } })
   .then(response=>res.send(response.data))
   .catch(error=>res.send(error.message))
@@ -63,6 +69,14 @@ const body = { 'title': 'Axios POST Request Example' };
 router.get('/post', (req,res,next) =>{
   axios.post('http://flask-api:5000/test/post',body)
   .then(response=>res.send(response.data.body['log']))
+  .catch(error=>res.send(error.message))
+  .finally();
+});
+router.get('/recommend/initrecom', (req, res, next) => {
+  const useridx = req.query.keyword
+  
+  axios.get('http://flask-api:5000//recommend/initrecom',{ params: { useridx : useridx } })
+  .then(response=>res.send(response.data))
   .catch(error=>res.send(error.message))
   .finally();
 });
