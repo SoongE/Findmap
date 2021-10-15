@@ -41,7 +41,7 @@ class _SearchResultState extends State<SearchResult> {
               appBar: AppBar(
                 backgroundColor: Colors.white,
                 title: Text(
-                  "Search word",
+                  widget.keyword,
                   style: TextStyle(color: Colors.black),
                 ),
                 elevation: 0,
@@ -82,26 +82,19 @@ class _SearchResultState extends State<SearchResult> {
   Future<List<Post>> fetchGetSearchResult() async {
     Map<String, dynamic> param = {"keyword": widget.keyword};
 
-    final response = await http.post(
-      Uri.http(BASEURL, '/test/search'),
+    final response = await http.get(
+      Uri.http(BASEURL, '/test/search', param),
       headers: {
         HttpHeaders.contentTypeHeader: "application/json",
         "token": "widget.user.accessToken",
       },
-      body: json.encode(param),
     );
 
     if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
-      if (responseBody['success']) {
-        return responseBody['search_html']
-            .map<Post>((json) => Post.fromJson(json))
-            .toList();
-      } else {
-        showSnackbar(context, responseBody['message']);
-        throw Exception(
-            'fetchGetSearchResult Exception: ${responseBody['message']}');
-      }
+      return responseBody['body']['search_html']
+          .map<Post>((json) => Post.fromJson(json))
+          .toList();
     } else {
       showSnackbar(context, '서버와 연결이 불안정합니다');
       throw Exception('Failed to connect to server');
