@@ -552,7 +552,7 @@ class _SharePageState extends State<SharePage> {
       bool _isPublic) async {
     PostFolder _saveFolder =
         _postFolderList.firstWhere((element) => element.name == _selectedValue);
-
+    print(_saveFolder.idx);
     var _folderIdx;
     if (_saveFolder.idx == 0) {
       _folderIdx = '';

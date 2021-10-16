@@ -51,6 +51,14 @@ class _SearchTabState extends State<SearchTab> {
         } else {
           if (_isInit) {
             var valueList = snapshot.data!.split(',');
+            // chartData = [
+            //   ChartData(valueList[1], 1, 4, 3, colorList[0]),
+            //   ChartData(valueList[2], 2, 16, 5, colorList[1]),
+            //   ChartData('검색어', 3, 10, 30, colorList[2]),
+            //   ChartData(valueList[4], 4, 14, 12, colorList[3]),
+            //   ChartData(valueList[5], 5, 8, 15, colorList[4]),
+            // ];
+            //Todo remove
             chartData = [
               ChartData(valueList[1], 1, 4, 3, colorList[0]),
               ChartData(valueList[2], 2, 16, 5, colorList[1]),
