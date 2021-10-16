@@ -51,16 +51,15 @@ class Mainmethod :
         
         return result
 
-def share(url):
+def share(url, crw, nlp):
     # temporary url. It will get the current url from nodejs later.
-    crw = crawler.Crawler(url)
-    nlp = model.PororoModel()
-
     try:
-        if crw.robots_check():
+        if crw.robots_check(url):
             # this page admit crawling
-            scrap_page = crw.crawl()
-
+            scrap_page = crw.crawl(url)
+            print(scrap_page)
+            if scrap_page == 0:
+                return 0
             title = scrap_page['title']
 
             if 'sentences' in scrap_page:
@@ -76,7 +75,7 @@ def share(url):
                                      '요리/레시피', '상품리뷰', '원예/재배', '게임', '스포츠', '사진', '자동차', '취미', '국내여행',
                                      '세계여행', '맛집', 'IT/컴퓨터', '사회/정치', '건강/의학', '비즈니스/경제', '외학/외국어', '교육/학문']
                     category_predict = nlp.categorize(title, category_list)
-                    scrap_page['category'] = max(category_predict, key=category_predict.get)
+                    scrap_page['category'] = max(category_predict, key=category_predict.get).replace('/','·')
                 except:
                     scrap_page['category'] = None
             else:

@@ -3,20 +3,18 @@ from pymysql import NULL
 
 from utils import make_response
 
-from search import main_method
-
-from search import model
+from search import main_method, model, crawler
 
 search_api = Blueprint("search", __name__, url_prefix="/search")
 SUCCESS = "success"
 FAILURE = "failure"
 
+crw = crawler.Crawler()
+pororo = model.PororoModel()
 @search_api.route('/')
 def main():
     keyword = request.args["keyword"]
     userIdx = request.args["userIdx"]
-
-    print(userIdx, keyword, 'FLASK')
   
     mp = main_method.Mainmethod(keyword, userIdx)
     search_list = mp.main()
@@ -43,7 +41,8 @@ def categorize():
 @search_api.route('/share', methods=['GET'])
 def share():
     param_value = request.args["url"]
+    body = main_method.share(param_value, crw, pororo)
 
-    result = main_method.share(param_value)
-    body = {"result" : result}
+    if body == 0:
+        return make_response(FAILURE, body)
     return make_response(SUCCESS, body)

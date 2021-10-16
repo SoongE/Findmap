@@ -7,9 +7,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
 class Crawler:
-
-    def __init__(self, url):
-        self.url = url
+    def __init__(self):
         self.html = ""
         self.soup = ""
 
@@ -20,21 +18,21 @@ class Crawler:
 
         self.driver = webdriver.Chrome('/root/search/chromedriver', chrome_options=chrome_options)
 
-    def robots_check(self):
-        domain_name = self.get_host_domain()
+    def robots_check(self, url):
+        domain_name = self.get_host_domain(url)
         rp = urllib.robotparser.RobotFileParser()
         rp.set_url('https://' + domain_name + '/robots.txt')
         rp.read()
-        check = rp.can_fetch("*", self.url)
+        check = rp.can_fetch("*", url)
         return check
 
-    def get_host_domain(self):
-        tmp = self.url.split('/')
+    def get_host_domain(self,url):
+        tmp = url.split('/')
         return tmp[2]
 
-    def url_connect(self):
+    def url_connect(self, url):
         try:
-            page = urlopen(self.url)
+            page = urlopen(url)
             self.html = page.read()
             page.close()
         except HTTPError as e:
@@ -140,13 +138,13 @@ class Crawler:
         else:
             return imgUrl
 
-    def get_contents(self):
+    def get_contents(self, url):
         # get contents of the page
         sentences = list()
         description = None
         title = None
         img_url = None
-        self.driver.get(self.url)
+        self.driver.get(url)
 
         # get sentences
         if description is None:
@@ -233,17 +231,15 @@ class Crawler:
                 scrap_page['description'] = None
             return scrap_page
 
-    def crawl(self):
-        crawl_html = self.url_connect()
+    def crawl(self, url):
+        crawl_html = self.url_connect(url)
         if not crawl_html:
             print("Error: connect to url")
-            # exit will be changed into sending an error message to nodejs server.
-            exit(0)
+            return 0
 
         crawl_soup = self.html_parse()
         if not crawl_soup:
             print("Error: parse html code")
-            # exit will be changed into sending an error message to nodejs server.
-            exit(0)
+            return 0
 
-        return self.get_contents()
+        return self.get_contents(url)
