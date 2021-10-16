@@ -60,11 +60,11 @@ class _SearchTabState extends State<SearchTab> {
             // ];
             //Todo remove
             chartData = [
-              ChartData('스트리트우먼 파이터', 1, 4, 3, colorList[0]),
-              ChartData('쇼미더 머니', 2, 16, 5, colorList[1]),
+              ChartData('백종원', 1, 4, 3, colorList[0]),
+              ChartData('연남동', 2, 16, 5, colorList[1]),
               ChartData('검색어', 3, 10, 30, colorList[2]),
-              ChartData('레드벨벳', 4, 14, 12, colorList[3]),
-              ChartData('BTS', 5, 8, 15, colorList[4]),
+              ChartData('연돈', 4, 14, 12, colorList[3]),
+              ChartData('스타벅스', 5, 8, 15, colorList[4]),
             ];
             _isInit = false;
           }
@@ -191,11 +191,11 @@ class _SearchTabState extends State<SearchTab> {
         //Todo remove later
         if (searchName == '레드벨벳') {
           chartData = [
-            ChartData('queendom', xList[0], yList[0], size[0], colorList[0]),
-            ChartData('조이', xList[1], yList[1], size[1], colorList[1]),
+            ChartData('스타벅스', xList[0], yList[0], size[0], colorList[0]),
+            ChartData('조각케이크', xList[1], yList[1], size[1], colorList[1]),
             ChartData(searchName, 3, 10, 30, colorList[2]),
-            ChartData('에스파', xList[3], yList[3], size[2], colorList[3]),
-            ChartData('sm', xList[4], yList[4], size[3], colorList[4]),
+            ChartData('쿠키', xList[3], yList[3], size[2], colorList[3]),
+            ChartData('투썸플레이스', xList[4], yList[4], size[3], colorList[4]),
           ];
         }
       });

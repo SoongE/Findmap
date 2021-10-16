@@ -31,7 +31,9 @@ class _SearchResultState extends State<SearchResult> {
       future: _memoizer.runOnce(() async => await fetchGetSearchResult()),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Text('');
+          return Container(
+              color: Colors.white,
+              child: Center(child: CupertinoActivityIndicator(radius: 30)));
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
