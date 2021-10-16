@@ -9,7 +9,6 @@ import 'package:findmap/views/search/search_result.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 class SearchTab extends StatefulWidget {
   const SearchTab({required this.user, Key? key}) : super(key: key);
@@ -186,7 +185,8 @@ class _SearchTabState extends State<SearchTab> {
   }
 
   Future<String> fetchGetInitData() async {
-    Map<String, dynamic> param = {'keyword': widget.user.userIdx.toString()};
+    // Map<String, dynamic> param = {'keyword': widget.user.userIdx.toString()};
+    Map<String, dynamic> param = {'keyword': '1'};
 
     final response = await http.get(
       Uri.http(BASEURL, '/test/recommend/initrecom', param),

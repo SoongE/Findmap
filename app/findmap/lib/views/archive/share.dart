@@ -23,18 +23,21 @@ class _SharePageState extends State<SharePage> {
   var _titleScrapPage = TextEditingController(text: "");
   var _commentScrapPage = TextEditingController(text: "");
   var _newFolderName = TextEditingController(text: "");
-  var _categoryIdx = -1;
+  var _summaryScrapPage = TextEditingController(text: "");
   var _thumbnailUrl = '';
+  int _categoryIdx = -1;
   bool _isPublic = false; // false 면 비공개 true 면 공개
   List<String> _folderList = ['아카이브'];
-  List<PostFolder> _postFolderList = [];
+  List<PostFolder> _postFolderList = [
+    PostFolder(0, -1, '아카이브', -1, '', '', '')
+  ];
   String _selectedValue = '아카이브';
   final GlobalKey<FormState> folderFormKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     fetchGetFolderList().then((value) {
-      _postFolderList = value;
+      _postFolderList.addAll(value);
       setState(() {
         _folderList.addAll(value.map((e) => e.name));
       });
@@ -50,7 +53,7 @@ class _SharePageState extends State<SharePage> {
     super.dispose();
   }
 
-  Future<void> fetchGetScrapData(String url) async {
+  Future<Map> fetchGetScrapData(String url) async {
     Map<String, dynamic> param = {"url": url};
 
     final response =
@@ -61,16 +64,16 @@ class _SharePageState extends State<SharePage> {
 
     if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
-      print(responseBody['result']);
-      if (responseBody['success']) {
-        setState(() {
-          _titleScrapPage.text = responseBody['result']['title'];
-          _commentScrapPage.text = responseBody['result']['description'];
-          _categoryIdx =
-              CATEGORY_INDEX[responseBody['result']['category']] ?? 0;
-        });
+      if (responseBody['status'] == 'success') {
+        print(responseBody);
+        return {
+          'title': responseBody['body']['title'],
+          'summary': responseBody['body']['description'],
+          'categoryIdx': CATEGORY_INDEX[responseBody['body']['category']] ?? 0,
+          'thumbnailUrl': responseBody['body']['img_url'],
+        };
       } else {
-        showSnackbar(context, responseBody['message']);
+        showSnackbar(context, '제목과 내용을 찾지 못했습니다. 직접 넣어주세요.');
         throw Exception(
             'fetchGetScrapData Exception: ${responseBody['message']}');
       }
@@ -103,8 +106,14 @@ class _SharePageState extends State<SharePage> {
           IconButton(
             icon: Icon(Icons.save_rounded, color: Colors.black),
             onPressed: () {
-              fetchSaveScrap(_titleScrapPage.text, _newFolderName.text,
-                  _commentScrapPage.text, _isPublic);
+              fetchSaveScrap(
+                  _titleScrapPage.text,
+                  _summaryScrapPage.text,
+                  _newFolderName.text,
+                  _commentScrapPage.text,
+                  _thumbnailUrl,
+                  _categoryIdx,
+                  _isPublic);
             },
           ),
         ],
@@ -120,6 +129,12 @@ class _SharePageState extends State<SharePage> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Text('');
                   } else {
+                    Map data = snapshot.data;
+                    _titleScrapPage.text = data['title'];
+                    _thumbnailUrl = data['thumbnailUrl'];
+                    _summaryScrapPage.text = data['summary'];
+                    _categoryIdx = data['categoryIdx'];
+
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: SingleChildScrollView(
@@ -170,6 +185,58 @@ class _SharePageState extends State<SharePage> {
                                         BorderSide(color: Colors.transparent),
                                   ),
                                   hintText: "글의 제목을 적어보세요!",
+                                ),
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.symmetric(vertical: 13),
+                              height: 1,
+                              width: double.maxFinite,
+                              color: Colors.grey,
+                            ),
+                            Container(
+                              padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                              child: Text(
+                                '요약',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                //border corner radius
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    //color of shadow
+                                    spreadRadius: 2,
+                                    //spread radius
+                                    blurRadius: 5,
+                                    // blur radius
+                                    offset: Offset(
+                                        0, 2), // changes position of shadow
+                                  ),
+                                ],
+                              ),
+                              child: TextField(
+                                textInputAction: TextInputAction.done,
+                                controller: _summaryScrapPage,
+                                minLines: 3,
+                                maxLines: 3,
+                                decoration: InputDecoration(
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide:
+                                        BorderSide(color: Colors.transparent),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: Colors.transparent),
+                                  ),
                                 ),
                               ),
                             ),
@@ -475,20 +542,35 @@ class _SharePageState extends State<SharePage> {
     }
   }
 
-  void fetchSaveScrap(String title, String newFolderName, String comment,
+  void fetchSaveScrap(
+      String title,
+      String summary,
+      String newFolderName,
+      String comment,
+      String thumbnailUrl,
+      int categoryIdx,
       bool _isPublic) async {
     PostFolder _saveFolder =
         _postFolderList.firstWhere((element) => element.name == _selectedValue);
+
+    var _folderIdx;
+    if (_saveFolder.idx == 0) {
+      _folderIdx = '';
+    } else {
+      _folderIdx = _saveFolder.idx.toString();
+    }
+
     Map<String, dynamic> body = {
       "title": title,
       "comment": comment,
-      "summary": "SUMMARY",
+      "summary": summary,
       "contentUrl": widget.url,
-      "thumbnailUrl": "thumbnailUrl",
-      "folderIdx": _saveFolder.idx.toString(),
-      "categoryIdx": '23',
+      "thumbnailUrl": thumbnailUrl,
+      "folderIdx": _folderIdx,
+      "categoryIdx": categoryIdx.toString(),
       "isFeed": _isPublic ? 'Y' : 'N',
     };
+
     final response = await http.post(
       Uri.http(BASEURL, '/scrap'),
       headers: {
@@ -502,8 +584,9 @@ class _SharePageState extends State<SharePage> {
       var responseBody = jsonDecode(response.body);
       if (responseBody['success'] == false) {
         showSnackbar(context, responseBody['message']);
+      } else {
+        SystemNavigator.pop();
       }
-      SystemNavigator.pop();
     } else {
       showSnackbar(context, '서버와 연결이 불안정합니다');
       throw Exception('Failed to load post!!! ${response.body}');
