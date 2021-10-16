@@ -30,7 +30,7 @@ class _ArchivePageState extends State<ArchivePage> {
 
   final _getArchiveMemoizer = AsyncMemoizer<List<Post>>();
 
-  late PostFolder _state = PostFolder(-1, -1, '아카이브', -1, '', '', '');
+  late PostFolder _state = PostFolder(0, -1, '아카이브', -1, '', '', '');
 
   late TextEditingController _title;
   late TextEditingController _comment;
@@ -59,7 +59,7 @@ class _ArchivePageState extends State<ArchivePage> {
                   if (snapshot.hasData && snapshot.data != null) {
                     _folderList = snapshot.data!;
                     _folderList.insert(
-                        0, PostFolder(-1, 0, '아카이브', 0, '', '', ''));
+                        0, PostFolder(0, -1, '아카이브', -1, '', '', ''));
                     return PopupMenuButton<PostFolder>(
                       padding: const EdgeInsets.all(0),
                       icon: Icon(
@@ -69,7 +69,7 @@ class _ArchivePageState extends State<ArchivePage> {
                       ),
                       onSelected: (value) => setState(() => {
                             _state = value,
-                            value.idx == -1
+                            value.idx == 0
                                 ? fetchGetArchive(context)
                                     .then((newValue) => _archiveList = newValue)
                                 : fetchGetFolderArchive(context, value).then(
@@ -125,7 +125,7 @@ class _ArchivePageState extends State<ArchivePage> {
           ],
         ),
         body: FutureBuilder<List<Post>>(
-          future: _state.idx == -1
+          future: _state.idx == 0
               ? _getArchiveMemoizer
                   .runOnce(() async => await fetchGetArchive(context))
               : fetchGetFolderArchive(context, _state),

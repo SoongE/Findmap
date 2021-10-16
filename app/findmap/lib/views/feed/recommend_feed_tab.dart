@@ -225,7 +225,7 @@ class _RecommendFeedTabState extends State<RecommendFeedTab>
     final response = await http.get(
       // TODO change to feeds/recommend
       Uri.http(BASEURL, '/feeds/recommendation',
-          {'scrapIdxList': '95,92,91,88,85,84,2,3,4,5'}),
+          {'scrapIdxList': '95,92,91,88,2,3,4,5'}),
       headers: {
         HttpHeaders.contentTypeHeader: "application/json",
         "token": widget.user.accessToken,
