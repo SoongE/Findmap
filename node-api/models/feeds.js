@@ -127,16 +127,16 @@ const feed = {
     },
     selectProfile: async(userIdx) => {
         const query = `
-        SELECT 
+        SELECT
             U.idx,
             U.profileUrl,
             U.nickName,
             U.description,
-            (SELECT COUNT(*) FROM ScrapTB S WHERE U.idx = S.userIdx) AS ScrapCount,
-            (SELECT COUNT(*) FROM FollowTB F WHERE U.idx = F.followingIdx) AS FollowCount,
-            (SELECT COUNT(*) FROM FeedHeartTB FH WHERE FH.userIdx = U.idx) AS HaertCount
+            (SELECT COUNT(*) FROM ScrapTB S WHERE U.idx = S.userIdx and S.status = 'Y') AS ScrapCount,
+            (SELECT COUNT(*) FROM FollowTB F WHERE U.idx = F.followingIdx and F.status = 'Y') AS FollowCount,
+            (SELECT COUNT(*) FROM FeedHeartTB FH WHERE FH.userIdx = U.idx and FH.status = 'Y') AS HaertCount
         FROM UserTB U
-            WHERE U.idx = ? and U.status = 'Y'
+        WHERE U.idx = ? and U.status = 'Y'
         `;
         const params = [userIdx];
         try {
