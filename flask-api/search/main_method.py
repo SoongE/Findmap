@@ -3,16 +3,17 @@ from search import model
 from search import crawler
 
 class Mainmethod :
-    def __init__(self,search_idx,user_idx) :
+    def __init__(self,search_idx,user_idx,fasttext_model) :
         self.searcher = searcher.Searcher()
         self.result = list()
         self.search = search_idx
         self.user_idx = user_idx
+        self.model = fasttext_model
     def main(self):
         search_text = self.search # 추후 노드에서 받을 예정!
         
         # 검색 결과의 title 로부터 카테고리를 유추
-        mod = model.Categorization()
+        mod = model.Categorization(self.model)
         naver_result = self.searcher.naver_get_result(search_text)
         kakao_result = self.searcher.kakao_get_result(search_text)
 

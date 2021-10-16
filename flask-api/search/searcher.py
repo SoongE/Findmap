@@ -9,11 +9,11 @@ class Searcher:
         # naver에서 rest api 통신할 때 필요한 정보들
         self.client_id = "zNA2MKsxD6v8EPSyzzRZ"
         self.client_secret = "s_AtHZylUw"
-        self.display = "50"
+        self.display = "5"
 
         # kakao에서 rest api 통신할 때 필요한 정보들
         self.rest_api_key = "9eae6db2c08b5fe4082bdd95f8134d01"
-        self.size = "50"
+        self.size = "5"
 
     def convert_html_special_char(self, string):
         new_str = re.sub('(<([^>]+)>)', '', string)
@@ -119,12 +119,12 @@ class Searcher:
         result = list()
 
         blog_result = self.kakao_parse_json(blog_url)
-        cafe_result = self.kakao_parse_json(cafe_url)
+        # cafe_result = self.kakao_parse_json(cafe_url)
 
         if blog_result:
             result += blog_result
-        if cafe_result:
-            result += cafe_result
+        # if cafe_result:
+        #     result += cafe_result
 
         if not result:
             print("Error: fail to get result")

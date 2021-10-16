@@ -1,8 +1,8 @@
 from flask import Blueprint, request
 from pymysql import NULL
+import fasttext
 
 from utils import make_response
-
 from search import main_method, model, crawler
 
 search_api = Blueprint("search", __name__, url_prefix="/search")
@@ -11,18 +11,19 @@ FAILURE = "failure"
 
 crw = crawler.Crawler()
 pororo = model.PororoModel()
+fasttext_model = fasttext.load_model('/root/search/0826101710_model.bin')
+
 @search_api.route('/')
 def main():
     keyword = request.args["keyword"]
     userIdx = request.args["userIdx"]
   
-    mp = main_method.Mainmethod(keyword, userIdx)
+    mp = main_method.Mainmethod(keyword, userIdx, fasttext_model)
     search_list = mp.main()
 
     for search in search_list:
         search['contentUrl'] = search.pop('link')
         search['summary'] = search.pop('description')
-        search['thumbnailUrl'] = ' '
 
     resources = {"search_html" : search_list}
     return make_response(SUCCESS,resources)
