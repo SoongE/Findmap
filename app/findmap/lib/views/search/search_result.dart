@@ -64,17 +64,6 @@ class _SearchResultState extends State<SearchResult> {
         itemCount: _post.length,
         itemBuilder: (context, index) =>
             SearchResultTile(user: widget.user, post: _post[index]),
-        // ListView.separated(
-        //   padding: const EdgeInsets.symmetric(horizontal: 20),
-        //   physics: BouncingScrollPhysics(),
-        //   itemCount: data.length,
-        //   separatorBuilder: (BuildContext context, int i) => Divider(height: 1),
-        //   itemBuilder: (context, index) => FollowingFeedTile(
-        //     user: widget.user,
-        //     feed: data[index],
-        //     onArchivePressed: () => _drawSaveToArchive(data[index]),
-        //   ),
-        // ),
       ),
     );
   }
