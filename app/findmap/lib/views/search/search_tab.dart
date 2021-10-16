@@ -185,18 +185,8 @@ class _SearchTabState extends State<SearchTab> {
     });
   }
 
-  Widget _webView(String search) {
-    return SafeArea(
-      child: WebView(
-        initialUrl:
-            'https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=1&ie=utf8&query=$search',
-        javascriptMode: JavascriptMode.unrestricted,
-      ),
-    );
-  }
-
   Future<String> fetchGetInitData() async {
-    Map<String, dynamic> param = {'keyword': '1'};
+    Map<String, dynamic> param = {'keyword': widget.user.userIdx.toString()};
 
     final response = await http.get(
       Uri.http(BASEURL, '/test/recommend/initrecom', param),
