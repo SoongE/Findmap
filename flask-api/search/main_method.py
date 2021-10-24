@@ -58,7 +58,6 @@ def share(url, crw, nlp):
         if crw.robots_check(url):
             # this page admit crawling
             scrap_page = crw.crawl(url)
-            print(scrap_page)
             if scrap_page == 0:
                 return 0
             title = scrap_page['title']

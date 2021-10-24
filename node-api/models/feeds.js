@@ -133,7 +133,7 @@ const feed = {
             U.nickName,
             U.description,
             (SELECT COUNT(*) FROM ScrapTB S WHERE U.idx = S.userIdx and S.status = 'Y') AS ScrapCount,
-            (SELECT COUNT(*) FROM FollowTB F WHERE U.idx = F.followingIdx and F.status = 'Y') AS FollowCount,
+            (SELECT COUNT(*) FROM FollowTB F WHERE U.idx = F.followingIdx and F.status = 'Y') AS FollowerCount,
             (SELECT COUNT(*) FROM FeedHeartTB FH WHERE FH.userIdx = U.idx and FH.status = 'Y') AS HaertCount
         FROM UserTB U
         WHERE U.idx = ? and U.status = 'Y'

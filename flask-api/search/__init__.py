@@ -5,6 +5,10 @@ import fasttext
 from utils import make_response
 from search import main_method, model, crawler
 
+import warnings
+warnings.filterwarnings("ignore")
+fasttext.FastText.eprint = lambda x: None
+
 search_api = Blueprint("search", __name__, url_prefix="/search")
 SUCCESS = "success"
 FAILURE = "failure"
@@ -26,6 +30,9 @@ def main():
         search['summary'] = search.pop('description')
 
     resources = {"search_html" : search_list}
+    print("Search Result")
+    print(f"Input: {keyword}")
+    print(f"Sorted result: {search_list}")
     return make_response(SUCCESS,resources)
 
 @search_api.route('/categorize')
