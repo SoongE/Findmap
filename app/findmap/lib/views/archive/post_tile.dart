@@ -11,15 +11,13 @@ class _ArticleDescription extends StatelessWidget {
     Key? key,
     required this.title,
     required this.subtitle,
-    required this.author,
-    required this.source,
+    required this.url,
     required this.isFeed,
   }) : super(key: key);
 
   final String title;
   final String subtitle;
-  final String author;
-  final String source;
+  final String url;
   final bool isFeed;
 
   @override
@@ -63,20 +61,18 @@ class _ArticleDescription extends StatelessWidget {
               isFeed
                   ? Icon(Icons.screen_share, size: 15, color: Colors.green)
                   : Container(),
-              Padding(padding: const EdgeInsets.symmetric(horizontal: 3)),
-              Text(
-                author,
-                style: const TextStyle(
-                  fontSize: 12.0,
-                  color: Colors.black87,
-                ),
-              ),
-              Padding(padding: const EdgeInsets.symmetric(horizontal: 3)),
-              Text(
-                source,
-                style: const TextStyle(
-                  fontSize: 12.0,
-                  color: Colors.black54,
+              isFeed
+                  ? Padding(padding: const EdgeInsets.symmetric(horizontal: 3))
+                  : Container(),
+              Expanded(
+                child: Text(
+                  url,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 12.0,
+                    color: Colors.black87,
+                  ),
                 ),
               ),
             ],
@@ -129,7 +125,8 @@ class _PostTileState extends State<PostTile>
           children: <Widget>[
             AspectRatio(
               aspectRatio: 1.0,
-              child: imageLoader(controller, widget.post.thumbnailUrl, BoxFit.cover),
+              child: imageLoader(
+                  controller, widget.post.thumbnailUrl, BoxFit.cover),
             ),
             Expanded(
               child: GestureDetector(
@@ -140,8 +137,7 @@ class _PostTileState extends State<PostTile>
                   child: _ArticleDescription(
                     title: widget.post.title,
                     subtitle: widget.post.summary,
-                    author: "글쓴이",
-                    source: "출처",
+                    url: widget.post.contentUrl,
                     isFeed: widget.post.isFeed == 'Y' ? true : false,
                   ),
                 ),
@@ -159,29 +155,4 @@ class _PostTileState extends State<PostTile>
       javascriptMode: JavascriptMode.unrestricted,
     );
   }
-
-// static Future<bool> get _delay async {
-//   await Future.delayed(Duration(milliseconds: 250));
-//   return true;
-// }
-//
-// Widget _webView(String url) {
-//   return SafeArea(
-//     child: Container(
-//       color: Colors.black,
-//       child: FutureBuilder(
-//         future: _delay,
-//         builder: (BuildContext context, AsyncSnapshot snapshot) {
-//           if (snapshot.hasData) {
-//             return WebView(
-//               initialUrl: url,
-//               javascriptMode: JavascriptMode.unrestricted,
-//             );
-//           }
-//           return Container(color: Colors.black);
-//         },
-//       ),
-//     ),
-//   );
-// }
 }
