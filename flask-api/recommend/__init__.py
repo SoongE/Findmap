@@ -6,6 +6,9 @@ from recommend import fasttext_word
 from recommend import item_filter
 from recommend import numtoStr
 
+import warnings
+warnings.filterwarnings("ignore")
+
 recommend_api = Blueprint("recommend", __name__, url_prefix="/recommend")
 SUCCESS = "success"
 FAILURE = "failure"
@@ -19,6 +22,9 @@ def main():
     for item in rec_list :
         temp_str = temp_str + "," + item
     resources = {"model" : temp_str}
+    print("Recommend Search Keyword")
+    print(f"Input: {param_value}")
+    print(f"Recommend keywords: {rec_list}")
     return make_response(SUCCESS,resources)
 
 
@@ -31,6 +37,9 @@ def recommend():
     for item in item_f :
         temp_str = temp_str + "," + str(item)
     resources =  {"model" : temp_str }
+    print(f"Recommend Feeds")
+    print(f"Input: user_idx {param_value}")
+    print(f"Recommend feeds idxs: {item_f}")
     return make_response(SUCCESS,resources)
 
 
@@ -43,7 +52,7 @@ def protorecom() :
     numtostr_C = numtoStr.Recommend(item_f)
     i_strlist = numtostr_C.give_result()
     total_list = list()
-    print(list(i_strlist))
+    # print(list(i_strlist))
     for item in i_strlist :
       temp_f = fasttext_word.model(item)
       t_ftext = temp_f.give_recommend()
@@ -51,11 +60,10 @@ def protorecom() :
       for item in  t_ftext:
         total_list.append(item)
     temp_str = ""
-    print(total_list)
+    # print(total_list)
     for item in total_list :
         temp_str = temp_str + "," + item
  
-    print(temp_str)
     resources =  {"searchinit" : temp_str}
     return make_response(SUCCESS,resources)
       
