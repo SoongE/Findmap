@@ -203,7 +203,7 @@ class _OtherUserPageState extends State<OtherUserPage>
         children: [
           circleImageLoader(userInfo.profileUrl, 65),
           displayCounter("스크랩", userInfo.ScrapCount.toString()),
-          displayCounter("팔로워", userInfo.FollowCount.toString()),
+          displayCounter("팔로워", userInfo.FollowerCount.toString()),
           displayCounter("하트", userInfo.HaertCount.toString()),
         ],
       ),

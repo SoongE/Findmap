@@ -50,8 +50,8 @@ const follow = {
         const query = `
             SELECT U.idx, U.profileUrl, U.nickName, U.description
             FROM UserTB U
-                INNER JOIN FollowTB F ON U.idx = F.followerIdx
-            WHERE F.followingIdx = ? and F.status = 'Y';
+                     INNER JOIN FollowTB F ON U.idx = F.followingIdx
+            WHERE F.followerIdx = ? and F.status = 'Y';
         `;
         const params = [userIdx];
         try {
@@ -66,8 +66,8 @@ const follow = {
         const query = `
             SELECT U.idx, U.profileUrl, U.nickName, U.description
             FROM UserTB U
-                INNER JOIN FollowTB F ON U.idx = F.followingIdx
-            WHERE F.followerIdx = ? and F.status = 'Y';
+                     INNER JOIN FollowTB F ON U.idx = F.followerIdx
+            WHERE F.followingIdx = ? and F.status = 'Y';
         `;
         const params = [userIdx];
         try {

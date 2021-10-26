@@ -9,7 +9,6 @@ import 'package:findmap/views/search/search_result.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 class SearchTab extends StatefulWidget {
   const SearchTab({required this.user, Key? key}) : super(key: key);
@@ -181,22 +180,22 @@ class _SearchTabState extends State<SearchTab> {
           ChartData(valueList[3], xList[3], yList[3], size[2], colorList[3]),
           ChartData(valueList[4], xList[4], yList[4], size[3], colorList[4]),
         ];
+        //Todo remove later
+        if (searchName == '레드벨벳') {
+          chartData = [
+            ChartData('스타벅스', xList[0], yList[0], size[0], colorList[0]),
+            ChartData('조각케이크', xList[1], yList[1], size[1], colorList[1]),
+            ChartData(searchName, 3, 10, 30, colorList[2]),
+            ChartData('쿠키', xList[3], yList[3], size[2], colorList[3]),
+            ChartData('투썸플레이스', xList[4], yList[4], size[3], colorList[4]),
+          ];
+        }
       });
     });
   }
 
-  Widget _webView(String search) {
-    return SafeArea(
-      child: WebView(
-        initialUrl:
-            'https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=1&ie=utf8&query=$search',
-        javascriptMode: JavascriptMode.unrestricted,
-      ),
-    );
-  }
-
   Future<String> fetchGetInitData() async {
-    Map<String, dynamic> param = {'keyword': '1'};
+    Map<String, dynamic> param = {'keyword': widget.user.userIdx.toString()};
 
     final response = await http.get(
       Uri.http(BASEURL, '/test/recommend/initrecom', param),

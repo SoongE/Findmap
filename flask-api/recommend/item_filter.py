@@ -39,8 +39,8 @@ class Item_filtered :
      cos_df = pd.DataFrame(data=cos_values, columns = a.index.values, index=a.index)
      return cos_df
 
-   print(train_df.shape)
-   print(test_df.shape)
+  #  print(train_df.shape)
+  #  print(test_df.shape)
 
    sparse_matrix = train_df.groupby('keywordidx').apply(lambda x: pd.Series(x['rating'].values, index=x['userIdx'])).unstack()
    sparse_matrix.index.name = 'keywordidx'
@@ -57,7 +57,7 @@ class Item_filtered :
      sparse_matrix_withsearch = sparse_matrix
 
    search_cos_df = cos_matrix(sparse_matrix_withsearch, sparse_matrix_withsearch)
-   print("matirx화 성공")
+  #  print("matirx화 성공")
    userId_grouped = train_df.groupby('userIdx')
    search_prediction_ = pd.DataFrame(index=list(userId_grouped.indices.keys()), columns=sparse_matrix_withsearch.index)
 
@@ -78,5 +78,5 @@ class Item_filtered :
    for i in search_ctg_idx :
      if search_prediction_[i].loc[self.userid] == max_rating_num :
          recommend_list.append(i)
-   print("1번의 maximum 추천값")
+  #  print(f"{self.userid}번의 maximum 추천값")
    return recommend_list 

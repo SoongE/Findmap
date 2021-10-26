@@ -274,7 +274,7 @@ class _FolderManageState extends State<FolderManage> {
             .map<PostFolder>((json) => PostFolder.fromJson(json))
             .toList();
       else {
-        showSnackbar(context, responseBody['message']);
+        // showSnackbar(context, responseBody['message']);
         throw Exception(
             'fetchGetFolderList Exception: ${responseBody['message']}');
       }
@@ -374,10 +374,11 @@ class _FolderManageState extends State<FolderManage> {
           motion: const DrawerMotion(),
           dismissible: DismissiblePane(
             onDismissed: () {
-              if (_removeMenuIdx == 1)
+              if (_removeMenuIdx == 1) {
+                _folderList.removeWhere((e) => e.idx == postFolder.idx);
                 showModifyDialog()
                     .then((value) => fetchDeleteFolder(postFolder.idx));
-              else
+              } else
                 fetchDeleteFolder(postFolder.idx);
             },
           ),
