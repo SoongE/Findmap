@@ -51,20 +51,12 @@ class _SearchTabState extends State<SearchTab> {
         } else {
           if (_isInit) {
             var valueList = snapshot.data!.split(',');
-            // chartData = [
-            //   ChartData(valueList[1], 1, 4, 3, colorList[0]),
-            //   ChartData(valueList[2], 2, 16, 5, colorList[1]),
-            //   ChartData('검색어', 3, 10, 30, colorList[2]),
-            //   ChartData(valueList[4], 4, 14, 12, colorList[3]),
-            //   ChartData(valueList[5], 5, 8, 15, colorList[4]),
-            // ];
-            //Todo remove
             chartData = [
-              ChartData('백종원', 1, 4, 3, colorList[0]),
-              ChartData('연남동', 2, 16, 5, colorList[1]),
+              ChartData(valueList[1], 1, 4, 3, colorList[0]),
+              ChartData(valueList[2], 2, 16, 5, colorList[1]),
               ChartData('검색어', 3, 10, 30, colorList[2]),
-              ChartData('연돈', 4, 14, 12, colorList[3]),
-              ChartData('스타벅스', 5, 8, 15, colorList[4]),
+              ChartData(valueList[4], 4, 14, 12, colorList[3]),
+              ChartData(valueList[5], 5, 8, 15, colorList[4]),
             ];
             _isInit = false;
           }
@@ -203,8 +195,7 @@ class _SearchTabState extends State<SearchTab> {
   }
 
   Future<String> fetchGetInitData() async {
-    // Map<String, dynamic> param = {'keyword': widget.user.userIdx.toString()};
-    Map<String, dynamic> param = {'keyword': '1'};
+    Map<String, dynamic> param = {'keyword': widget.user.userIdx.toString()};
 
     final response = await http.get(
       Uri.http(BASEURL, '/test/recommend/initrecom', param),
