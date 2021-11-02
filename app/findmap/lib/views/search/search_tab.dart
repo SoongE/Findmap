@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:async/async.dart';
 import 'package:findmap/models/user.dart';
 import 'package:findmap/src/digit.dart';
 import 'package:findmap/src/my_colors.dart';
@@ -25,6 +26,8 @@ class _SearchTabState extends State<SearchTab> {
   static const int MAX_RADIO = 30;
   static const int MIN_RADIO = 10;
 
+  final AsyncMemoizer<String> getInitDataMemoizer = AsyncMemoizer<String>();
+
   final GlobalKey<FormState> _keywordKey = GlobalKey<FormState>();
   late TextEditingController _searchKeyword;
   bool _visibleSearchInput = false;
@@ -42,7 +45,8 @@ class _SearchTabState extends State<SearchTab> {
   Widget build(BuildContext context) {
     _searchKeyword = TextEditingController(text: '');
     return FutureBuilder<String>(
-      future: fetchGetInitData(),
+      // future: fetchGetInitData(),
+      future: getInitDataMemoizer.runOnce(() async => await fetchGetInitData()),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Text('');

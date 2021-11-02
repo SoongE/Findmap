@@ -144,15 +144,18 @@ class _SignInState extends State<SignIn> {
 
   Widget socialLogin(String logo, Color color) {
     var sizeRatio = 0.13;
-    return Container(
-      width: MediaQuery.of(context).size.width * sizeRatio,
-      height: MediaQuery.of(context).size.width * sizeRatio,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: color,
+    return GestureDetector(
+      onTap: () => showSnackbar(context, '추후 개발 예정입니다'),
+      child: Container(
+        width: MediaQuery.of(context).size.width * sizeRatio,
+        height: MediaQuery.of(context).size.width * sizeRatio,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: color,
+        ),
+        child:
+            Padding(padding: const EdgeInsets.all(6), child: Image.asset(logo)),
       ),
-      child:
-          Padding(padding: const EdgeInsets.all(6), child: Image.asset(logo)),
     );
   }
 
