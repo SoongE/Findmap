@@ -123,7 +123,7 @@ class Searcher:
                 print("Error Code: " + res_code)
                 return False
 
-    def kakao_get_result(self, search_text, img_url):
+    def kakao_get_result(self, search_text):
         enc_text = urllib.parse.quote(search_text)
         
         blog_url = "https://dapi.kakao.com/v2/search/blog?query=" + enc_text + "&size=" + self.size
@@ -131,8 +131,8 @@ class Searcher:
 
         result = list()
 
-        blog_result = self.kakao_parse_json(blog_url, img_url, "Dblog")
-        cafe_result = self.kakao_parse_json(cafe_url, img_url, "Dcafe")
+        blog_result = self.kakao_parse_json(blog_url, "Dblog")
+        cafe_result = self.kakao_parse_json(cafe_url, "Dcafe")
 
         if blog_result:
             result += blog_result
