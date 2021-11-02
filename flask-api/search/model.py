@@ -6,31 +6,8 @@ import pymysql
 from pororo import Pororo
 
 class Categorization:
-<<<<<<< HEAD
     def __init__(self, model):
         self.model = model
-=======
-    def __init__(self):
-        self.model = fasttext.load_model('/root/search/0826101710_model.bin')
-        
-        # host_name = "findmap-first-db.c2jag33neij8.ap-northeast-2.rds.amazonaws.com"
-        # user_name = "admin"
-        # password = "mypassword"
-        # db_name = "findmap-first-db"
-        
-        # db = pymysql.connect(
-        #        host = host_name,
-        #        port = 3306,
-        #         user = user_name,
-        #         passwd = password,
-        #         db = db_name,
-        #         charset = 'utf8'
-        #  )
-
-        # SQL = "" ## sql 입력
-
-        # self.df = pd.read_sql(SQL,db)
->>>>>>> origin/main
 
     def remove_label(self, pred):
         # fasttext를 사용할 때 카테고리에 붙는 __label__을 제거
@@ -73,10 +50,6 @@ class Categorization:
 
             result[i]["pred"] = self.get_preference(category_pred_value, user_rate)
 
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/main
     def get_preference(self, category_pred_value, user_rate):
         # 사용자의 카테고리별 선호도를 바탕으로 검색 결과의 선호도를 유추
         user_rate_np = np.array(user_rate).flatten()
