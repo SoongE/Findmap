@@ -136,6 +136,8 @@ const feed = {
     getRecommendationFeed: async (req, res) => {
         const userIdx = req.decoded.userIdx;
         const scrapIdxList = req.query.scrapIdxList;
+        // const response = await axios.get('http://flask-api:5000/search/categorize',{ params: { keyword: keyword }});
+        // const scrapIdxList = response.data;
 
         try {
             // 로그인 확인
