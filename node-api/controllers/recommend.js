@@ -55,7 +55,7 @@ const search = {
     getRelatedSearchTerm: async (req, res) => {
         const keyword = req.query.keyword;
 
-        if (!keyword) return res.json({success: false, code: 2701, message: "keyword를 입력해 주세요.(검색어)"});
+        if (!keyword) return res.json({success: false, code: 2701, message: "keyword(검색어)를 입력해 주세요."});
 
         axios.get('http://flask-api:5000/recommend',{ params: { keyword: keyword } })
         .then(response=>res.send(response.data))
@@ -66,7 +66,7 @@ const search = {
         const userIdx = req.decoded.userIdx;
         const keyword = req.query.keyword;
 
-        if (!keyword) return res.json({success: false, code: 2701, message: "keyword를 입력해 주세요.(검색어)"});
+        if (!keyword) return res.json({success: false, code: 2701, message: "keyword(검색어)를 입력해 주세요."});
 
         axios.get('http://flask-api:5000/search',{ params: { keyword: keyword , userIdx:userIdx} })
         .then(response=>res.send(response.data))
@@ -77,8 +77,8 @@ const search = {
         const userIdx = req.decoded.userIdx;
         const keyword = req.query.keyword
 
-        if (!keyword) return res.json({success: false, code: 2701, message: "keyword를 입력해 주세요.(검색어)"});
-        
+        if (!keyword) return res.json({success: false, code: 2701, message: "keyword(검색어)를 입력해 주세요."});
+
         axios.get('http://flask-api:5000/search/categorize',{ params: { keyword: keyword , userIdx:userIdx} })
         .then(response=>res.send(response.data))
         .catch(error=>res.send(error.message))
