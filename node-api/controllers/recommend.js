@@ -1,13 +1,10 @@
-var express = require('express');
-var router = express.Router();
-var schedule = require('node-schedule');
-
+const axios = require('axios');
 let feedModel = require('../models/feeds');
 let userModel = require('../models/users');
 
 const search = {
     getTest: async (req, res) => {
-        axios.get('http://flask-api:5000/test')
+        axios.get('http://3.35.200.151/search/hot?categoryIdx=0')
         .then(response=>res.send(response.data))
         .catch(error=>res.send(error.message))
         .finally();

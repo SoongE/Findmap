@@ -1,8 +1,5 @@
-var express = require('express');
-var router = express.Router();
+const axios = require('axios');
 var schedule = require('node-schedule');
-
-let userModel = require('../models/users');
 
 const search = {
     getShare: async (req, res) => {
