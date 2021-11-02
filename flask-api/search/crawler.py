@@ -30,9 +30,9 @@ class Crawler:
         tmp = url.split('/')
         return tmp[2]
 
-    def url_connect(self, url):
+    def url_connect(self, url, timeout):
         try:
-            page = urlopen(url)
+            page = urlopen(url, timeout)
             self.html = page.read()
             page.close()
         except HTTPError as e:
@@ -40,6 +40,8 @@ class Crawler:
             return False
         except URLError as e:
             print(e)
+            return False
+        except:
             return False
         else:
             print("connecting success!")
@@ -232,7 +234,7 @@ class Crawler:
             return scrap_page
 
     def crawl(self, url):
-        crawl_html = self.url_connect(url)
+        crawl_html = self.url_connect(url, 3)
         if not crawl_html:
             print("Error: connect to url")
             return 0
