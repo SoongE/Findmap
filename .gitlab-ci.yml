@@ -1,5 +1,6 @@
 stages:
   - test
+  - deploy
 
 variables:
   INNER_NAME: "RHCSKY"
@@ -42,3 +43,21 @@ test_flask:
     - main
     - dev
     - merge_requests
+    
+deploy_to_server:
+  stage: deploy
+  before_script:
+  - 'command -v ssh-agent >/dev/null || ( apk add --update openssh )' 
+  - eval $(ssh-agent -s)
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+  - ssh-keyscan $VM_IPADDRESS >> ~/.ssh/known_hosts
+  - chmod 644 ~/.ssh/known_hosts
+  script:
+  - ssh $SSH_USER@$VM_IPADDRESS "hostname && git clone git@lab.hanium.or.kr:21_HF144/21_hf144.git"
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
