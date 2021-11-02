@@ -119,10 +119,10 @@ class Categorization:
         label = self.model.predict(keyword, k=3)[0]
         pred_label = self.remove_label(label)
 
-        #label_temp = []
-        #for i in pred_label :
-            #i.replace("/","·")
-            #label_temp.append(i)
+        label_temp = []
+        for i in pred_label :
+            i.replace("/","·")
+            label_temp.append(i)
         
         #label_idx_list = []
         #for i in label_temp :
