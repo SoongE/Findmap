@@ -25,7 +25,7 @@ class Item_filtered :
      charset = 'utf8'
    )
 
-   SQL = "  select userIdx, categoryIdx as keywordidx ,count(*) as rating from UserInterestTB uit group by userIdx ,categoryIdx  "  
+   SQL = "select userIdx, categoryIdx as keywordidx ,count(*) as rating from UserInterestTB uit where status = 'Y' group by userIdx, categoryIdx;"  
 
 
 

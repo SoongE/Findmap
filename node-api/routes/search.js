@@ -26,4 +26,7 @@ router.post('/hot',search.postHotSearchWord);
 // 실시간 검색어 조회
 router.get('/hot',search.getHotSearchWord);
 
+// 실시간 크롤링
+router.get('/crawl', search.getCrawl);
+
 module.exports = router;

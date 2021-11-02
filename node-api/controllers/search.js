@@ -1,12 +1,13 @@
 var express = require('express');
 var router = express.Router();
+var schedule = require('node-schedule');
+
 
 let searchModel = require('../models/search');
 let userModel = require('../models/users');
 
 const search = {
     getSearchInternet: async (req, res) => {
-        let searchQuery;
         const query = req.query.query;
         const userIdx = req.decoded.userIdx;
 
@@ -21,9 +22,6 @@ const search = {
 
             const searchQuery = query.trim();
 
-            // 검색 기록 저장
-            const insertSearchLog = await searchModel.insertSearchLog(userIdx,searchQuery);
-
             // 검색어 저장
             const checkSearchWord = await searchModel.selectSearchWord(searchQuery);
             if (checkSearchWord.length < 1) {
@@ -32,7 +30,12 @@ const search = {
                 const updateSearchWord = await searchModel.updateSearchWord(searchQuery);
             }
 
-            return res.json({success: true, code: 1000, message: "검색기록, 검색어 저장 완료"});
+            // 검색 기록 저장
+            const [searchWord] = checkSearchWord;
+            const wordIdx = searchWord.idx;
+            const insertSearchLog = await searchModel.insertSearchLog(userIdx,wordIdx);
+
+            return res.json({success: true, code: 1000, message: "검색어,검색 기록 저장 완료"});
         } catch(err){
             return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
         }
@@ -54,17 +57,6 @@ const search = {
             const searchQuery = query.trim();
  
             const searchResult = await searchModel.searchFeed(searchQuery);
-
-            // 검색 기록 저장
-            const insertSearchLog = await searchModel.insertSearchLog(userIdx,searchQuery);
-
-            // 검색어 저장
-            const checkSearchWord = await searchModel.selectSearchWord(searchQuery);
-            if (checkSearchWord.length < 1) {
-                const insertSearchWord = await searchModel.insertSearchWord(searchQuery);
-            } else {
-                const updateSearchWord = await searchModel.updateSearchWord(searchQuery);
-            }
 
             if(searchResult[0] == undefined) {
                 return res.json({success: false, code: 3601, message: "검색 결과가 없습니다."});
@@ -113,16 +105,16 @@ const search = {
     },
     deleteSearchLog: async (req, res) => {
         const userIdx = req.decoded.userIdx;
-        const wordIdx = req.query.wordIdx;
-        if (!wordIdx) {
-            return res.json({success: false, code: 2602, message: "wordIdx를 입력해주세요"});
+        const logIdx = req.query.logIdx;
+        if (!logIdx) {
+            return res.json({success: false, code: 2602, message: "logIdx를 입력해주세요"});
         }
         try {
-            const checkSearchLog = await searchModel.checkSearchLog(userIdx,wordIdx);
+            const checkSearchLog = await searchModel.checkSearchLog(userIdx,logIdx);
             if (checkSearchLog[0] == undefined) {
               return res.json({success: false, code: 3602, message: "검색 기록이 존재하지 않습니다."});
             }
-            const [searchRow] = await searchModel.deleteSearchLog(userIdx,wordIdx);
+            const [searchRow] = await searchModel.deleteSearchLog(userIdx,logIdx);
             return res.json({success: true, code: 1000, message: "검색 기록 삭제 성공"});
         } catch (err) {
             return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
@@ -200,6 +192,35 @@ const search = {
             }
 
             return res.json({success: true, code: 1000, message: "실시간 검색어 조회 성공", result: searchResult});
+        } catch (err) {
+            return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
+        }
+    },
+    getCrawl: async (req,res) => {
+
+        try {
+
+            // 10초마다 실행하는 코드
+            schedule.scheduleJob('10 * * * * *', async()=>{ 
+                console.log('10초마다 실행!');
+
+                // axios.get('http://flask-api:5000/search/categorize',{ params: { keyword: keyword , userIdx:userIdx} })
+                // .then(response=>res.send(response.data))
+                // .catch(error=>res.send(error.message))
+                // .finally();
+            })
+
+            // 날짜를 지정해서 실행하는 코드 //일요일 2시 30분
+            var j = schedule.scheduleJob({hour: 14, minute: 30, dayOfWeek: 0}, function(){ 
+                console.log('일요일 2시 30분에 실행');
+            });
+
+            //var date = new Date(2021, 11, 2, 5, 30, 0);
+            // var j = schedule.scheduleJob(date, function(){
+            //     console.log('날짜 지정');
+            // });
+
+            return res.json({success: true, code: 1000, message: "실시간 크롤링 시작"});
         } catch (err) {
             return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
         }

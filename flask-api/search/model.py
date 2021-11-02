@@ -6,8 +6,8 @@ import pymysql
 from pororo import Pororo
 
 class Categorization:
-    def __init__(self):
-        self.model = fasttext.load_model('/root/search/0826101710_model.bin')
+    def __init__(self, model):
+        self.model = model
         
         host_name = "findmap-first-db.c2jag33neij8.ap-northeast-2.rds.amazonaws.com"
         user_name = "admin"
@@ -87,9 +87,14 @@ class Categorization:
         
         label_idx_list = []
         for i in label_temp :
+<<<<<<< HEAD
             SQL = "select idx,name from CategoryTB ct where name = '{}'".format(i.strip()) 
             df = pd.read_sql(SQL,self.db)
             print(df)
+=======
+            SQL = "select idx,name from CategoryTB ct where name = '{}'".format(i) 
+            df = pd.read_sql(SQL,self.db)
+>>>>>>> 1d18d29429355c7deb60387753ce828099fe5295
             label_idx_list.append(df['idx'][0])
         return label_idx_list
 
@@ -97,13 +102,13 @@ class PororoModel:
     def __init__(self):
         self.summ = Pororo(task="summarization", model="abstractive", lang="ko")
         self.zsl = Pororo(task="zero-topic")
-        pass
 
     def summarize(self, contents):
         # summarize contents of the page
+        print("Pororo!!!")
+        print(self.summ(contents))
         return self.summ(contents)
 
     def categorize(self, contents, category_list):
         # categorize contents
         return self.zsl(contents, category_list)
-
