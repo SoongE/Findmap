@@ -31,6 +31,7 @@ test_flask:
     - runner
   stage: test
   before_script:
+    - bash
     - cd flask-api
     - export PATH=$PATH:/opt/conda/bin
     - python -m pip install -r requirements.txt
