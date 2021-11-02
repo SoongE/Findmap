@@ -55,7 +55,7 @@ deploy_to_server:
   - ssh-keyscan $VM_IPADDRESS >> ~/.ssh/known_hosts
   - chmod 644 ~/.ssh/known_hosts
   script:
-  - ssh $SSH_USER@$VM_IPADDRESS "hostname && git clone git@lab.hanium.or.kr:21_HF144/21_hf144.git"
+  - ssh $SSH_USER@$VM_IPADDRESS "hostname && sh git_pull.sh"
   artifacts:
     paths:
     - public
