@@ -137,15 +137,14 @@ const search = {
             throw err;
         }
     },
-    searchUser: async(searchQuery) => {
+    searchUser: async(searchQuery,myIdx) => {
         const query = `
         SELECT
             U.idx AS userIdx
             , U.nickName AS userNickName
             , IFNULL(U.profileUrl, 'N') as userProfile
-            , (select COUNT(*) FROM FollowTB F where F.followerIdx = U.idx) as followerCount
-            , (select COUNT(*) FROM FollowTB F where F.followingIdx = U.idx) as followingCount
-            , IFNULL((select F.status FROM FollowTB F where F.followingIdx = U.idx),'N') as followStatus
+            , (select COUNT(*) FROM FollowTB F where F.followingIdx = U.idx) as followerCount
+            , IFNULL((select F.status FROM FollowTB F where F.followingIdx = U.idx and F.followerIdx=${myIdx}),'N') as followStatus
             FROM UserTB U
             WHERE U.status = 'Y' and (U.nickName LIKE '%${searchQuery}%');`
         const params = [searchQuery];
