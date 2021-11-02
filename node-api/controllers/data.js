@@ -25,7 +25,7 @@ const search = {
             })
 
             // 날짜를 지정해서 실행하는 코드 //일요일 2시 30분
-            var j = schedule.scheduleJob({hour: 14, minute: 30, dayOfWeek: 0}, function(){ 
+            var j = schedule.scheduleJob({hour: 14, minute: 30, dayOfWeek: 0}, function(){
                 console.log('일요일 2시 30분에 실행');
             });
 
@@ -33,6 +33,8 @@ const search = {
             // var j = schedule.scheduleJob(date, function(){
             //     console.log('날짜 지정');
             // });
+
+            j.cancel();
 
             return res.json({success: true, code: 1000, message: "실시간 크롤링 시작"});
         } catch (err) {
