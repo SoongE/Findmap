@@ -14,7 +14,7 @@ class Categorization:
         password = "mypassword"
         db_name = "findmap-first-db"
         
-        self.db = db = pymysql.connect(
+        self.db = pymysql.connect(
                 host = host_name,
                 port = 3306,
                  user = user_name,
