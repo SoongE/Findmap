@@ -4,12 +4,10 @@ import random
 import numpy as np
 import pymysql 
 from pororo import Pororo
-from search.crawler import Crawler
 
 class Categorization:
     def __init__(self, model):
         self.model = model
-        self.crw = Crawler()
 
     def remove_label(self, pred):
         # fasttext를 사용할 때 카테고리에 붙는 __label__을 제거
@@ -56,15 +54,8 @@ class Categorization:
 
             category_pred_value = list(category_pred.values())
 
-            result[i]["thumbnailUrl"] = self.get_thumbnail_url(x["link"])
+            result[i]["thumbnailUrl"] = x["thumbnail"]
             result[i]["pred"] = self.get_preference(category_pred_value, user_rate)
-
-    def get_thumbnail_url(self, url):
-        # return self.crw.crawl(url)['img_url']
-        self.crw.url_connect(url)
-        self.crw.html_parse()
-        return self.crw.get_image()
-
 
     def get_preference(self, category_pred_value, user_rate):
         # 사용자의 카테고리별 선호도를 바탕으로 검색 결과의 선호도를 유추

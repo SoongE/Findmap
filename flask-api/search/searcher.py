@@ -2,6 +2,7 @@ import urllib.request
 from urllib.error import HTTPError
 import json
 import re
+from search.crawler import Crawler
 
 
 class Searcher:
@@ -15,6 +16,8 @@ class Searcher:
         self.rest_api_key = "9eae6db2c08b5fe4082bdd95f8134d01"
         self.size = "5"
 
+        self.crw = Crawler()
+
     def convert_html_special_char(self, string):
         new_str = re.sub('(<([^>]+)>)', '', string)
         new_str = re.sub('&nbsp;', ' ', new_str)
@@ -27,7 +30,7 @@ class Searcher:
 
         return new_str
 
-    def naver_parse_json(self, url):
+    def naver_parse_json(self, url, img_url):
         req = urllib.request.Request(url)
         req.add_header("X-Naver-Client-Id", self.client_id)
         req.add_header("X-Naver-Client-Secret", self.client_secret)
@@ -45,12 +48,22 @@ class Searcher:
                 res_body = json.load(res)
                 result = list()
 
-                for x in res_body["items"]:
-                    title = self.convert_html_special_char(x['title'])
-                    link = x["link"]
-                    description = self.convert_html_special_char(x['description'])
-                    result.append({"title": title, "link": link, "description": description})
-                return result
+                if (img_url == "Nnews"):
+                    for x in res_body["items"]:
+                        title = self.convert_html_special_char(x['title'])
+                        link = x["link"]
+                        description = self.convert_html_special_char(x['description'])
+                        thumb_url = self.get_thumbnail_url(x["link"])
+                        result.append({"title": title, "link": link, "description": description, "thumbnail": thumb_url})
+                    return result
+
+                else:
+                    for x in res_body["items"]:
+                        title = self.convert_html_special_char(x['title'])
+                        link = x["link"]
+                        description = self.convert_html_special_char(x['description'])
+                        result.append({"title": title, "link": link, "description": description, "thumbnail": img_url})
+                    return result
 
             else:
                 print("Error Code: " + res_code)
@@ -65,9 +78,9 @@ class Searcher:
 
         result = list()
 
-        blog_result = self.naver_parse_json(blog_url)
-        cafe_result = self.naver_parse_json(cafe_url)
-        news_result = self.naver_parse_json(news_url)
+        blog_result = self.naver_parse_json(blog_url, "Nblog")
+        cafe_result = self.naver_parse_json(cafe_url, "NCafe")
+        news_result = self.naver_parse_json(news_url, "Nnews")
 
         if blog_result:
             result += blog_result
@@ -82,7 +95,7 @@ class Searcher:
         else:
             return result
 
-    def kakao_parse_json(self, url):
+    def kakao_parse_json(self, url, img_url):
         req = urllib.request.Request(url)
         req.add_header("Authorization", "KakaoAK " + self.rest_api_key)
 
@@ -103,14 +116,14 @@ class Searcher:
                     title = self.convert_html_special_char(x['title'])
                     link = x["url"]
                     description = self.convert_html_special_char(x['contents'])
-                    result.append({"title": title, "link": link, "description": description})
+                    result.append({"title": title, "link": link, "description": description, "thumbnail": img_url})
                 return result
 
             else:
                 print("Error Code: " + res_code)
                 return False
 
-    def kakao_get_result(self, search_text):
+    def kakao_get_result(self, search_text, img_url):
         enc_text = urllib.parse.quote(search_text)
         
         blog_url = "https://dapi.kakao.com/v2/search/blog?query=" + enc_text + "&size=" + self.size
@@ -118,16 +131,22 @@ class Searcher:
 
         result = list()
 
-        blog_result = self.kakao_parse_json(blog_url)
-        # cafe_result = self.kakao_parse_json(cafe_url)
+        blog_result = self.kakao_parse_json(blog_url, img_url, "Dblog")
+        cafe_result = self.kakao_parse_json(cafe_url, img_url, "Dcafe")
 
         if blog_result:
             result += blog_result
-        # if cafe_result:
-        #     result += cafe_result
+        if cafe_result:
+            result += cafe_result
 
         if not result:
             print("Error: fail to get result")
             return False
         else:
             return result
+
+    def get_thumbnail_url(self, url):
+    # return self.crw.crawl(url)['img_url']
+        self.crw.url_connect(url)
+        self.crw.html_parse()
+        return self.crw.get_image()
