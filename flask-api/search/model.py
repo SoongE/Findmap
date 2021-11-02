@@ -8,6 +8,24 @@ from pororo import Pororo
 class Categorization:
     def __init__(self, model):
         self.model = model
+        
+        host_name = "findmap-first-db.c2jag33neij8.ap-northeast-2.rds.amazonaws.com"
+        user_name = "admin"
+        password = "mypassword"
+        db_name = "findmap-first-db"
+        
+        self.db = db = pymysql.connect(
+                host = host_name,
+                port = 3306,
+                 user = user_name,
+                 passwd = password,
+                 db = db_name,
+                 charset = 'utf8'
+          )
+
+        # SQL = "" ## sql 입력
+
+        # self.df = pd.read_sql(SQL,db)
 
     def remove_label(self, pred):
         # fasttext를 사용할 때 카테고리에 붙는 __label__을 제거
@@ -21,10 +39,10 @@ class Categorization:
         return clear_pred
 
     def categorize(self, result):
-        category_pred = {'문학/책': 0, '영화': 0, '미술/디자인': 0, '공연/전시': 0, '음악': 0, '드라마': 0, '스타/연예인': 0, '만화/애니': 0,
-                         '방송': 0, '일상/생각': 0, '육아/결혼': 0, '애완/반려동물': 0, '좋은글/이미지': 0, '패션/미용': 0, '인테리어/DIY': 0,
-                         '요리/레시피': 0, '상품리뷰': 0, '원예/재배': 0, '게임': 0, '스포츠': 0, '사진': 0, '자동차': 0, '취미': 0, '국내여행': 0,
-                         '세계여행': 0, '맛집': 0, 'IT/컴퓨터': 0, '사회/정치': 0, '건강/의학': 0, '비즈니스/경제': 0, '어학/외국어': 0, '교육/학문': 0}
+        category_pred = {'문학·책': 0, '영화': 0, '미술·디자인': 0, '공연·전시': 0, '음악': 0, '드라마': 0, '스타·연예인': 0, '만화·애니': 0,
+                         '방송': 0, '일상·생각': 0, '육아·결혼': 0, '애완·반려동물': 0, '좋은글·이미지': 0, '패션/미용': 0, '인테리어·DIY': 0,
+                         '요리·레시피': 0, '상품리뷰': 0, '원예·재배': 0, '게임': 0, '스포츠': 0, '사진': 0, '자동차': 0, '취미': 0, '국내여행': 0,
+                         '세계여행': 0, '맛집': 0, 'IT·컴퓨터': 0, '사회·정치': 0, '건강·의학': 0, '비즈니스·경제': 0, '어학·외국어': 0, '교육·학문': 0}
 
         user_rate = list()
         user_rate = [0.126436, 0.134778, 0.235164, 0.311223, 0.983456, 0.123415, 0.995632, -0.235162, 
@@ -50,6 +68,7 @@ class Categorization:
 
             result[i]["pred"] = self.get_preference(category_pred_value, user_rate)
 
+
     def get_preference(self, category_pred_value, user_rate):
         # 사용자의 카테고리별 선호도를 바탕으로 검색 결과의 선호도를 유추
         user_rate_np = np.array(user_rate).flatten()
@@ -60,19 +79,30 @@ class Categorization:
     def get_category_of_keyword(self, keyword):
         label = self.model.predict(keyword, k=3)[0]
         pred_label = self.remove_label(label)
-        return [keyword, pred_label]
+
+        label_temp = []
+        for i in pred_label :
+            i.replace("/","·")
+            label_temp.append(i)
+        
+        label_idx_list = []
+        for i in label_temp :
+            SQL = "select idx,name from CategoryTB ct where name = '{}'".format(i) 
+            df = pd.read_sql(SQL,self.db)
+            label_idx_list.append(df['idx'][0])
+        return label_idx_list
 
 class PororoModel:
     def __init__(self):
         self.summ = Pororo(task="summarization", model="abstractive", lang="ko")
         self.zsl = Pororo(task="zero-topic")
-        pass
 
     def summarize(self, contents):
         # summarize contents of the page
+        print("Pororo!!!")
+        print(self.summ(contents))
         return self.summ(contents)
 
     def categorize(self, contents, category_list):
         # categorize contents
         return self.zsl(contents, category_list)
-
