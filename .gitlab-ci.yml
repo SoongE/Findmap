@@ -29,7 +29,6 @@ test_nodejs:
 test_flask:
   image:
     name: ubuntu:18.04
-    entrypoint: [ '/bin/bash', '-c' ]
   tags:
     - runner
   stage: test
