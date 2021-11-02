@@ -78,7 +78,7 @@ const search = {
 
         if (!keyword) return res.json({success: false, code: 2701, message: "keyword(검색어)를 입력해 주세요."});
 
-        axios.get('http://flask-api:5000/search/categorize',{ params: { keyword: keyword} })
+        axios.get('http://flask-api:5000/search/categorize',{ params: { keyword: keyword } })
         .then(response=>res.send(response.data))
         .catch(error=>res.send(error.message))
         .finally();

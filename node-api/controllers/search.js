@@ -8,7 +8,6 @@ let userModel = require('../models/users');
 
 const search = {
     getSearchInternet: async (req, res) => {
-        let searchQuery;
         const query = req.query.query;
         const userIdx = req.decoded.userIdx;
 
@@ -23,9 +22,6 @@ const search = {
 
             const searchQuery = query.trim();
 
-            // 검색 기록 저장
-            const insertSearchLog = await searchModel.insertSearchLog(userIdx,searchQuery);
-
             // 검색어 저장
             const checkSearchWord = await searchModel.selectSearchWord(searchQuery);
             if (checkSearchWord.length < 1) {
@@ -34,7 +30,12 @@ const search = {
                 const updateSearchWord = await searchModel.updateSearchWord(searchQuery);
             }
 
-            return res.json({success: true, code: 1000, message: "검색기록, 검색어 저장 완료"});
+            // 검색 기록 저장
+            const [searchWord] = checkSearchWord;
+            const wordIdx = searchWord.idx;
+            const insertSearchLog = await searchModel.insertSearchLog(userIdx,wordIdx);
+
+            return res.json({success: true, code: 1000, message: "검색어,검색 기록 저장 완료"});
         } catch(err){
             return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
         }
@@ -115,16 +116,16 @@ const search = {
     },
     deleteSearchLog: async (req, res) => {
         const userIdx = req.decoded.userIdx;
-        const wordIdx = req.query.wordIdx;
-        if (!wordIdx) {
-            return res.json({success: false, code: 2602, message: "wordIdx를 입력해주세요"});
+        const logIdx = req.query.logIdx;
+        if (!logIdx) {
+            return res.json({success: false, code: 2602, message: "logIdx를 입력해주세요"});
         }
         try {
-            const checkSearchLog = await searchModel.checkSearchLog(userIdx,wordIdx);
+            const checkSearchLog = await searchModel.checkSearchLog(userIdx,logIdx);
             if (checkSearchLog[0] == undefined) {
               return res.json({success: false, code: 3602, message: "검색 기록이 존재하지 않습니다."});
             }
-            const [searchRow] = await searchModel.deleteSearchLog(userIdx,wordIdx);
+            const [searchRow] = await searchModel.deleteSearchLog(userIdx,logIdx);
             return res.json({success: true, code: 1000, message: "검색 기록 삭제 성공"});
         } catch (err) {
             return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
