@@ -8,7 +8,7 @@ from pororo import Pororo
 class Categorization:
     def __init__(self, model):
         self.model = model
-        
+
         host_name = "findmap-first-db.c2jag33neij8.ap-northeast-2.rds.amazonaws.com"
         user_name = "admin"
         password = "mypassword"
@@ -38,7 +38,7 @@ class Categorization:
                 continue
         return clear_pred
 
-    def categorize(self, result):
+    def sort_search_list(self, result):
         category_pred = {'문학·책': 0, '영화': 0, '미술·디자인': 0, '공연·전시': 0, '음악': 0, '드라마': 0, '스타·연예인': 0, '만화·애니': 0,
                          '방송': 0, '일상·생각': 0, '육아·결혼': 0, '애완·반려동물': 0, '좋은글·이미지': 0, '패션/미용': 0, '인테리어·DIY': 0,
                          '요리·레시피': 0, '상품리뷰': 0, '원예·재배': 0, '게임': 0, '스포츠': 0, '사진': 0, '자동차': 0, '취미': 0, '국내여행': 0,
@@ -89,6 +89,7 @@ class Categorization:
         for i in label_temp :
             SQL = "select idx,name from CategoryTB ct where name = '{}'".format(i) 
             df = pd.read_sql(SQL,self.db)
+            print(df)
             label_idx_list.append(df['idx'][0])
         return label_idx_list
 
@@ -99,8 +100,6 @@ class PororoModel:
 
     def summarize(self, contents):
         # summarize contents of the page
-        print("Pororo!!!")
-        print(self.summ(contents))
         return self.summ(contents)
 
     def categorize(self, contents, category_list):
