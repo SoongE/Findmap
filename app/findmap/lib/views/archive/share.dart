@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:async/async.dart';
 import 'package:findmap/models/post_folder.dart';
 import 'package:findmap/models/user.dart';
 import 'package:findmap/src/feature_category.dart';
@@ -33,6 +34,7 @@ class _SharePageState extends State<SharePage> {
   ];
   String _selectedValue = '아카이브';
   final GlobalKey<FormState> folderFormKey = GlobalKey<FormState>();
+  final AsyncMemoizer<Map> getScrapDataMemoizer = AsyncMemoizer<Map>();
 
   @override
   void initState() {
@@ -51,46 +53,6 @@ class _SharePageState extends State<SharePage> {
     _commentScrapPage.dispose();
     _newFolderName.dispose();
     super.dispose();
-  }
-
-  Future<Map> fetchGetScrapData(String url) async {
-    Map<String, dynamic> param = {"url": url};
-
-    final response =
-        await http.get(Uri.http(BASEURL, '/test/share', param), headers: {
-      HttpHeaders.contentTypeHeader: "application/json",
-      "token": widget.user.accessToken,
-    }).timeout(Duration(minutes: 2));
-
-    if (response.statusCode == 200) {
-      var responseBody = jsonDecode(response.body);
-      if (responseBody['status'] == 'success') {
-        print(responseBody);
-        return {
-          'title': responseBody['body']['title'],
-          'summary': responseBody['body']['description'],
-          'categoryIdx': CATEGORY_INDEX[responseBody['body']['category']] ?? 0,
-          'thumbnailUrl': responseBody['body']['img_url'],
-        };
-      } else {
-        showSnackbar(context, '제목과 내용을 찾지 못했습니다. 직접 넣어주세요.');
-        throw Exception(
-            'fetchGetScrapData Exception: ${responseBody['message']}');
-      }
-    } else {
-      showSnackbar(context, '서버와 연결이 불안정합니다');
-      throw Exception('Failed to connect to server\n${response.body}');
-    }
-  }
-
-  findFolderUsingIndexWhere(List _folderList, String _newFolderName) {
-    // Find the index of folder. If not found, index = -1
-    final index =
-        _folderList.indexWhere((element) => element == _newFolderName);
-    if (index >= 0)
-      return 1;
-    else
-      return -1;
   }
 
   @override
@@ -124,7 +86,8 @@ class _SharePageState extends State<SharePage> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             FutureBuilder(
-                future: fetchGetScrapData(widget.url),
+                future: getScrapDataMemoizer
+                    .runOnce(() async => await fetchGetScrapData(widget.url)),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Text('');
@@ -446,6 +409,46 @@ class _SharePageState extends State<SharePage> {
         ),
       ),
     );
+  }
+
+  Future<Map> fetchGetScrapData(String url) async {
+    Map<String, dynamic> param = {"url": url};
+
+    final response =
+        await http.get(Uri.http(BASEURL, '/test/share', param), headers: {
+      HttpHeaders.contentTypeHeader: "application/json",
+      "token": widget.user.accessToken,
+    }).timeout(Duration(minutes: 2));
+
+    if (response.statusCode == 200) {
+      var responseBody = jsonDecode(response.body);
+      if (responseBody['status'] == 'success') {
+        print(responseBody);
+        return {
+          'title': responseBody['body']['title'],
+          'summary': responseBody['body']['description'],
+          'categoryIdx': CATEGORY_INDEX[responseBody['body']['category']] ?? 0,
+          'thumbnailUrl': responseBody['body']['img_url'],
+        };
+      } else {
+        showSnackbar(context, '제목과 내용을 찾지 못했습니다. 직접 넣어주세요.');
+        throw Exception(
+            'fetchGetScrapData Exception: ${responseBody['message']}');
+      }
+    } else {
+      showSnackbar(context, '서버와 연결이 불안정합니다');
+      throw Exception('Failed to connect to server\n${response.body}');
+    }
+  }
+
+  int findFolderUsingIndexWhere(List _folderList, String _newFolderName) {
+    // Find the index of folder. If not found, index = -1
+    final index =
+        _folderList.indexWhere((element) => element == _newFolderName);
+    if (index >= 0)
+      return 1;
+    else
+      return -1;
   }
 
   _makeNewFolderDialog() async {
