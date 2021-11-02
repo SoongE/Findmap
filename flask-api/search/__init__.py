@@ -38,11 +38,10 @@ def main():
 @search_api.route('/categorize')
 def categorize():
     keyword = request.args["keyword"]
-    userIdx = request.args["userIdx"]
      
     search_idx_cl = model.Categorization()
-    search_idx_cl.categorize(keyword, userIdx)
-
+    param_value = search_idx_cl.get_category_of_keyword(keyword)
+    
     body = {"ctg" : param_value}
     return make_response(SUCCESS, body)
 

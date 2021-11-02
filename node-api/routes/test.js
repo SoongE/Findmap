@@ -44,9 +44,8 @@ router.get('/search', (req, res, next) => {
 });
 router.get('/search/categorize', (req, res, next) => {
   const keyword = req.query.keyword
-  const userIdx = req.qeury.userIdx
 
-  axios.get('http://flask-api:5000/search/categorize',{ params: { keyword: keyword , userIdx:userIdx} })
+  axios.get('http://flask-api:5000/search/categorize',{ params: { keyword: keyword } })
   .then(response=>res.send(response.data))
   .catch(error=>res.send(error.message))
   .finally();
