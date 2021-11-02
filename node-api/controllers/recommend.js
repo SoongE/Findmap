@@ -73,7 +73,7 @@ const search = {
         .catch(error=>res.send(error.message))
         .finally();
     },
-    getRecommendCategorizeWord: async (req, res) => {
+    getRecommendCategorizeWord: async (req, res,next) => {
         const keyword = req.query.keyword
 
         if (!keyword) return res.json({success: false, code: 2701, message: "keyword(검색어)를 입력해 주세요."});
@@ -82,8 +82,7 @@ const search = {
         .then(response=>res.send(response.data))
         .catch(error=>res.send(error.message))
         .finally();
-
-        // db에 검색어 3개 저장
+        
     }
 }
 
