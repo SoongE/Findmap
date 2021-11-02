@@ -1,10 +1,10 @@
 var express = require('express');
 var router = express.Router();
+var schedule = require('node-schedule');
+
 
 let searchModel = require('../models/search');
 let userModel = require('../models/users');
-
-var schedule = require('node-schedule');
 
 const search = {
     getSearchInternet: async (req, res) => {
