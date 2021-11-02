@@ -1,17 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const axios = require('axios');
 
 const recommend = require('../controllers/recommend');
 const auth = require('../middlewares/auth');
-
-/* test */
-router.get('/', (req, res, next) => {
-    axios.get('http://flask-api:5000/test')
-        .then(response=>res.send(response.data))
-        .catch(error=>res.send(error.message))
-        .finally();
-});
 
 // test
 router.get('/test', auth.checkToken, recommend.getTest);
