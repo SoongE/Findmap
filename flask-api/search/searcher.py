@@ -54,7 +54,7 @@ class Searcher:
                         link = x["link"]
                         description = self.convert_html_special_char(x['description'])
                         thumb_url = self.get_thumbnail_url(x["link"])
-                        result.append({"title": title, "link": link, "description": description, "thumbnail": thumb_url})
+                        result.append({"title": title, "link": link, "description": description, "thumbnailUrl": thumb_url})
                     return result
 
                 else:
@@ -62,7 +62,7 @@ class Searcher:
                         title = self.convert_html_special_char(x['title'])
                         link = x["link"]
                         description = self.convert_html_special_char(x['description'])
-                        result.append({"title": title, "link": link, "description": description, "thumbnail": img_url})
+                        result.append({"title": title, "link": link, "description": description, "thumbnailUrl": img_url})
                     return result
 
             else:
@@ -95,7 +95,7 @@ class Searcher:
         else:
             return result
 
-    def kakao_parse_json(self, url, img_url):
+    def kakao_parse_json(self, url):
         req = urllib.request.Request(url)
         req.add_header("Authorization", "KakaoAK " + self.rest_api_key)
 
@@ -112,21 +112,11 @@ class Searcher:
                 res_body = json.load(res)
                 result = list()
 
-                if (img_url == "Dblog"): 
-                    for x in res_body["documents"]:
-                        title = self.convert_html_special_char(x['title'])
-                        link = x["url"]
-                        thumb_url = self.get_thumbnail_url(x["url"])
-                        description = self.convert_html_special_char(x['contents'])
-                        result.append({"title": title, "link": link, "description": description, "thumbnail": thumb_url})
-                    return result
-                else:
-                    for x in res_body["documents"]:
-                        title = self.convert_html_special_char(x['title'])
-                        link = x["url"]
-                        description = self.convert_html_special_char(x['contents'])
-                        result.append({"title": title, "link": link, "description": description, "thumbnail": img_url})
-                    return result
+                for x in res_body["documents"]:
+                    title = self.convert_html_special_char(x['title'])
+                    description = self.convert_html_special_char(x['contents'])
+                    result.append({"title": title, "link": x["url"], "description": description, "thumbnailUrl": x["thumbnail"]})
+                return result
 
             else:
                 print("Error Code: " + res_code)
@@ -140,8 +130,8 @@ class Searcher:
 
         result = list()
 
-        blog_result = self.kakao_parse_json(blog_url, "Dblog")
-        cafe_result = self.kakao_parse_json(cafe_url, "Dcafe")
+        blog_result = self.kakao_parse_json(blog_url)
+        cafe_result = self.kakao_parse_json(cafe_url)
 
         if blog_result:
             result += blog_result
@@ -160,5 +150,5 @@ class Searcher:
         self.crw.html_parse()
         img_url = self.crw.og_crawl('image')
         if img_url is False: 
-            return None
+            return ""
         return img_url

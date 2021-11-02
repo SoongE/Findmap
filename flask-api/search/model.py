@@ -54,7 +54,6 @@ class Categorization:
 
             category_pred_value = list(category_pred.values())
 
-            result[i]["thumbnailUrl"] = x["thumbnail"]
             result[i]["pred"] = self.get_preference(category_pred_value, user_rate)
 
     def get_preference(self, category_pred_value, user_rate):
