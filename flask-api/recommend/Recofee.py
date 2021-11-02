@@ -23,7 +23,7 @@ class Recc :
      charset = 'utf8'
    )
 
-   SQL = "select idx from ScrapTB st  where isFeed = 'Y' and status = 'Y' and userIdx = " + user_idx
+   SQL = "select idx from ScrapTB st  where isFeed = 'Y' and status = 'Y' and userIdx = " + str(user_idx)
 
    self.df  = pd.read_sql(SQL,db)
    
