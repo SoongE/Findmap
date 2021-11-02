@@ -58,17 +58,6 @@ const search = {
  
             const searchResult = await searchModel.searchFeed(searchQuery);
 
-            // 검색 기록 저장
-            const insertSearchLog = await searchModel.insertSearchLog(userIdx,searchQuery);
-
-            // 검색어 저장
-            const checkSearchWord = await searchModel.selectSearchWord(searchQuery);
-            if (checkSearchWord.length < 1) {
-                const insertSearchWord = await searchModel.insertSearchWord(searchQuery);
-            } else {
-                const updateSearchWord = await searchModel.updateSearchWord(searchQuery);
-            }
-
             if(searchResult[0] == undefined) {
                 return res.json({success: false, code: 3601, message: "검색 결과가 없습니다."});
             }
