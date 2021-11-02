@@ -35,7 +35,7 @@ test_flask:
   before_script:
     - cd flask-api
     - export PATH=/opt/conda/bin:$PATH
-    - python3 -m pip install -r requirements.txt
+    # - python3 -m pip install -r requirements.txt
   script:
     - echo INNER_NAME=$INNER_NAME
   only:
