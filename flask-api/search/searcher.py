@@ -159,6 +159,6 @@ class Searcher:
         self.crw.url_connect(url)
         self.crw.html_parse()
         img_url = self.crw.og_crawl('image')
-        if not img_url: 
+        if img_url is False: 
             return None
         return img_url
