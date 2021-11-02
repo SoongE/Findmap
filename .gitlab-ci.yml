@@ -28,15 +28,15 @@ test_nodejs:
 
 test_flask:
   image:
-    name: ubuntu:18.04
+    name: pytorch/pytorch:latest
   tags:
     - runner
   stage: test
   before_script:
     - cd flask-api
-    - export PATH=$PATH:/opt/conda/bin
-  script:
+    - export PATH=/opt/conda/bin:$PATH
     - python3 -m pip install -r requirements.txt
+  script:
     - echo INNER_NAME=$INNER_NAME
   only:
     - main
