@@ -119,19 +119,19 @@ class Categorization:
         label = self.model.predict(keyword, k=3)[0]
         pred_label = self.remove_label(label)
 
-        label_temp = []
-        for i in pred_label :
-            i.replace("/","·")
-            label_temp.append(i)
+        #label_temp = []
+        #for i in pred_label :
+            #i.replace("/","·")
+            #label_temp.append(i)
         
-        label_idx_list = []
-        for i in label_temp :
+        #label_idx_list = []
+        #for i in label_temp :
 
-            SQL = "select idx,name from CategoryTB ct where name = '{}'".format(i.strip()) 
-            df = pd.read_sql(SQL,self.db)
-            print(df)
-            label_idx_list.append(df['idx'][0])
-        return label_idx_list
+            #SQL = "select idx,name from CategoryTB ct where name = '{}'".format(i.strip()) 
+            #df = pd.read_sql(SQL,self.db)
+            #print(df)
+            #label_idx_list.append(df['idx'][0])
+        return pred_label
 
 class PororoModel:
     def __init__(self):
