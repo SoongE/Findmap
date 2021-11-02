@@ -112,12 +112,21 @@ class Searcher:
                 res_body = json.load(res)
                 result = list()
 
-                for x in res_body["documents"]:
-                    title = self.convert_html_special_char(x['title'])
-                    link = x["url"]
-                    description = self.convert_html_special_char(x['contents'])
-                    result.append({"title": title, "link": link, "description": description, "thumbnail": img_url})
-                return result
+                if (img_url == "Dblog"): 
+                    for x in res_body["documents"]:
+                        title = self.convert_html_special_char(x['title'])
+                        link = x["url"]
+                        thumb_url = self.get_thumbnail_url(x["url"])
+                        description = self.convert_html_special_char(x['contents'])
+                        result.append({"title": title, "link": link, "description": description, "thumbnail": thumb_url})
+                    return result
+                else:
+                    for x in res_body["documents"]:
+                        title = self.convert_html_special_char(x['title'])
+                        link = x["url"]
+                        description = self.convert_html_special_char(x['contents'])
+                        result.append({"title": title, "link": link, "description": description, "thumbnail": img_url})
+                    return result
 
             else:
                 print("Error Code: " + res_code)
