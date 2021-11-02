@@ -1,4 +1,4 @@
-import pandas as pd
+# import pandas as pd
 import fasttext
 import random
 import numpy as np
@@ -6,7 +6,7 @@ import pymysql
 
 class Categorization:
     def __init__(self):
-        self.model = fasttext.load_model('/home/jiyun/mount/NLP/model/0826101710_model.bin')
+        self.model = fasttext.load_model('/root/search/0826101710_model.bin')
         
         # host_name = "findmap-first-db.c2jag33neij8.ap-northeast-2.rds.amazonaws.com"
         # user_name = "admin"
@@ -81,4 +81,6 @@ class Categorization:
         return np.dot(category_pred_value_np, user_rate_np)
 
     def get_category_of_keyword(self, keyword):
-        return [keyword, self.model.predict(keyword)[0][0]]
+        label = self.model.predict(keyword, k=3)[0]
+        pred_label = self.remove_label(label)
+        return [keyword, pred_label]

@@ -39,7 +39,7 @@ def main():
 def categorize():
     keyword = request.args["keyword"]
      
-    search_idx_cl = model.Categorization()
+    search_idx_cl = model.Categorization(fasttext_model)
     param_value = search_idx_cl.get_category_of_keyword(keyword)
     
     body = {"ctg" : param_value}

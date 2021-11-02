@@ -41,6 +41,8 @@ class Crawler:
         except URLError as e:
             print(e)
             return False
+        except:
+            return False
         else:
             print("connecting success!")
             return True

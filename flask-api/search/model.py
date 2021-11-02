@@ -6,22 +6,22 @@ import pymysql
 from pororo import Pororo
 
 class Categorization:
-    def __init__(self):
-        self.model = fasttext.load_model('/root/search/0826101710_model.bin')
+    def __init__(self, model):
+        self.model = model
         
-        # host_name = "findmap-first-db.c2jag33neij8.ap-northeast-2.rds.amazonaws.com"
-        # user_name = "admin"
-        # password = "mypassword"
-        # db_name = "findmap-first-db"
+        host_name = "findmap-first-db.c2jag33neij8.ap-northeast-2.rds.amazonaws.com"
+        user_name = "admin"
+        password = "mypassword"
+        db_name = "findmap-first-db"
         
-        # db = pymysql.connect(
-        #        host = host_name,
-        #        port = 3306,
-        #         user = user_name,
-        #         passwd = password,
-        #         db = db_name,
-        #         charset = 'utf8'
-        #  )
+        self.db = db = pymysql.connect(
+                host = host_name,
+                port = 3306,
+                 user = user_name,
+                 passwd = password,
+                 db = db_name,
+                 charset = 'utf8'
+          )
 
         # SQL = "" ## sql 입력
 
@@ -79,19 +79,30 @@ class Categorization:
     def get_category_of_keyword(self, keyword):
         label = self.model.predict(keyword, k=3)[0]
         pred_label = self.remove_label(label)
-        return [keyword, pred_label]
+
+        label_temp = []
+        for i in pred_label :
+            i.replace("/","·")
+            label_temp.append(i)
+        
+        label_idx_list = []
+        for i in label_temp :
+            SQL = "select idx,name from CategoryTB ct where name = '{}'".format(i) 
+            df = pd.read_sql(SQL,self.db)
+            label_idx_list.append(df['idx'][0])
+        return label_idx_list
 
 class PororoModel:
     def __init__(self):
         self.summ = Pororo(task="summarization", model="abstractive", lang="ko")
         self.zsl = Pororo(task="zero-topic")
-        pass
 
     def summarize(self, contents):
         # summarize contents of the page
+        print("Pororo!!!")
+        print(self.summ(contents))
         return self.summ(contents)
 
     def categorize(self, contents, category_list):
         # categorize contents
         return self.zsl(contents, category_list)
-
