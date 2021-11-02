@@ -60,4 +60,4 @@ deploy_to_server:
     paths:
     - public
   only:
-  - master
+  - main
