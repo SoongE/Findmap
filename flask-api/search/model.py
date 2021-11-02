@@ -87,14 +87,11 @@ class Categorization:
         
         label_idx_list = []
         for i in label_temp :
-<<<<<<< HEAD
+
             SQL = "select idx,name from CategoryTB ct where name = '{}'".format(i.strip()) 
             df = pd.read_sql(SQL,self.db)
             print(df)
-=======
-            SQL = "select idx,name from CategoryTB ct where name = '{}'".format(i) 
-            df = pd.read_sql(SQL,self.db)
->>>>>>> 1d18d29429355c7deb60387753ce828099fe5295
+
             label_idx_list.append(df['idx'][0])
         return label_idx_list
 
