@@ -133,9 +133,9 @@ class Categorization:
 
             SQL = "select idx,name from CategoryTB ct where name = '{}'".format(i.strip()) 
             df = pd.read_sql(SQL,self.db)
-            print(df)
             label_idx_list.append(str(df['idx'][0]))
 
+        print(label_idx_list)
 
         result_s = ""
         for num , k in enumerate(label_idx_list) :
