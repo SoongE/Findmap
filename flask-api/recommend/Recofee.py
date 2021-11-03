@@ -34,6 +34,8 @@ class Recc :
      for i in k :
          result.append(i)
 
+     result.sort(reverse=True)
+     
      result_s = ""
      for num , k in enumerate(result) :
             if num == len(result)-1 :
