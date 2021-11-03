@@ -121,8 +121,9 @@ class Categorization:
 
         label_temp = []
         for i in pred_label :
-            i.replace("/","·")
-            label_temp.append(i)
+            for q in i :
+             q.replace("/","·")
+             label_temp.append(q)
         
         #label_idx_list = []
         #for i in label_temp :
@@ -131,7 +132,7 @@ class Categorization:
             #df = pd.read_sql(SQL,self.db)
             #print(df)
             #label_idx_list.append(df['idx'][0])
-        return label_temp
+        return label_temp   
 
 class PororoModel:
     def __init__(self):
