@@ -38,8 +38,8 @@ class Recc :
      cos_df = pd.DataFrame(data=cos_values, columns = a.index.values, index=a.index)
      return cos_df
 
-  #  print(train_df.shape)
-  #  print(test_df.shape)
+   #  print(train_df.shape)
+   #  print(test_df.shape)
 
    sparse_matrix = train_df.groupby('keywordidx').apply(lambda x: pd.Series(x['rating'].values, index=x['userIdx'])).unstack()
    sparse_matrix.index.name = 'keywordidx'
@@ -56,7 +56,7 @@ class Recc :
      sparse_matrix_withsearch = sparse_matrix
 
    search_cos_df = cos_matrix(sparse_matrix_withsearch, sparse_matrix_withsearch)
-  #  print("matirx화 성공")
+   #  print("matirx화 성공")
    userId_grouped = train_df.groupby('userIdx')
    search_prediction_ = pd.DataFrame(index=list(userId_grouped.indices.keys()), columns=sparse_matrix_withsearch.index)
 
@@ -80,11 +80,17 @@ class Recc :
      sum = sum + float(i)
   
    average_rating = sum / len(max_rating_num)
+
+   print(average_rating)
    # 평균값
 
    over_avg_df =  max_rating_num[max_rating_num>average_rating]
    print(over_avg_df)
-   selected_col = over_avg_df.columns.tolist()
+   selected_col = []
+   
+   for i in over_avg_df['keywordidx'] :
+     selected_col.append(i)
+    
 
    last_result = [] 
 
