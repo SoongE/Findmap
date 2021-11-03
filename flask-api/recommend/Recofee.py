@@ -88,7 +88,7 @@ class Recc :
    print(over_avg_df)
    selected_col = []
    
-   for i in over_avg_df['keywordidx'] :
+   for i in list(over_avg_df.index) :
      selected_col.append(i)
     
   
