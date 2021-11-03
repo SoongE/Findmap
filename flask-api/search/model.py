@@ -133,7 +133,7 @@ class Categorization:
             df = pd.read_sql(SQL,self.db)
             print(df)
             label_idx_list.append(df['idx'][0])
-        return label_temp   
+        return label_idx_list  
 
 class PororoModel:
     def __init__(self):
