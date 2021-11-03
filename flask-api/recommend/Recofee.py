@@ -104,9 +104,9 @@ class Recc :
    result_s = ""
    for num , k in enumerate(last_result) :
        if num == len(last_result)-1 :
-          result_s = result_s + k
+          result_s = result_s + str(k)
        else :
-          result_s = result_s + k + ','
+          result_s = result_s + str(k) + ','
             
    return result_s
     
