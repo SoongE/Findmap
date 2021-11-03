@@ -223,9 +223,7 @@ class _RecommendFeedTabState extends State<RecommendFeedTab>
 
   Future<List<Feed>> fetchGetRecommendFeeds(BuildContext context) async {
     final response = await http.get(
-      // TODO change to feeds/recommend
-      Uri.http(BASEURL, '/feeds/recommendation',
-          {'scrapIdxList': '95,92,91,88,2,3,4,5'}),
+      Uri.http(BASEURL, '/recommend/feeds'),
       headers: {
         HttpHeaders.contentTypeHeader: "application/json",
         "token": widget.user.accessToken,

@@ -57,7 +57,7 @@ class _SharePageState extends State<SharePage> {
     Map<String, dynamic> param = {"url": url};
 
     final response =
-        await http.get(Uri.http(BASEURL, '/test/share', param), headers: {
+        await http.get(Uri.http(BASEURL, '/data/share', param), headers: {
       HttpHeaders.contentTypeHeader: "application/json",
       "token": widget.user.accessToken,
     }).timeout(Duration(minutes: 2));

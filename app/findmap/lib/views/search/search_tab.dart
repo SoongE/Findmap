@@ -45,7 +45,6 @@ class _SearchTabState extends State<SearchTab> {
   Widget build(BuildContext context) {
     _searchKeyword = TextEditingController(text: '');
     return FutureBuilder<String>(
-      // future: fetchGetInitData(),
       future: getInitDataMemoizer.runOnce(() async => await fetchGetInitData()),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -170,6 +169,8 @@ class _SearchTabState extends State<SearchTab> {
 
   void _tap(int? index) {
     final String searchName = chartData[index as int].name;
+    fetchGetCategorizeWord(searchName);
+
     fetchGetKeywordData(searchName).then((value) {
       setState(() {
         var valueList = value.split(',');
@@ -199,13 +200,11 @@ class _SearchTabState extends State<SearchTab> {
   }
 
   Future<String> fetchGetInitData() async {
-    Map<String, dynamic> param = {'keyword': widget.user.userIdx.toString()};
-
     final response = await http.get(
-      Uri.http(BASEURL, '/test/recommend/initrecom', param),
+      Uri.http(BASEURL, '/recommend/initSearchTerm'),
       headers: {
         HttpHeaders.contentTypeHeader: "application/json",
-        "token": "widget.user.accessToken",
+        "token": widget.user.accessToken,
       },
     );
 
@@ -222,7 +221,7 @@ class _SearchTabState extends State<SearchTab> {
     Map<String, dynamic> param = {'keyword': keyword};
 
     final response = await http.get(
-      Uri.http(BASEURL, '/test/recommend', param),
+      Uri.http(BASEURL, '/recommend/relatedSearchTerm', param),
       headers: {
         HttpHeaders.contentTypeHeader: "application/json",
         "token": "widget.user.accessToken",
@@ -233,6 +232,24 @@ class _SearchTabState extends State<SearchTab> {
       var responseBody = jsonDecode(response.body);
       return responseBody['body']['model'];
     } else {
+      showSnackbar(context, '서버와 연결이 불안정합니다');
+      throw Exception('Failed to connect to server');
+    }
+  }
+
+  Future<void> fetchGetCategorizeWord(String keyword) async {
+    Map<String, dynamic> param = {'keyword': keyword};
+
+    final response = await http.post(
+      Uri.http(BASEURL, '/recommend/categorize-word'),
+      headers: {
+        HttpHeaders.contentTypeHeader: "application/json",
+        "token": widget.user.accessToken,
+      },
+      body: json.encode(param),
+    );
+
+    if (response.statusCode != 200) {
       showSnackbar(context, '서버와 연결이 불안정합니다');
       throw Exception('Failed to connect to server');
     }

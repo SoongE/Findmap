@@ -74,7 +74,7 @@ class _SearchResultState extends State<SearchResult> {
     Map<String, dynamic> param = {"keyword": widget.keyword};
 
     final response = await http.get(
-      Uri.http(BASEURL, '/test/search', param),
+      Uri.http(BASEURL, '/recommend/search', param),
       headers: {
         HttpHeaders.contentTypeHeader: "application/json",
         "token": "widget.user.accessToken",
