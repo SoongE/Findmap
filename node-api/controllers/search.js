@@ -19,18 +19,17 @@ const search = {
 
             const searchQuery = query.trim();
 
-
             // 검색어 확인
             const checkSearchWord = await searchModel.selectSearchWord(searchQuery);
 
             // 검색어 카테고리list 확인
             const response = await axios.get('http://flask-api:5000/search/categorize',{ params: { keyword: keyword }});
-            const data = response.data;
-            console.log(data)
+            const ctglist = response.data.body.ctg;
+            const ctg = str.split(",");
 
             // 검색어 저장 //카테고리list 포함해서 수정하기
             if (checkSearchWord.length < 1) {
-                const insertSearchWord = await searchModel.insertSearchWord(searchQuery);
+                const insertSearchWord = await searchModel.insertSearchWord(searchQuery,ctg[0],ctg[1],ctg[2]);
             } else {
                 const updateSearchWord = await searchModel.updateSearchWord(searchQuery);
             }

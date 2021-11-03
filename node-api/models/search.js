@@ -44,10 +44,10 @@ const search = {
             throw err;
         }
     },
-    insertSearchWord: async(searchQuery) => {
+    insertSearchWord: async(searchQuery,ctg1,ctg2,ctg3) => {
         const query = `
-            INSERT INTO SearchWordTB(word)
-            VALUES(?);
+            INSERT INTO SearchWordTB(word,categoryIdx1,categoryIdx2,categoryIdx3)
+            VALUES(?,?,?,?);
         `;
         const params = [searchQuery];
         try {
