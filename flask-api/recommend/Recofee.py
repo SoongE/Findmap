@@ -101,7 +101,14 @@ class Recc :
      for k in df_temp['idx'] :
        last_result.append(k)
 
-   return last_result
+   result_s = ""
+   for num , k in enumerate(last_result) :
+       if num == len(last_result)-1 :
+          result_s = result_s + k
+       else :
+          result_s = result_s + k + ','
+            
+   return result_s
     
  #def recommend_Feed(self) :
     # k = self.df['idx']
