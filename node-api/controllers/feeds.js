@@ -138,8 +138,7 @@ const feed = {
         const userIdx = req.decoded.userIdx;
         // const scrapIdxList = req.query.scrapIdxList;
         const response = await axios.get('http://flask-api:5000/recommend/recofeed',{ params: {useridx : userIdx}} );
-        console.log(response.data.body.model)
-        const scrapIdxList = response.data;
+        const scrapIdxList = response.data.body.model;
 
         try {
             // 로그인 확인

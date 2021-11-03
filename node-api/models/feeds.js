@@ -266,7 +266,8 @@ const feed = {
                 end as createdTerm
             FROM ScrapTB S
                      INNER JOIN UserTB UT ON UT.idx = S.userIdx
-            WHERE S.idx = ? and S.isFeed = 'Y' and S.status = 'Y';
+            WHERE S.idx = ? and S.isFeed = 'Y' and S.status = 'Y'
+            ORDER BY S.createdAt DESC;
         `;
         const params = [scrapIdx,myIdx];
         try {
