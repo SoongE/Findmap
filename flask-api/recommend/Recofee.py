@@ -33,7 +33,16 @@ class Recc :
      result = []
      for i in k :
          result.append(i)
-     return result
+
+     result_s = ""
+     for num , k in enumerate(result) :
+            if num == len(result)-1 :
+                result_s = result_s + k
+            else :
+                result_s = result_s + k + ','
+            
+        
+     return result_s
          
 
      
