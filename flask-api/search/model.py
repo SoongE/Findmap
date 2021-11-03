@@ -132,7 +132,7 @@ class Categorization:
             SQL = "select idx,name from CategoryTB ct where name = '{}'".format(i.strip()) 
             df = pd.read_sql(SQL,self.db)
             print(df)
-            label_idx_list.append(df['idx'][0])
+            label_idx_list.append(str(df['idx'][0]))
         return label_idx_list  
 
 class PororoModel:
