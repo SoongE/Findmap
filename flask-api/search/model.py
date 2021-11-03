@@ -18,11 +18,11 @@ class Categorization:
         self.db = pymysql.connect(
                 host = host_name,
                 port = 3306,
-                 user = user_name,
-                 passwd = password,
-                 db = db_name,
-                 charset = 'utf8'
-          )
+                user = user_name,
+                passwd = password,
+                db = db_name,
+                charset = 'utf8'
+        )
 
         # SQL = "" ## sql 입력
 
@@ -57,6 +57,7 @@ class Categorization:
             temp = x - 4
             if temp > 0:
                 user_rate[temp] += 5
+        print(category_df)
 
         scrap_df_x = scrap_df.iloc[:, 0]
         scrap_df_y = scrap_df.iloc[:, 1]
@@ -90,8 +91,9 @@ class Categorization:
                          '방송': 0, '일상·생각': 0, '육아·결혼': 0, '애완·반려동물': 0, '좋은글·이미지': 0, '패션/미용': 0, '인테리어·DIY': 0,
                          '요리·레시피': 0, '상품리뷰': 0, '원예·재배': 0, '게임': 0, '스포츠': 0, '사진': 0, '자동차': 0, '취미': 0, '국내여행': 0,
                          '세계여행': 0, '맛집': 0, 'IT·컴퓨터': 0, '사회·정치': 0, '건강·의학': 0, '비즈니스·경제': 0, '어학·외국어': 0, '교육·학문': 0}
-
+        print(userIdx)
         user_rate = self.calculate_user_rate(userIdx)
+        print(user_rate)
         
         for i, x in enumerate(result):
             title = x["title"]
