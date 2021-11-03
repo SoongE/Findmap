@@ -83,6 +83,7 @@ class Recc :
    # 평균값
 
    over_avg_df =  max_rating_num[max_rating_num>average_rating]
+   print(over_avg_df)
    selected_col = over_avg_df.columns.tolist()
 
    last_result = [] 
