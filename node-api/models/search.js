@@ -45,13 +45,11 @@ const search = {
         }
     },
     insertSearchWord: async(searchQuery,ctg1,ctg2,ctg3) => {
-        const query = `
-            INSERT INTO SearchWordTB(word,categoryIdx1,categoryIdx2,categoryIdx3)
-            VALUES(?,?,?,?);
-        `;
-        const params = [searchQuery];
+        const fields = 'word,categoryIdx1,categoryIdx2,categoryIdx3';
+        const values = [searchQuery,ctg1,ctg2,ctg3];
+        const query = `INSERT INTO SearchWordTB(${fields}) VALUES(?,?,?,?)`;
         try {
-            const result = await pool.queryParam(query,params);
+            const result = await pool.queryParamArr(query, values);
             return result;
         } catch (err) {
             console.log('Search Word insert ERROR: ', err);

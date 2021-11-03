@@ -20,12 +20,12 @@ const search = {
             const searchQuery = query.trim();
 
             // 검색어 확인
-            const checkSearchWord = await searchModel.selectSearchWord(searchQuery);
+            var checkSearchWord = await searchModel.selectSearchWord(searchQuery);
 
             // 검색어 카테고리list 확인
-            const response = await axios.get('http://flask-api:5000/search/categorize',{ params: { keyword: keyword }});
+            const response = await axios.get('http://flask-api:5000/search/categorize',{ params: { keyword: searchQuery }});
             const ctglist = response.data.body.ctg;
-            const ctg = str.split(",");
+            const ctg = ctglist.split(",");
 
             // 검색어 저장 //카테고리list 포함해서 수정하기
             if (checkSearchWord.length < 1) {
@@ -35,6 +35,7 @@ const search = {
             }
 
             // 검색 기록 저장
+            var checkSearchWord = await searchModel.selectSearchWord(searchQuery);
             const [searchWord] = checkSearchWord;
             const wordIdx = searchWord.idx;
             const insertSearchLog = await searchModel.insertSearchLog(userIdx,wordIdx);
