@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:async/async.dart';
 import 'package:findmap/models/post_folder.dart';
 import 'package:findmap/models/user.dart';
 import 'package:findmap/src/feature_category.dart';
@@ -33,6 +34,7 @@ class _SharePageState extends State<SharePage> {
   ];
   String _selectedValue = '아카이브';
   final GlobalKey<FormState> folderFormKey = GlobalKey<FormState>();
+  late AsyncMemoizer _memoizer;
 
   @override
   void initState() {
@@ -42,6 +44,7 @@ class _SharePageState extends State<SharePage> {
         _folderList.addAll(value.map((e) => e.name));
       });
     });
+    _memoizer = AsyncMemoizer<Map>();
     super.initState();
   }
 
@@ -64,6 +67,7 @@ class _SharePageState extends State<SharePage> {
 
     if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
+      print("GET_CATEGORY_INDEX ${responseBody['body']}");
       if (responseBody['status'] == 'success') {
         print(responseBody);
         return {
@@ -125,7 +129,7 @@ class _SharePageState extends State<SharePage> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               FutureBuilder(
-                  future: fetchGetScrapData(widget.url),
+                  future: _memoizer.runOnce(() async => await fetchGetScrapData(widget.url)),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Text('');
@@ -563,6 +567,8 @@ class _SharePageState extends State<SharePage> {
       "categoryIdx": categoryIdx.toString(),
       "isFeed": _isPublic ? 'Y' : 'N',
     };
+
+    print('category index: ${body['categoryIdx']}');
 
     final response = await http.post(
       Uri.http(BASEURL, '/scrap'),
