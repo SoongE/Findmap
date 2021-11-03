@@ -8,6 +8,7 @@ class model :
     def __init__(self,search_param) :
         self.recommend_list = []
         self.word = search_param.strip()
+  
     def give_recommend(self) :
         from app import mod
 

@@ -33,7 +33,7 @@ def main():
 def recommend():
     param_value = int(request.args["useridx"])
     item_c = Recofee.Recc(param_value)
-    item_f = item_c.recommend_Feed()
+    item_f = item_c.make_list()
     #temp_str = ""
     #for item in item_f :
         #temp_str = temp_str + "," + str(item)
