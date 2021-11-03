@@ -34,10 +34,18 @@ class _SearchTabState extends State<SearchTab> {
   late List<ChartData> chartData = [];
   var colorList = CHART_COLOR.toList()..shuffle();
   bool _isInit = true;
+  late final focusNode;
+
+  @override
+  void initState() {
+    focusNode = FocusNode();
+    super.initState();
+  }
 
   @override
   void dispose() {
     _searchKeyword.dispose();
+    focusNode.dispose();
     super.dispose();
   }
 
@@ -75,6 +83,7 @@ class _SearchTabState extends State<SearchTab> {
                     child: Form(
                       key: this._keywordKey,
                       child: TextFormField(
+                        focusNode: focusNode,
                         autofocus: _visibleSearchInput ? true : false,
                         controller: _searchKeyword,
                         textInputAction: TextInputAction.search,
@@ -129,10 +138,12 @@ class _SearchTabState extends State<SearchTab> {
                               // if click center keyword, then input new search keyword
                               setState(() {
                                 _visibleSearchInput = true;
+                                focusNode.requestFocus();
                               });
                             } else {
                               if (_visibleSearchInput == true)
                                 _visibleSearchInput = !_visibleSearchInput;
+                              focusNode.unfocus();
                               _tap(details.pointIndex);
                             }
                           },
