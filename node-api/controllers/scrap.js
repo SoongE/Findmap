@@ -1,3 +1,4 @@
+const axios = require('axios');
 let userModel = require('../models/users');
 let scrapModel = require('../models/scrap');
 let folderModel = require('../models/folders');
@@ -7,16 +8,21 @@ const regexDate = /^(19|20)\d{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[0-1])$/; //"y
 const scrap = {
     postScrap: async (req, res) => {
         const userIdx = req.decoded.userIdx;
-        let {title, contentUrl, thumbnailUrl, summary, comment, categoryIdx, folderIdx, isFeed} = req.body; 
+        let {title, contentUrl, thumbnailUrl, summary, comment, folderIdx, isFeed} = req.body; 
 
-        if (!title || !contentUrl || !thumbnailUrl || !summary || !categoryIdx) {
+        if (!title || !contentUrl || !thumbnailUrl || !summary) {
             return res.json({success: false, code: 2101, message: "스크랩할 내용을 넣어주세요."});
         }
         // comment = null
-        if (categoryIdx) {
-            if (1<=categoryIdx && categoryIdx<=4) return res.json({success: false, code: 2102, message: "1~4는 상위 관심 카테고리를 나타냅니다. 5~36의 하위 관심 카테고리를 선택해주세요."});
-            if (categoryIdx<1 || categoryIdx>36) return res.json({success: false, code: 2103, message: "선택할 수 있는 범위를 넘어섰습니다. 5~36의 숫자를 입력해주세요."});
-        } 
+        // if (categoryIdx) {
+        //     if (1<=categoryIdx && categoryIdx<=4) return res.json({success: false, code: 2102, message: "1~4는 상위 관심 카테고리를 나타냅니다. 5~36의 하위 관심 카테고리를 선택해주세요."});
+        //     if (categoryIdx<1 || categoryIdx>36) return res.json({success: false, code: 2103, message: "선택할 수 있는 범위를 넘어섰습니다. 5~36의 숫자를 입력해주세요."});
+        // } 
+        // 제목으로 categoryIdx 가져오기
+        const response = await axios.get('http://flask-api:5000/search/categorize',{ params: { keyword: title }});
+        const ctglist = response.data.body.ctg;
+        const ctg = ctglist.split(",");
+        let categoryIdx = ctg[0];
 
         // folderIdx = null
         // if (!folderIdx) return res.json({success: false, code: 2104, message: "folderIdx를 입력해주세요."});
