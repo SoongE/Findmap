@@ -81,7 +81,7 @@ class Recc :
   
    average_rating = sum / len(max_rating_num)
 
-   print(average_rating)
+   print("평균값" + str(average_rating))
    # 평균값
 
    over_avg_df =  max_rating_num[max_rating_num>average_rating]
@@ -91,7 +91,7 @@ class Recc :
    for i in over_avg_df['keywordidx'] :
      selected_col.append(i)
     
-
+  
    last_result = [] 
 
    for i in selected_col :
