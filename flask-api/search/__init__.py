@@ -48,7 +48,7 @@ def categorize():
 @search_api.route('/share', methods=['GET'])
 def share():
     param_value = request.args["url"]
-    body = main_method.share(param_value, crw, pororo)
+    body = main_method.share(param_value, crw, pororo, fasttext_model)
 
     if body == 0:
         return make_response(FAILURE, body)
