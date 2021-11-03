@@ -118,331 +118,324 @@ class _SharePageState extends State<SharePage> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(11.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            FutureBuilder(
-                future: fetchGetScrapData(widget.url),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Text('');
-                  } else {
-                    Map data = snapshot.data;
-                    _titleScrapPage.text = data['title'];
-                    _thumbnailUrl = data['thumbnailUrl'];
-                    _summaryScrapPage.text = data['summary'];
-                    _categoryIdx = data['categoryIdx'];
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(11.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              FutureBuilder(
+                  future: fetchGetScrapData(widget.url),
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Text('');
+                    } else {
+                      Map data = snapshot.data;
+                      _titleScrapPage.text = data['title'];
+                      _thumbnailUrl = data['thumbnailUrl'];
+                      _summaryScrapPage.text = data['summary'];
+                      _categoryIdx = data['categoryIdx'];
 
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Container(
-                              padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                              child: Text(
-                                '제목',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                            child: Text(
+                              '제목',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              //border corner radius
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  //color of shadow
+                                  spreadRadius: 2,
+                                  //spread radius
+                                  blurRadius: 5,
+                                  // blur radius
+                                  offset: Offset(
+                                      0, 2), // changes position of shadow
+                                ),
+                              ],
+                            ),
+                            child: TextField(
+                              textInputAction: TextInputAction.done,
+                              controller: _titleScrapPage,
+                              minLines: 3,
+                              maxLines: 3,
+                              decoration: InputDecoration(
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide:
+                                      BorderSide(color: Colors.transparent),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.transparent),
+                                ),
+                                hintText: "글의 제목을 적어보세요!",
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.symmetric(vertical: 13),
+                            height: 1,
+                            width: double.maxFinite,
+                            color: Colors.grey,
+                          ),
+                          Container(
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                            child: Text(
+                              '요약',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              //border corner radius
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  //color of shadow
+                                  spreadRadius: 2,
+                                  //spread radius
+                                  blurRadius: 5,
+                                  // blur radius
+                                  offset: Offset(
+                                      0, 2), // changes position of shadow
+                                ),
+                              ],
+                            ),
+                            child: TextField(
+                              textInputAction: TextInputAction.done,
+                              controller: _summaryScrapPage,
+                              minLines: 3,
+                              maxLines: 3,
+                              decoration: InputDecoration(
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide:
+                                      BorderSide(color: Colors.transparent),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.transparent),
                                 ),
                               ),
                             ),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(12),
-                                //border corner radius
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.5),
-                                    //color of shadow
-                                    spreadRadius: 2,
-                                    //spread radius
-                                    blurRadius: 5,
-                                    // blur radius
-                                    offset: Offset(
-                                        0, 2), // changes position of shadow
-                                  ),
-                                ],
-                              ),
-                              child: TextField(
-                                textInputAction: TextInputAction.done,
-                                controller: _titleScrapPage,
-                                minLines: 3,
-                                maxLines: 3,
-                                decoration: InputDecoration(
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                    borderSide:
-                                        BorderSide(color: Colors.transparent),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide:
-                                        BorderSide(color: Colors.transparent),
-                                  ),
-                                  hintText: "글의 제목을 적어보세요!",
-                                ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.symmetric(vertical: 13),
+                            height: 1,
+                            width: double.maxFinite,
+                            color: Colors.grey,
+                          ),
+                          Container(
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                            child: Text(
+                              '폴더',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                            Container(
-                              margin: EdgeInsets.symmetric(vertical: 13),
-                              height: 1,
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              //border corner radius
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  //color of shadow
+                                  spreadRadius: 2,
+                                  //spread radius
+                                  blurRadius: 5,
+                                  // blur radius
+                                  offset: Offset(
+                                      0, 2), // changes position of shadow
+                                ),
+                              ],
+                            ),
+                            child: SizedBox(
                               width: double.maxFinite,
-                              color: Colors.grey,
-                            ),
-                            Container(
-                              padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                              child: Text(
-                                '요약',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(12),
-                                //border corner radius
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.5),
-                                    //color of shadow
-                                    spreadRadius: 2,
-                                    //spread radius
-                                    blurRadius: 5,
-                                    // blur radius
-                                    offset: Offset(
-                                        0, 2), // changes position of shadow
-                                  ),
-                                ],
-                              ),
-                              child: TextField(
-                                textInputAction: TextInputAction.done,
-                                controller: _summaryScrapPage,
-                                minLines: 3,
-                                maxLines: 3,
-                                decoration: InputDecoration(
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                    borderSide:
-                                        BorderSide(color: Colors.transparent),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide:
-                                        BorderSide(color: Colors.transparent),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.symmetric(vertical: 13),
-                              height: 1,
-                              width: double.maxFinite,
-                              color: Colors.grey,
-                            ),
-                            Container(
-                              padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                              child: Text(
-                                '폴더',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                //border corner radius
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.5),
-                                    //color of shadow
-                                    spreadRadius: 2,
-                                    //spread radius
-                                    blurRadius: 5,
-                                    // blur radius
-                                    offset: Offset(
-                                        0, 2), // changes position of shadow
-                                  ),
-                                ],
-                              ),
-                              child: SizedBox(
-                                width: double.maxFinite,
-                                height: 35,
-                                child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 15.0),
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton(
-                                            focusColor: Colors.white,
-                                            value: _selectedValue,
-                                            items: _folderList
-                                                .map<DropdownMenuItem<String>>(
-                                              (String value) {
-                                                return DropdownMenuItem(
-                                                  value: value,
-                                                  child: Align(
-                                                      alignment:
-                                                          Alignment.centerLeft,
-                                                      child: Container(
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            0.6,
-                                                        child:
-                                                            _selectedValue ==
-                                                                    value
-                                                                ? Row(
-                                                                    children: [
-                                                                        Text(
-                                                                          value,
-                                                                          style:
-                                                                              TextStyle(color: Colors.green),
-                                                                        ),
-                                                                        Padding(
-                                                                            padding:
-                                                                                const EdgeInsets.symmetric(horizontal: 3)),
-                                                                        Icon(
-                                                                            Icons
-                                                                                .check,
-                                                                            color:
-                                                                                Colors.green)
-                                                                      ])
-                                                                : Text(value),
-                                                      )),
-                                                );
-                                              },
-                                            ).toList(),
-                                            onChanged: (value) {
-                                              FocusScope.of(context)
-                                                  .requestFocus(
-                                                      new FocusNode());
-                                              setState(() {
-                                                _selectedValue =
-                                                    value.toString();
-                                              });
+                              height: 35,
+                              child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(left: 15.0),
+                                      child: DropdownButtonHideUnderline(
+                                        child: DropdownButton(
+                                          focusColor: Colors.white,
+                                          value: _selectedValue,
+                                          items: _folderList
+                                              .map<DropdownMenuItem<String>>(
+                                            (String value) {
+                                              return DropdownMenuItem(
+                                                value: value,
+                                                child: Align(
+                                                    alignment:
+                                                        Alignment.centerLeft,
+                                                    child: Container(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.6,
+                                                      child: _selectedValue ==
+                                                              value
+                                                          ? Row(children: [
+                                                              Text(
+                                                                value,
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .green),
+                                                              ),
+                                                              Padding(
+                                                                  padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                      horizontal:
+                                                                          3)),
+                                                              Icon(Icons.check,
+                                                                  color: Colors
+                                                                      .green)
+                                                            ])
+                                                          : Text(value),
+                                                    )),
+                                              );
                                             },
-                                          ),
+                                          ).toList(),
+                                          onChanged: (value) {
+                                            FocusScope.of(context)
+                                                .requestFocus(new FocusNode());
+                                            setState(() {
+                                              _selectedValue = value.toString();
+                                            });
+                                          },
                                         ),
                                       ),
-                                      IconButton(
-                                          icon: Icon(Icons.add),
-                                          color: Colors.black38,
-                                          onPressed: () {
-                                            // 폴더 추가
-                                            _makeNewFolderDialog();
-                                          }),
-                                    ]),
-                              ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.symmetric(vertical: 13),
-                              height: 1,
-                              width: double.maxFinite,
-                              color: Colors.grey,
-                            ),
-                            Container(
-                              padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                              child: Text(
-                                '코멘트',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(12),
-                                //border corner radius
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.5),
-                                    //color of shadow
-                                    spreadRadius: 2,
-                                    //spread radius
-                                    blurRadius: 5,
-                                    // blur radius
-                                    offset: Offset(
-                                        0, 2), // changes position of shadow
-                                  ),
-                                ],
-                              ),
-                              child: TextField(
-                                textInputAction: TextInputAction.done,
-                                controller: _commentScrapPage,
-                                minLines: 3,
-                                maxLines: 3,
-                                decoration: InputDecoration(
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                    borderSide:
-                                        BorderSide(color: Colors.transparent),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide:
-                                        BorderSide(color: Colors.transparent),
-                                  ),
-                                  hintText: '나만의 코멘트를 달아보세요!',
-                                ),
-                              ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.symmetric(vertical: 13),
-                              height: 1,
-                              width: double.maxFinite,
-                              color: Colors.grey,
-                            ),
-                            Container(
-                              padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    '공개 여부 설정',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
                                     ),
-                                  ),
-                                  Switch(
-                                    value: _isPublic,
-                                    onChanged: (value) {
-                                      FocusScope.of(context)
-                                          .requestFocus(new FocusNode());
-                                      setState(() {
-                                        _isPublic = value;
-                                      });
-                                    },
-                                    activeTrackColor: Colors.lightGreenAccent,
-                                    activeColor: Colors.green,
-                                  ),
-                                ],
+                                    IconButton(
+                                        icon: Icon(Icons.add),
+                                        color: Colors.black38,
+                                        onPressed: () {
+                                          // 폴더 추가
+                                          _makeNewFolderDialog();
+                                        }),
+                                  ]),
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.symmetric(vertical: 13),
+                            height: 1,
+                            width: double.maxFinite,
+                            color: Colors.grey,
+                          ),
+                          Container(
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                            child: Text(
+                              '코멘트',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }
-                }),
-          ],
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              //border corner radius
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  //color of shadow
+                                  spreadRadius: 2,
+                                  //spread radius
+                                  blurRadius: 5,
+                                  // blur radius
+                                  offset: Offset(
+                                      0, 2), // changes position of shadow
+                                ),
+                              ],
+                            ),
+                            child: TextField(
+                              textInputAction: TextInputAction.done,
+                              controller: _commentScrapPage,
+                              minLines: 3,
+                              maxLines: 3,
+                              decoration: InputDecoration(
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide:
+                                      BorderSide(color: Colors.transparent),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.transparent),
+                                ),
+                                hintText: '나만의 코멘트를 달아보세요!',
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.symmetric(vertical: 13),
+                            height: 1,
+                            width: double.maxFinite,
+                            color: Colors.grey,
+                          ),
+                          Container(
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  '공개 여부 설정',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Switch(
+                                  value: _isPublic,
+                                  onChanged: (value) {
+                                    FocusScope.of(context)
+                                        .requestFocus(new FocusNode());
+                                    setState(() {
+                                      _isPublic = value;
+                                    });
+                                  },
+                                  activeTrackColor: Colors.lightGreenAccent,
+                                  activeColor: Colors.green,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                  }),
+            ],
+          ),
         ),
       ),
     );
