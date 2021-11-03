@@ -126,13 +126,13 @@ class Categorization:
             print(i)
             label_temp.append(i)
         
-        #label_idx_list = []
-        #for i in label_temp :
+        label_idx_list = []
+        for i in label_temp :
 
-            #SQL = "select idx,name from CategoryTB ct where name = '{}'".format(i.strip()) 
-            #df = pd.read_sql(SQL,self.db)
-            #print(df)
-            #label_idx_list.append(df['idx'][0])
+            SQL = "select idx,name from CategoryTB ct where name = '{}'".format(i.strip()) 
+            df = pd.read_sql(SQL,self.db)
+            print(df)
+            label_idx_list.append(df['idx'][0])
         return label_temp   
 
 class PororoModel:
