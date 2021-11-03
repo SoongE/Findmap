@@ -121,9 +121,10 @@ class Categorization:
 
         label_temp = []
         for i in pred_label :
-            for q in i :
-             q.replace("/","·")
-             label_temp.append(q)
+            print(i)
+            i.replace("/","·")
+            print(i)
+            label_temp.append(i)
         
         #label_idx_list = []
         #for i in label_temp :
