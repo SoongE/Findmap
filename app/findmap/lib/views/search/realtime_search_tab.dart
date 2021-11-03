@@ -7,6 +7,7 @@ import 'package:findmap/models/user.dart';
 import 'package:findmap/src/feature_category.dart';
 import 'package:findmap/src/my_colors.dart';
 import 'package:findmap/utils/utils.dart';
+import 'package:findmap/views/search/search_result.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:webview_flutter/webview_flutter.dart';
@@ -42,6 +43,9 @@ class _RealtimeSearchTabState extends State<RealtimeSearchTab>
   }
 
   Widget _tabController() {
+    var _tmp = _tabs[1];
+    _tabs[1] = _tabs[2];
+    _tabs[2] = _tmp;
     return DefaultTabController(
       key: const ValueKey('child'),
       length: _tabs.length,
@@ -168,7 +172,9 @@ class _GetRealtimeSearchState extends State<GetRealtimeSearch> {
           height: 40,
           child: InkWell(
             onTap: () => Navigator.push(
-                context, createRoute(_webView(_ranking[index].word))),
+                context,
+                createRoute(SearchResult(
+                    user: widget.user, keyword: _ranking[index].word))),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -179,28 +185,26 @@ class _GetRealtimeSearchState extends State<GetRealtimeSearch> {
                     fontSize: 15.3,
                   ),
                 ),
-                '${_ranking[index].changes}'.contains('UP') ?
-                Icon(
-                  Icons.arrow_drop_down_rounded,
-                  color: Colors.blue,
-                ) :
-                '${_ranking[index].changes}'.contains('DOWN') ?
-                Icon(
-                  Icons.arrow_drop_up_rounded,
-                  color: Colors.red,
-                ) :
-                '${_ranking[index].changes}'.contains('NEW') ?
-                Icon(
-                  Icons.star_rounded,
-                  color: Colors.yellow,
-                  size: 18.0,
-                ):
-                Text(
-                  '-  ',
-                  style: new TextStyle(
-                    color: Colors.black26,
-                  )
-                ),
+                '${_ranking[index].changes}'.contains('UP')
+                    ? Icon(
+                        Icons.arrow_drop_down_rounded,
+                        color: Colors.blue,
+                      )
+                    : '${_ranking[index].changes}'.contains('DOWN')
+                        ? Icon(
+                            Icons.arrow_drop_up_rounded,
+                            color: Colors.red,
+                          )
+                        : '${_ranking[index].changes}'.contains('NEW')
+                            ? Icon(
+                                Icons.star_rounded,
+                                color: Colors.yellow,
+                                size: 18.0,
+                              )
+                            : Text('-  ',
+                                style: new TextStyle(
+                                  color: Colors.black26,
+                                )),
               ],
             ),
           ),

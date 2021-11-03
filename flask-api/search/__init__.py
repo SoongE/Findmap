@@ -38,11 +38,10 @@ def main():
 @search_api.route('/categorize')
 def categorize():
     keyword = request.args["keyword"]
-    userIdx = request.args["userIdx"]
      
-    search_idx_cl = model.Categorization()
-    search_idx_cl.categorize(keyword, userIdx)
-
+    search_idx_cl = model.Categorization(fasttext_model)
+    param_value = search_idx_cl.get_category_of_keyword(keyword)
+    
     body = {"ctg" : param_value}
     return make_response(SUCCESS, body)
 
@@ -53,4 +52,15 @@ def share():
 
     if body == 0:
         return make_response(FAILURE, body)
+    return make_response(SUCCESS, body)
+
+
+@search_api.route('/bulcategorize')
+def bulcategorize():
+    keyword = request.args["keyword"]
+     
+    search_idx_cl = model.PororoModel()
+    param_value = search_idx_cl.summarize(keyword)
+    
+    body = {"ctg" : param_value}
     return make_response(SUCCESS, body)

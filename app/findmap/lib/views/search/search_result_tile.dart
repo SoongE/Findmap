@@ -39,7 +39,7 @@ class _ArticleDescription extends StatelessWidget {
           subtitle,
           maxLines: 3,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(color: Colors.black, letterSpacing: 1.0),
+          style: const TextStyle(color: Colors.black, letterSpacing: 0.5),
         ),
       ],
     );
@@ -88,7 +88,7 @@ class _SearchResultTileState extends State<SearchResultTile>
                 borderRadius: BorderRadius.circular(20),
               ),
               padding: const EdgeInsets.all(10),
-              height: 120,
+              height: 122,
               width: MediaQuery.of(context).size.width,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,

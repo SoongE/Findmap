@@ -136,7 +136,7 @@ class _FollowerState extends State<Follower> {
 
   Future<List<UserInfo>> fetchGetUserInfo() async {
     final response = await http.get(
-      Uri.http(BASEURL, '/follow/follower-list',
+      Uri.http(BASEURL, '/follow/following-list',
           {'userIdx': widget.user.userIdx.toString()}),
       headers: {
         HttpHeaders.contentTypeHeader: "application/json",

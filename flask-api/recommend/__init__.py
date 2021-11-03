@@ -5,6 +5,7 @@ from utils import make_response
 from recommend import fasttext_word
 from recommend import item_filter
 from recommend import numtoStr
+from recommend import Recofee
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -31,12 +32,12 @@ def main():
 @recommend_api.route('/recofeed')
 def recommend():
     param_value = int(request.args["useridx"])
-    item_c = item_filter.Item_filtered(param_value)
-    item_f = item_c.make_list()
-    temp_str = ""
-    for item in item_f :
-        temp_str = temp_str + "," + str(item)
-    resources =  {"model" : temp_str }
+    item_c = Recofee.Recc(param_value)
+    item_f = item_c.recommend_Feed()
+    #temp_str = ""
+    #for item in item_f :
+        #temp_str = temp_str + "," + str(item)
+    resources =  {"model" : item_f }
     print(f"Recommend Feeds")
     print(f"Input: user_idx {param_value}")
     print(f"Recommend feeds idxs: {item_f}")

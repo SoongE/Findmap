@@ -7,7 +7,7 @@ sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 class model :
     def __init__(self,search_param) :
         self.recommend_list = []
-        self.word = search_param
+        self.word = search_param.strip()
     def give_recommend(self) :
         from app import mod
 

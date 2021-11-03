@@ -9,6 +9,7 @@ class Mainmethod :
         self.search = search_idx
         self.user_idx = user_idx
         self.model = fasttext_model
+
     def main(self):
         search_text = self.search # 추후 노드에서 받을 예정!
         
@@ -39,7 +40,7 @@ class Mainmethod :
         # node.js 로부터 사용자 정보 받아오기.
         # 각 카테고리별 스크랩 수 / 최초 관심사 카테고리 등등...
 
-        mod.categorize(self.result, self.user_idx)
+        mod.sort_search_list(self.result, self.user_idx)
 
         # node.js 로부터 사용자 정보 받아오기.
         # 각 카테고리별 스크랩 수 / 최초 관심사 카테고리 등등...
@@ -63,11 +64,14 @@ def share(url, crw, nlp):
             title = scrap_page['title']
 
             if 'sentences' in scrap_page:
-                sentences = scrap_page['sentences']
-                if sentences is not None:
-                    description = nlp.summarize(sentences)
-                    scrap_page['description'] = description
-
+                try:
+                    sentences = scrap_page['sentences']
+                    if sentences is not None or sentences.strip() is not "":
+                        description = nlp.summarize(sentences)
+                        scrap_page['description'] = description
+                except:
+                    scrap_page['description'] = None
+            
             if title is not None:
                 try:
                     category_list = ['문학/책', '영화', '미술/디자인', '공연/전시', '음악', '드라마', '스타/연예인', '만화/애니',
