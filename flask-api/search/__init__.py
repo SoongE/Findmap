@@ -39,7 +39,7 @@ def main():
 def categorize():
     keyword = request.args["keyword"]
      
-    search_idx_cl = model.Categorization()
+    search_idx_cl = model.Categorization(fasttext_model)
     param_value = search_idx_cl.get_category_of_keyword(keyword)
     
     body = {"ctg" : param_value}
@@ -48,8 +48,19 @@ def categorize():
 @search_api.route('/share', methods=['GET'])
 def share():
     param_value = request.args["url"]
-    body = main_method.share(param_value, crw, pororo)
+    body = main_method.share(param_value, crw, pororo, fasttext_model)
 
     if body == 0:
         return make_response(FAILURE, body)
     return make_response(SUCCESS, body)
+
+
+#@search_api.route('/bulcategorize')
+#def bulcategorize():
+    #keyword = request.args["keyword"]
+     
+    #search_idx_cl = model.Categorization(fasttext_model)
+    #param_value = search_idx_cl.get_category_of_keyword(keyword)
+    
+    #body = {"ctg" : param_value}
+    #return make_response(SUCCESS, body)

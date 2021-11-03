@@ -44,14 +44,12 @@ const search = {
             throw err;
         }
     },
-    insertSearchWord: async(searchQuery) => {
-        const query = `
-            INSERT INTO SearchWordTB(word)
-            VALUES(?);
-        `;
-        const params = [searchQuery];
+    insertSearchWord: async(searchQuery,ctg1,ctg2,ctg3) => {
+        const fields = 'word,categoryIdx1,categoryIdx2,categoryIdx3';
+        const values = [searchQuery,ctg1,ctg2,ctg3];
+        const query = `INSERT INTO SearchWordTB(${fields}) VALUES(?,?,?,?)`;
         try {
-            const result = await pool.queryParam(query,params);
+            const result = await pool.queryParamArr(query, values);
             return result;
         } catch (err) {
             console.log('Search Word insert ERROR: ', err);
@@ -60,7 +58,7 @@ const search = {
     },
     selectSearchWord: async(searchQuery) => {
         const query = `
-            SELECT word
+            SELECT idx,word
             FROM SearchWordTB
             WHERE word = ?;
         `;
@@ -88,9 +86,9 @@ const search = {
             throw err;
         }
     },
-    insertSearchLog: async(userIdx,searchQuery) => {
-        const fields = 'userIdx,word';
-        const values = [userIdx,searchQuery];
+    insertSearchLog: async(userIdx,wordIdx) => {
+        const fields = 'userIdx,wordIdx';
+        const values = [userIdx,wordIdx];
         const query = `INSERT INTO SearchLogTB(${fields}) VALUES(?,?)`;
         try {
             const result = await pool.queryParamArr(query, values);
@@ -101,7 +99,11 @@ const search = {
         }
     },
     selectSearchLog: async(userIdx) => {
-        const query = `SELECT * FROM SearchLogTB WHERE userIdx = ? and status = 'Y' ORDER BY createdAt DESC`;
+        const query = `
+        SELECT SL.idx,word,SL.createdAt
+            FROM SearchLogTB SL
+            INNER JOIN SearchWordTB SW ON SL.wordIdx = SW.idx
+            WHERE userIdx = ? and SL.status = 'Y' ORDER BY SL.createdAt DESC`;
         const params = [userIdx];
         try {
             const result = await pool.queryParam(query,params);
@@ -111,9 +113,9 @@ const search = {
             throw err;
         }
     },
-    checkSearchLog: async(userIdx,wordIdx) => {
+    checkSearchLog: async(userIdx,logIdx) => {
         const query = `SELECT * FROM SearchLogTB WHERE userIdx = ? and idx = ? and status = 'Y' ORDER BY createdAt DESC`;
-        const params = [userIdx, wordIdx];
+        const params = [userIdx, logIdx];
         try {
             const result = await pool.queryParam(query,params);
             return result;
@@ -122,9 +124,9 @@ const search = {
             throw err;
         }
     },
-    deleteSearchLog: async(userIdx, wordIdx) => {
+    deleteSearchLog: async(userIdx, logIdx) => {
         const query = `UPDATE SearchLogTB SET status = 'D' WHERE userIdx = ? and idx = ?;`
-        const params = [userIdx, wordIdx];
+        const params = [userIdx, logIdx];
         try {
             const result = await pool.queryParam(query,params);
             return [result];
@@ -133,15 +135,14 @@ const search = {
             throw err;
         }
     },
-    searchUser: async(searchQuery) => {
+    searchUser: async(searchQuery,myIdx) => {
         const query = `
         SELECT
             U.idx AS userIdx
             , U.nickName AS userNickName
             , IFNULL(U.profileUrl, 'N') as userProfile
-            , (select COUNT(*) FROM FollowTB F where F.followerIdx = U.idx) as followerCount
-            , (select COUNT(*) FROM FollowTB F where F.followingIdx = U.idx) as followingCount
-            , IFNULL((select F.status FROM FollowTB F where F.followingIdx = U.idx),'N') as followStatus
+            , (select COUNT(*) FROM FollowTB F where F.followingIdx = U.idx) as followerCount
+            , IFNULL((select F.status FROM FollowTB F where F.followingIdx = U.idx and F.followerIdx=${myIdx}),'N') as followStatus
             FROM UserTB U
             WHERE U.status = 'Y' and (U.nickName LIKE '%${searchQuery}%');`
         const params = [searchQuery];

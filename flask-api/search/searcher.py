@@ -146,7 +146,7 @@ class Searcher:
 
     def get_thumbnail_url(self, url):
     # return self.crw.crawl(url)['img_url']
-        cp = self.crw.url_connect(url, 0.02)
+        cp = self.crw.url_connect(url)
         if cp:
             self.crw.html_parse()
             img_url = self.crw.og_crawl('image')

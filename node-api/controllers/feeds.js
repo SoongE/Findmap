@@ -1,3 +1,4 @@
+const axios = require('axios');
 let feedModel = require('../models/feeds');
 let userModel = require('../models/users');
 
@@ -135,12 +136,14 @@ const feed = {
     },
     getRecommendationFeed: async (req, res) => {
         const userIdx = req.decoded.userIdx;
-        const scrapIdxList = req.query.scrapIdxList;
+        // const scrapIdxList = req.query.scrapIdxList;
+        const response = await axios.get('http://flask-api:5000/recommend/recofeed',{ params: {useridx : userIdx}} );
+        const scrapIdxList = response.data.body.model;
 
         try {
             // 로그인 확인
-            const checkJWT = await userModel.checkJWT(userIdx);
-            if (checkJWT[0].length < 1) return res.json({success: false, code: 3007, message: "로그인되어 있지 않습니다."});
+            // const checkJWT = await userModel.checkJWT(userIdx);
+            // if (checkJWT[0].length < 1) return res.json({success: false, code: 3007, message: "로그인되어 있지 않습니다."});
 
             if(!scrapIdxList) return res.json({success: false, code: 2030, message: "추천 게시글 인덱스 리스트를 입력해 주세요."});
 

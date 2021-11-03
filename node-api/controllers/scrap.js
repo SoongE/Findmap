@@ -1,3 +1,4 @@
+const axios = require('axios');
 let userModel = require('../models/users');
 let scrapModel = require('../models/scrap');
 let folderModel = require('../models/folders');
@@ -7,7 +8,7 @@ const regexDate = /^(19|20)\d{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[0-1])$/; //"y
 const scrap = {
     postScrap: async (req, res) => {
         const userIdx = req.decoded.userIdx;
-        let {title, contentUrl, thumbnailUrl, summary, comment, categoryIdx, folderIdx, isFeed} = req.body; 
+        let {title, contentUrl, thumbnailUrl, summary, comment, categoryIdx, folderIdx, isFeed} = req.body;
 
         if (!title || !contentUrl || !thumbnailUrl || !summary || !categoryIdx) {
             return res.json({success: false, code: 2101, message: "스크랩할 내용을 넣어주세요."});
@@ -16,7 +17,7 @@ const scrap = {
         if (categoryIdx) {
             if (1<=categoryIdx && categoryIdx<=4) return res.json({success: false, code: 2102, message: "1~4는 상위 관심 카테고리를 나타냅니다. 5~36의 하위 관심 카테고리를 선택해주세요."});
             if (categoryIdx<1 || categoryIdx>36) return res.json({success: false, code: 2103, message: "선택할 수 있는 범위를 넘어섰습니다. 5~36의 숫자를 입력해주세요."});
-        } 
+        }
 
         // folderIdx = null
         // if (!folderIdx) return res.json({success: false, code: 2104, message: "folderIdx를 입력해주세요."});
@@ -45,7 +46,7 @@ const scrap = {
             let result = ``;
             result = await scrapModel.selectScrap(userIdx);
             if (result[0] == undefined) {
-              return res.json({success: false, code: 3101, message: "스크랩이 존재하지 않습니다."});
+                return res.json({success: false, code: 3101, message: "스크랩이 존재하지 않습니다."});
             }
             return res.json({success: true, code: 1000, message: "스크랩 전체 조회 성공", result: result});
         } catch (err) {
@@ -65,7 +66,7 @@ const scrap = {
             let result = ``;
             result = await scrapModel.selectScrapByFolder(userIdx,folderIdx);
             if (result[0] == undefined) {
-              return res.json({success: false, code: 3101, message: "스크랩이 존재하지 않습니다."});
+                return res.json({success: false, code: 3101, message: "스크랩이 존재하지 않습니다."});
             }
             return res.json({success: true, code: 1000, message: "스크랩 폴더별 조회 성공", result: result});
         } catch (err) {
@@ -110,18 +111,18 @@ const scrap = {
         }
     },
     getScrapDetail: async (req, res) => {
-      const userIdx = req.decoded.userIdx;
-      const scrapIdx = req.params.scrapIdx;
+        const userIdx = req.decoded.userIdx;
+        const scrapIdx = req.params.scrapIdx;
 
-      try {
-          const scrapRow = await scrapModel.selectScrapDetail(userIdx,scrapIdx);
-          if (scrapRow[0] == undefined) {
+        try {
+            const scrapRow = await scrapModel.selectScrapDetail(userIdx,scrapIdx);
+            if (scrapRow[0] == undefined) {
                 return res.json({success: false, code: 3101, message: "스크랩이 존재하지 않습니다."});
-          }
-          return res.json({success: true, code: 1000, message: "스크랩 상세 조회 성공", result: scrapRow});
-      } catch (err) {
-        return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
-      }
+            }
+            return res.json({success: true, code: 1000, message: "스크랩 상세 조회 성공", result: scrapRow});
+        } catch (err) {
+            return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
+        }
     },
     patchScrap: async (req, res) => {
         const userIdx = req.decoded.userIdx;
@@ -131,11 +132,11 @@ const scrap = {
             return res.json({success: false, code: 2125, message: "수정할 내용을 입력해주세요. (title, summary, comment, folderIdx, isFeed)"});
         }
         if(isFeed && (!regexTest.test(isFeed))) return res.json({success: false, code: 2106, message: "isFeed 형식이 올바르지 않습니다. Y 혹은 N의 형태로 입력해주세요."});
-        
+
         try{
             const checkScrap = await scrapModel.selectScrapDetail(userIdx, scrapIdx);
             if (checkScrap[0] == undefined) {
-            return res.json({success: false, code: 3101, message: "스크랩이 존재하지 않습니다."});
+                return res.json({success: false, code: 3101, message: "스크랩이 존재하지 않습니다."});
             }
             if (title) {
                 const titleResult = await scrapModel.updateScrapTitle(userIdx, scrapIdx, title);
@@ -152,7 +153,7 @@ const scrap = {
             if (isFeed) {
                 const feedResult = await scrapModel.updateScrapFeed(userIdx, scrapIdx, isFeed);
             }
-            
+
             const scrapRow = await scrapModel.selectScrapDetail(userIdx, scrapIdx);
 
             return res.json({success: true, code: 1000, message: "스크랩 선택 수정 성공", result: scrapRow});
@@ -169,7 +170,7 @@ const scrap = {
         try{
             const checkScrap = await scrapModel.selectScrapDetail(userIdx, scrapIdx);
             if (checkScrap[0] == undefined) {
-            return res.json({success: false, code: 3101, message: "스크랩이 존재하지 않습니다."});
+                return res.json({success: false, code: 3101, message: "스크랩이 존재하지 않습니다."});
             }
             const result = await scrapModel.updateScrapTitle(userIdx, scrapIdx, title);
             const scrapRow = await scrapModel.selectScrapDetail(userIdx, scrapIdx);
@@ -178,13 +179,13 @@ const scrap = {
         }catch(err){
             return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
         }
-      },
+    },
     patchScrapSummary: async (req, res) => {
         const userIdx = req.decoded.userIdx;
         const scrapIdx = req.params.scrapIdx;
         let {summary} = req.body;
         if(!summary) return res.json({success: false, code: 2122, message: "summary를 입력해 주세요"});
-        
+
         try{
             const checkScrap = await scrapModel.selectScrapDetail(userIdx, scrapIdx);
             if (checkScrap[0] == undefined) {
@@ -192,37 +193,37 @@ const scrap = {
             }
             const result = await scrapModel.updateScrapSummary(userIdx, scrapIdx, summary);
             const scrapRow = await scrapModel.selectScrapDetail(userIdx, scrapIdx);
-  
+
             return res.json({success: true, code: 1000, message: "스크랩 줄거리 수정 성공", result: scrapRow});
         }catch(err){
             return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
         }
-      },
+    },
     patchScrapComment: async (req, res) => {
-      const userIdx = req.decoded.userIdx;
-      const scrapIdx = req.params.scrapIdx;
-      let {comment} = req.body;
-      if(!comment) return res.json({success: false, code: 2123, message: "comment를 입력해주세요"});
+        const userIdx = req.decoded.userIdx;
+        const scrapIdx = req.params.scrapIdx;
+        let {comment} = req.body;
+        if(!comment) return res.json({success: false, code: 2123, message: "comment를 입력해주세요"});
 
-      try{
-          const checkScrap = await scrapModel.selectScrapDetail(userIdx, scrapIdx);
-          if (checkScrap[0] == undefined) {
-              return res.json({success: false, code: 3101, message: "스크랩이 존재하지 않습니다."});
-          }
-          const result = await scrapModel.updateScrapComment(userIdx, scrapIdx, comment);
-          const scrapRow = await scrapModel.selectScrapDetail(userIdx, scrapIdx);
+        try{
+            const checkScrap = await scrapModel.selectScrapDetail(userIdx, scrapIdx);
+            if (checkScrap[0] == undefined) {
+                return res.json({success: false, code: 3101, message: "스크랩이 존재하지 않습니다."});
+            }
+            const result = await scrapModel.updateScrapComment(userIdx, scrapIdx, comment);
+            const scrapRow = await scrapModel.selectScrapDetail(userIdx, scrapIdx);
 
-          return res.json({success: true, code: 1000, message: "스크랩 코멘트 수정 성공", result: scrapRow});
-      }catch(err){
-          return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
-      }
+            return res.json({success: true, code: 1000, message: "스크랩 코멘트 수정 성공", result: scrapRow});
+        }catch(err){
+            return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
+        }
     },
     patchScrapFolder: async (req, res) => {
         const userIdx = req.decoded.userIdx;
         const scrapIdx = req.params.scrapIdx;
         let {folderIdx} = req.body;
         if(!folderIdx) return res.json({success: false, code: 2124, message: "folderIdx를 입력해주세요"});
-        
+
         try {
             const checkScrap = await scrapModel.selectScrapDetail(userIdx, scrapIdx);
             if (checkScrap[0] == undefined) {
@@ -234,7 +235,7 @@ const scrap = {
             }
             const result = await scrapModel.updateScrapFolder(userIdx, scrapIdx, folderIdx);
             const scrapRow = await scrapModel.selectScrapDetail(userIdx, scrapIdx);
-            
+
             return res.json({success: true, code: 1000, message: "스크랩 폴더 수정 성공", result: scrapRow});
         }catch(err){
             return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
@@ -243,7 +244,7 @@ const scrap = {
     patchScrapFeedUp: async (req, res) => {
         const userIdx = req.decoded.userIdx;
         const scrapIdx = req.params.scrapIdx;
-        
+
         try {
             const checkScrap = await scrapModel.selectScrapDetail(userIdx, scrapIdx);
             if (checkScrap[0] == undefined) {
@@ -251,7 +252,7 @@ const scrap = {
             }
             const result = await scrapModel.updateScrapFeedUp(userIdx, scrapIdx);
             const scrapRow = await scrapModel.selectScrapDetail(userIdx, scrapIdx);
-            
+
             return res.json({success: true, code: 1000, message: "스크랩 피드 올리기 성공", result: scrapRow});
         }catch(err){
             return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});
@@ -260,7 +261,7 @@ const scrap = {
     patchScrapFeedDown: async (req, res) => {
         const userIdx = req.decoded.userIdx;
         const scrapIdx = req.params.scrapIdx;
-        
+
         try {
             const checkScrap = await scrapModel.selectScrapDetail(userIdx, scrapIdx);
             if (checkScrap[0] == undefined) {
@@ -268,7 +269,7 @@ const scrap = {
             }
             const result = await scrapModel.updateScrapFeedDown(userIdx, scrapIdx);
             const scrapRow = await scrapModel.selectScrapDetail(userIdx, scrapIdx);
-            
+
             return res.json({success: true, code: 1000, message: "스크랩 피드 내리기 성공", result: scrapRow});
         }catch(err){
             return res.json({success: false, code: 4000, message: 'Server Error : ' + err.message});

@@ -43,9 +43,6 @@ class _RealtimeSearchTabState extends State<RealtimeSearchTab>
   }
 
   Widget _tabController() {
-    var _tmp = _tabs[1];
-    _tabs[1] = _tabs[2];
-    _tabs[2] = _tmp;
     return DefaultTabController(
       key: const ValueKey('child'),
       length: _tabs.length,
@@ -100,7 +97,7 @@ class _RealtimeSearchTabState extends State<RealtimeSearchTab>
 
     if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
-
+      print(responseBody);
       if (responseBody['success']) {
         if (responseBody['result'] == null) return [];
         List<String> interest = [];
