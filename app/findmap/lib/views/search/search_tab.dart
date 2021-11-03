@@ -57,7 +57,7 @@ class _SearchTabState extends State<SearchTab> {
             chartData = [
               ChartData(valueList[1], 1, 4, 3, colorList[0]),
               ChartData(valueList[2], 2, 16, 5, colorList[1]),
-              ChartData('검색어', 3, 10, 30, colorList[2]),
+              ChartData('검색하기', 3, 10, 30, colorList[2]),
               ChartData(valueList[4], 4, 14, 12, colorList[3]),
               ChartData(valueList[5], 5, 8, 15, colorList[4]),
             ];
@@ -169,7 +169,7 @@ class _SearchTabState extends State<SearchTab> {
 
   void _tap(int? index) {
     final String searchName = chartData[index as int].name;
-    fetchGetCategorizeWord(searchName);
+    fetchGetSaveWord(searchName);
 
     fetchGetKeywordData(searchName).then((value) {
       setState(() {
@@ -224,7 +224,7 @@ class _SearchTabState extends State<SearchTab> {
       Uri.http(BASEURL, '/recommend/relatedSearchTerm', param),
       headers: {
         HttpHeaders.contentTypeHeader: "application/json",
-        "token": "widget.user.accessToken",
+        "token": widget.user.accessToken,
       },
     );
 
@@ -237,20 +237,20 @@ class _SearchTabState extends State<SearchTab> {
     }
   }
 
-  Future<void> fetchGetCategorizeWord(String keyword) async {
-    Map<String, dynamic> param = {'keyword': keyword};
+  Future<void> fetchGetSaveWord(String keyword) async {
+    Map<String, dynamic> param = {'query': keyword};
 
-    final response = await http.post(
-      Uri.http(BASEURL, '/recommend/categorize-word'),
+    final response = await http.get(
+      Uri.http(BASEURL, '/search', param),
       headers: {
         HttpHeaders.contentTypeHeader: "application/json",
         "token": widget.user.accessToken,
       },
-      body: json.encode(param),
     );
 
     if (response.statusCode != 200) {
       showSnackbar(context, '서버와 연결이 불안정합니다');
+      print(response.body);
       throw Exception('Failed to connect to server');
     }
   }

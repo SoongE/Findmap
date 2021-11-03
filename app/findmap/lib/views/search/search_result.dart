@@ -77,7 +77,7 @@ class _SearchResultState extends State<SearchResult> {
       Uri.http(BASEURL, '/recommend/search', param),
       headers: {
         HttpHeaders.contentTypeHeader: "application/json",
-        "token": "widget.user.accessToken",
+        "token": widget.user.accessToken,
       },
     );
 
