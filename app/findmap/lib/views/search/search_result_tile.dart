@@ -87,8 +87,7 @@ class _SearchResultTileState extends State<SearchResultTile>
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
               ),
-              padding: const EdgeInsets.all(10),
-              height: 122,
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
               width: MediaQuery.of(context).size.width,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,

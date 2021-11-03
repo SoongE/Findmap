@@ -223,9 +223,7 @@ class _RecommendFeedTabState extends State<RecommendFeedTab>
 
   Future<List<Feed>> fetchGetRecommendFeeds(BuildContext context) async {
     final response = await http.get(
-      // TODO change to feeds/recommend
-      Uri.http(BASEURL, '/feeds/recommendation',
-          {'scrapIdxList': '95,92,91,88,2,3,4,5'}),
+      Uri.http(BASEURL, '/feeds/recommendation'),
       headers: {
         HttpHeaders.contentTypeHeader: "application/json",
         "token": widget.user.accessToken,
@@ -234,6 +232,8 @@ class _RecommendFeedTabState extends State<RecommendFeedTab>
 
     if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
+
+      print(responseBody['result']);
 
       if (responseBody['success'])
         return responseBody['result']

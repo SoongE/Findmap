@@ -34,10 +34,18 @@ class _SearchTabState extends State<SearchTab> {
   late List<ChartData> chartData = [];
   var colorList = CHART_COLOR.toList()..shuffle();
   bool _isInit = true;
+  late final focusNode;
+
+  @override
+  void initState() {
+    focusNode = FocusNode();
+    super.initState();
+  }
 
   @override
   void dispose() {
     _searchKeyword.dispose();
+    focusNode.dispose();
     super.dispose();
   }
 
@@ -45,7 +53,6 @@ class _SearchTabState extends State<SearchTab> {
   Widget build(BuildContext context) {
     _searchKeyword = TextEditingController(text: '');
     return FutureBuilder<String>(
-      // future: fetchGetInitData(),
       future: getInitDataMemoizer.runOnce(() async => await fetchGetInitData()),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -58,7 +65,7 @@ class _SearchTabState extends State<SearchTab> {
             chartData = [
               ChartData(valueList[1], 1, 4, 3, colorList[0]),
               ChartData(valueList[2], 2, 16, 5, colorList[1]),
-              ChartData('검색어', 3, 10, 30, colorList[2]),
+              ChartData('검색하기', 3, 10, 30, colorList[2]),
               ChartData(valueList[4], 4, 14, 12, colorList[3]),
               ChartData(valueList[5], 5, 8, 15, colorList[4]),
             ];
@@ -76,6 +83,7 @@ class _SearchTabState extends State<SearchTab> {
                     child: Form(
                       key: this._keywordKey,
                       child: TextFormField(
+                        focusNode: focusNode,
                         autofocus: _visibleSearchInput ? true : false,
                         controller: _searchKeyword,
                         textInputAction: TextInputAction.search,
@@ -130,10 +138,12 @@ class _SearchTabState extends State<SearchTab> {
                               // if click center keyword, then input new search keyword
                               setState(() {
                                 _visibleSearchInput = true;
+                                focusNode.requestFocus();
                               });
                             } else {
                               if (_visibleSearchInput == true)
                                 _visibleSearchInput = !_visibleSearchInput;
+                              focusNode.unfocus();
                               _tap(details.pointIndex);
                             }
                           },
@@ -170,6 +180,8 @@ class _SearchTabState extends State<SearchTab> {
 
   void _tap(int? index) {
     final String searchName = chartData[index as int].name;
+    fetchGetSaveWord(searchName);
+
     fetchGetKeywordData(searchName).then((value) {
       setState(() {
         var valueList = value.split(',');
@@ -199,13 +211,11 @@ class _SearchTabState extends State<SearchTab> {
   }
 
   Future<String> fetchGetInitData() async {
-    Map<String, dynamic> param = {'keyword': widget.user.userIdx.toString()};
-
     final response = await http.get(
-      Uri.http(BASEURL, '/test/recommend/initrecom', param),
+      Uri.http(BASEURL, '/recommend/initSearchTerm'),
       headers: {
         HttpHeaders.contentTypeHeader: "application/json",
-        "token": "widget.user.accessToken",
+        "token": widget.user.accessToken,
       },
     );
 
@@ -222,10 +232,10 @@ class _SearchTabState extends State<SearchTab> {
     Map<String, dynamic> param = {'keyword': keyword};
 
     final response = await http.get(
-      Uri.http(BASEURL, '/test/recommend', param),
+      Uri.http(BASEURL, '/recommend/relatedSearchTerm', param),
       headers: {
         HttpHeaders.contentTypeHeader: "application/json",
-        "token": "widget.user.accessToken",
+        "token": widget.user.accessToken,
       },
     );
 
@@ -234,6 +244,24 @@ class _SearchTabState extends State<SearchTab> {
       return responseBody['body']['model'];
     } else {
       showSnackbar(context, '서버와 연결이 불안정합니다');
+      throw Exception('Failed to connect to server');
+    }
+  }
+
+  Future<void> fetchGetSaveWord(String keyword) async {
+    Map<String, dynamic> param = {'query': keyword};
+
+    final response = await http.get(
+      Uri.http(BASEURL, '/search', param),
+      headers: {
+        HttpHeaders.contentTypeHeader: "application/json",
+        "token": widget.user.accessToken,
+      },
+    );
+
+    if (response.statusCode != 200) {
+      showSnackbar(context, '서버와 연결이 불안정합니다');
+      print(response.body);
       throw Exception('Failed to connect to server');
     }
   }

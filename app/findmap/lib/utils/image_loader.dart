@@ -8,14 +8,11 @@ Widget imageLoader(AnimationController controller, String url, BoxFit fit) {
   if (_noneThumbnailUrl.contains(url)) {
     return Image.asset('assets/archive_basic.png', fit: BoxFit.cover);
   }
-  if (url == "Nblog") {
-    return Image.asset('assets/search/Nblog.png', fit: BoxFit.cover);
-  }
-  else if (url == "NCafe") {
+  if (url == "NCafe") {
     return Image.asset('assets/search/Ncafe.png', fit: BoxFit.cover);
   }
-  else if (url == "Dcafe") {
-    return Image.asset('assets/search/Dcafe.png', fit: BoxFit.cover);
+  else if (url == "Nblog") {
+    return Image.asset('assets/search/Nblog.png', fit: BoxFit.cover);
   }
   return ExtendedImage.network(
     url,
