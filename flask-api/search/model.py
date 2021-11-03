@@ -122,7 +122,7 @@ class Categorization:
         label_temp = []
         for i in pred_label :
             print(i)
-            i.replace('/','·')
+            i = i.replace('/','·')
             print(i)
             label_temp.append(i)
         
