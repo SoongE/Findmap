@@ -28,7 +28,8 @@ class Setting extends StatefulWidget {
 }
 
 class _SettingState extends State<Setting> {
-  GlobalKey<S2SingleState<bool>> _confirmKey = GlobalKey<S2SingleState<bool>>();
+  GlobalKey<S2SingleState<bool>> _withdrawKey =
+      GlobalKey<S2SingleState<bool>>();
   bool _confirmSelect = false;
 
   GlobalKey<S2MultiState<int>> _categoryKey = GlobalKey<S2MultiState<int>>();
@@ -72,7 +73,7 @@ class _SettingState extends State<Setting> {
                     _textButton('팔로잉/팔로우', callback: _toFollowingFollow),
                     _textButton('약관 확인', callback: _toDocumentToS),
                     _textButton('오픈소스 라이선스 확인', callback: _toDocumentLicense),
-                    _textButton('비밀번호 변경'),
+                    _textButton('비밀번호 변경', callback: _shotSnackBar),
                     _textButton('문의', callback: _sendEmail),
                     _textButton('회원탈퇴', callback: _withdrawal),
                     _textButton('로그아웃', callback: _logout),
@@ -114,6 +115,10 @@ class _SettingState extends State<Setting> {
     );
   }
 
+  void _shotSnackBar() {
+    showSnackbar(context, '비밀번호 변경은 다음 버전에 제공될 예정입니다');
+  }
+
   void _toFollowingFollow() {
     Navigator.of(context).push(createRoute(FollowerFollowing(widget.user)));
   }
@@ -136,9 +141,7 @@ class _SettingState extends State<Setting> {
   }
 
   void _withdrawal() async {
-    _confirmKey.currentState!.showModal();
-    Navigator.pushAndRemoveUntil(
-        context, createRoute(FirstPage()), (route) => false);
+    _withdrawKey.currentState!.showModal();
   }
 
   void _logout() async {
@@ -310,7 +313,7 @@ class _SettingState extends State<Setting> {
 
   Widget _confirmPopUp() {
     return SmartSelect<bool>.single(
-      key: _confirmKey,
+      key: _withdrawKey,
       value: _confirmSelect,
       title: "",
       onChange: (state) {
