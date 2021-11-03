@@ -99,7 +99,7 @@ class Recc :
      df_temp = pd.read_sql(sql_temp,self.db)
 
      for k in df_temp['idx'] :
-       last_result.append[k]
+       last_result.append(k)
 
    return last_result
     
