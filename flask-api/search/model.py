@@ -140,9 +140,9 @@ class Categorization:
             if num == len(label_idx_list)-1 :
                 result_s = result_s + k
             else :
-                temp = temp + k + ','
+                result_s = result_s + k + ','
             
-        return temp  
+        return result_s  
 
 class PororoModel:
     def __init__(self):
