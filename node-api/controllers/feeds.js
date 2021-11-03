@@ -142,8 +142,8 @@ const feed = {
 
         try {
             // 로그인 확인
-            const checkJWT = await userModel.checkJWT(userIdx);
-            if (checkJWT[0].length < 1) return res.json({success: false, code: 3007, message: "로그인되어 있지 않습니다."});
+            // const checkJWT = await userModel.checkJWT(userIdx);
+            // if (checkJWT[0].length < 1) return res.json({success: false, code: 3007, message: "로그인되어 있지 않습니다."});
 
             if(!scrapIdxList) return res.json({success: false, code: 2030, message: "추천 게시글 인덱스 리스트를 입력해 주세요."});
 
