@@ -37,9 +37,9 @@ class Recc :
      result_s = ""
      for num , k in enumerate(result) :
             if num == len(result)-1 :
-                result_s = result_s + k
+                result_s = result_s + str(k)
             else :
-                result_s = result_s + k + ','
+                result_s = result_s + str(k) + ','
             
         
      return result_s
