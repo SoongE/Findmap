@@ -404,7 +404,10 @@ class _SettingState extends State<Setting> {
         print(state.value);
         if (state.value.length > 5) {
           showSnackbar(context, "관심사는 5개까지 선택 가능합니다.\n최근 수정한 내용은 반영되지 않습니다.");
-        } else {
+        } else if (state.value.length < 1) {
+          showSnackbar(context, "관심사는 최소 1개이상 선택해야 합니다.\n최근 수정한 내용은 반영되지 않습니다.");
+        } else
+        {
           var sendList = _categorySelect;
           for (var i in state.value) {
             var filtered = _categorySelect.where((e) => e == i);
