@@ -26,7 +26,7 @@ class ArchivePage extends StatefulWidget {
 class _ArchivePageState extends State<ArchivePage> {
   List<Post> _archiveList = <Post>[];
   List<PostFolder> _folderList = <PostFolder>[];
-  List<String> _menuList = <String>['폴더 관리', '다른 메뉴'];
+  List<String> _menuList = <String>['폴더 관리', '추가 예정'];
 
   final _getArchiveMemoizer = AsyncMemoizer<List<Post>>();
 
@@ -102,16 +102,16 @@ class _ArchivePageState extends State<ArchivePage> {
           ]),
           elevation: 0,
           actions: [
-            IconButton(
-              splashRadius: 1,
-              icon: Icon(LineIcons.search, color: Colors.black),
-              onPressed: () {},
-            ),
-            IconButton(
-              splashRadius: 1,
-              icon: Icon(LineIcons.checkCircle, color: Colors.black),
-              onPressed: () {},
-            ),
+            // IconButton(
+            //   splashRadius: 1,
+            //   icon: Icon(LineIcons.search, color: Colors.black),
+            //   onPressed: () {},
+            // ),
+            // IconButton(
+            //   splashRadius: 1,
+            //   icon: Icon(LineIcons.checkCircle, color: Colors.black),
+            //   onPressed: () {},
+            // ),
             PopupMenuButton<String>(
               icon: Icon(Icons.menu, color: Colors.black),
               onSelected: (value) => menuPopUponSelected(value),
