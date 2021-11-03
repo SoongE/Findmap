@@ -133,7 +133,16 @@ class Categorization:
             df = pd.read_sql(SQL,self.db)
             print(df)
             label_idx_list.append(str(df['idx'][0]))
-        return label_idx_list  
+
+
+        result_s = ""
+        for num , k in enumerate(label_idx_list) :
+            if num == len(label_idx_list)-1 :
+                result_s = result_s + k
+            else :
+                temp = temp + k + ','
+            
+        return temp  
 
 class PororoModel:
     def __init__(self):
