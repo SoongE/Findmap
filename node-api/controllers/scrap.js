@@ -13,10 +13,10 @@ const scrap = {
             return res.json({success: false, code: 2101, message: "스크랩할 내용을 넣어주세요."});
         }
         // comment = null
-        if (categoryIdx) {
-            if (1<=categoryIdx && categoryIdx<=4) return res.json({success: false, code: 2102, message: "1~4는 상위 관심 카테고리를 나타냅니다. 5~36의 하위 관심 카테고리를 선택해주세요."});
-            if (categoryIdx<1 || categoryIdx>36) return res.json({success: false, code: 2103, message: "선택할 수 있는 범위를 넘어섰습니다. 5~36의 숫자를 입력해주세요."});
-        } 
+        // if (categoryIdx) {
+        //     if (1<=categoryIdx && categoryIdx<=4) return res.json({success: false, code: 2102, message: "1~4는 상위 관심 카테고리를 나타냅니다. 5~36의 하위 관심 카테고리를 선택해주세요."});
+        //     if (categoryIdx<1 || categoryIdx>36) return res.json({success: false, code: 2103, message: "선택할 수 있는 범위를 넘어섰습니다. 5~36의 숫자를 입력해주세요."});
+        // }
 
         // folderIdx = null
         // if (!folderIdx) return res.json({success: false, code: 2104, message: "folderIdx를 입력해주세요."});
