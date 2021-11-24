@@ -2,7 +2,7 @@
 
 <div align="center">
 <p align="center">
-    <img src="assets/logo.png" alt="logo" width="250" height="250"/>
+    <img src="https://lab.hanium.or.kr/21_HF144/21_hf144/uploads/f5aea3f4cfe4daa986392a3805c36976/logo.png" alt="logo" width="250" height="250"/>
 </p>
 <h4 align="center">AI기반 검색, 검색결과, 게시글 추천 SNS 서비스</h4>
 <p align="center">
@@ -39,16 +39,17 @@
     Findmap은 2021 한이음 "21_HF144 빅데이터, AI기반 컨버전스 콘텐츠 마인드맵 앱개발" 프로젝트로 진행된 결과물입니다.
     <br/>
     상업적 목적을 띄고 있지 않으며, 팀 <b>Ajou Nice</b>에 의해 개발되었습니다.
+    <br/>
+    🏆2021 한이음 공모전 동상 수상🏆
+    <br/>
+    🏆ACK2021 우수상 수상🏆
 </p>
 </div>
-
-
-
 ## Overview
 
 ‘Findmap’은 Find와 Mindmap의 map을 합친 단어로 사용자들이 웹서핑할 때 헤매지 않도록 지도(맞춤 검색 결과, 맞춤 게시글 추천) 또는 마인드맵(맞춤 검색어)을 그려주어 방향성을 정해주고자 하는 이중적인 의미를 담아 만든 애플리케이션이다. 
 
-‘Findmap’은 검색 시 사용자의 데이터를 기반으로 **맞춤 검색 결과**를 보여주고, 사용자가 검색할 것 같은 단어를 **예측해서 추천 검색어를 제시**한다. 또한, 검색 중 저장하고 싶은 게시글이 있을 때 나만의 아카이브에 **스크랩**하고 관리할 수 있다. 마지막으로 **SNS** 기능을 추가해서 다른 사람들과 게시글을 공유하며 소통할 수 있다.
+‘Findmap’은 검색 시 사용자의 데이터를 기반으로 **맞춤 검색 결과**를 보여주고, 사용자가 검색할 것 같은 단어를 **예측해서 추천 검색어를 제시**한다. 또한, 검색 중 저장하고 싶은 게시글이 있을 때 나만의 아카이브에 **스크랩**하고 관리할 수 있다. 이와 더불어 **SNS** 기능을 추가해서 다른 사람들과 게시글을 공유하며 소통할 수 있다.
 
 ## Features
 
@@ -86,7 +87,7 @@ Findmap AI로 **검색 결과를 사용자 취향에 맞게 정렬**하여 검�
 
 ## Architecture
 
-업로드 예정
+![System Architecture](https://lab.hanium.or.kr/21_HF144/21_hf144/uploads/a57b853151fb2ac57b6384dc09f615c7/system_architecture.png)
 
 [API docs](https://lab.hanium.or.kr/21_HF144/21_hf144/wikis/home)
 
