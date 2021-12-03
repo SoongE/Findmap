@@ -1,0 +1,16 @@
+stages:
+  - test
+
+variables:
+  INNER_NAME: "RHCSKY"
+
+test_flask:
+  tags:
+    - runner
+  before_script:
+    - cd flask-api
+    - export PATH=$PATH:/opt/conda/bin
+    - python -m pip install -r requirements.txt
+  stage: test
+  script:
+    - echo INNER_NAME=$INNER_NAME
