@@ -8,12 +8,12 @@ from search.crawler import Crawler
 class Searcher:
     def __init__(self):
         # naver에서 rest api 통신할 때 필요한 정보들
-        self.client_id = "zNA2MKsxD6v8EPSyzzRZ"
-        self.client_secret = "s_AtHZylUw"
+        self.client_id = "xxxxxxxxxxxxxxx"
+        self.client_secret = "xxxxxxxxxxxxxxx"
         self.display = "5"
 
         # kakao에서 rest api 통신할 때 필요한 정보들
-        self.rest_api_key = "9eae6db2c08b5fe4082bdd95f8134d01"
+        self.rest_api_key = "xxxxxxxxxxxxxxx"
         self.size = "5"
 
         self.crw = Crawler()
